@@ -14,21 +14,34 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 @import config.AppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.TemplateOverrides
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 
 @this(
   appConfig: AppConfig,
   hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: Option[String] = None, showBackLink: Boolean = true)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+
+@additionalHead = {
+       <link href="@routes.Assets.versioned("stylesheets/application.css")" media="all" rel="stylesheet" type="text/css" />
+}
 
 @hmrcStandardPage(
-  HmrcStandardPageParams(
+  hmrcstandardpage.HmrcStandardPageParams(
     pageTitle = pageTitle,
-    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled
+
+    templateOverrides = TemplateOverrides(
+      additionalHeadBlock = Some(additionalHead)
+    ),
+
+    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
+
+    backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None
   )
 )(contentBlock)
 

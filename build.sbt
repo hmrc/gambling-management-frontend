@@ -1,5 +1,4 @@
 import uk.gov.hmrc.DefaultBuildSettings
-import scoverage.ScoverageKeys
 
 lazy val appName: String = "gambling-management-frontend"
 
