@@ -18,7 +18,11 @@ Developed using Scala 3 with the Play Framework and suitable to run on JRE 21 or
 
 ### To run the whole stack under Service Manager
 ```
+<<<<<<< HEAD
 sm2 --start VAPING_STAMPS_API_ALL
+=======
+sm2 --start DASS_GAMBLING_ALL
+>>>>>>> 8067b6d (DTR-3794: MGD Index page presenting the user with a view of their dashboard and all screens they can access.)
 ```
 
 ### To control the service locally from the console
@@ -28,7 +32,11 @@ sbt run
 
 To stop the service running:
 ```
+<<<<<<< HEAD
 sm2 --start DASS_GAMBLING_ALL
+=======
+sm2 --stop DASS_GAMBLING_ALL
+>>>>>>> 8067b6d (DTR-3794: MGD Index page presenting the user with a view of their dashboard and all screens they can access.)
 ```
 
 ## Endpoints
