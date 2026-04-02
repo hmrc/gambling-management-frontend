@@ -1,0 +1,84 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this(layout: Layout)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = Some("Manage your Machine Games Duty")) {
+
+<div class="govuk-width-container">
+ <a href="javascript:window.history.back()" class="govuk-back-link">Back</a>
+ <main class="govuk-main-wrapper" id="main-content">
+  <div class="govuk-grid-row">
+   <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Manage your Machine Games Duty</h1>
+    <p class="govuk-body">MGD registration number: XWM00000001770</p>
+    <br>
+    <div class="flex-container govuk-grid-row">
+     <div class="card" id="statement">
+      <div class="card-body">
+       <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
+        Statement
+       </h2>
+       <p class="govuk-body govuk-!-margin-bottom-2">As of 12 January 2026, your balance is £82,768 in debit.</p>
+      </div>
+      <div class="card-action">
+       <ul class="govuk-list">
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">View account statement</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" target="_blank" href="https://www.tax.service.gov.uk/pay/enter-machine-games-duty-reference">Make a payment (opens in a new tab)</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="card" id="returns">
+      <div class="card-body">
+       <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
+        Returns
+       </h2>
+       <p class="govuk-body govuk-!-margin-bottom-2">You have 4 overdue returns.</p>
+      </div>
+      <div class="card-action">
+       <ul class="govuk-list">
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">File a return</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">View filed returns</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="card" id="registration">
+      <div class="card-body">
+       <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
+        Registration
+       </h2>
+      </div>
+      <div class="card-action">
+       <ul class="govuk-list">
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="view-certificate/rg-crt-certificate-org.html">View registration certificate</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="../change-registration-details/ch-reg-task-list.html">Change registration details</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">Cancel registration </a></li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+ </main>
+</div>
+}
+
+@{
+    //$COVERAGE-OFF$
+}
