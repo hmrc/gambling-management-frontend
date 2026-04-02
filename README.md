@@ -18,7 +18,7 @@ Developed using Scala 3 with the Play Framework and suitable to run on JRE 21 or
 
 ### To run the whole stack under Service Manager
 ```
-sm2 --start VAPING_STAMPS_API_ALL
+sm2 --start DASS_GAMBLING_ALL
 ```
 
 ### To control the service locally from the console
@@ -28,7 +28,7 @@ sbt run
 
 To stop the service running:
 ```
-sm2 --start DASS_GAMBLING_ALL
+sm2 --stop DASS_GAMBLING_ALL
 ```
 
 ## Endpoints
