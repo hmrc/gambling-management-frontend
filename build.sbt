@@ -49,41 +49,6 @@ lazy val root = Project(appName, file("."))
     coverageExcludedFiles := (ThisBuild / coverageExcludedFiles).value
   )
 
-lazy val coverageSettings: Seq[Setting[?]] = {
-  import scoverage.ScoverageKeys
-  val excludedPackages = Seq(
-    "<empty>",
-    ".*Reverse.*",
-    ".*standardError*.*",
-    ".*govuk_wrapper*.*",
-    ".*main_template*.*",
-    "uk.gov.hmrc.BuildInfo",
-    "app.*",
-    "prod.*",
-    "config.*",
-    "testOnly.*",
-    "testOnlyDoNotUseInAppConf.*",
-    ".*feedback*.*",
-    "partials.*",
-    "controllers.testOnly.*",
-    "forms.validation.mappings",
-    "views.html.*[Tt]emplate.*",
-    "views.html.views.templates.helpers*",
-    "views.html.views.templates.inputs*",
-    "views.headerFooterTemplate",
-    "models.*"
-  )
-
-  Seq(
-    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
-      ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 76,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true
-  )
-}
-
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
