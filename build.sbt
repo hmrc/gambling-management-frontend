@@ -25,6 +25,7 @@ ThisBuild / coverageExcludedFiles :=
     ".*Routes\\.scala",
     ".*RoutesPrefix\\.scala",
     ".*Reverse.*",
+    ".*ViewUtils.*",
     ".*controllers\\.routes\\..*",
     ".*views\\.html\\..*",
     ".*target/scala-3.*/routes/.*"
@@ -45,7 +46,31 @@ lazy val root = Project(appName, file("."))
     scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
     pipelineStages := Seq(gzip),
     coverageExcludedPackages := (ThisBuild / coverageExcludedPackages).value,
-    coverageExcludedFiles := (ThisBuild / coverageExcludedFiles).value
+    coverageExcludedFiles := (ThisBuild / coverageExcludedFiles).value,
+    retrieveManaged := true,
+    pipelineStages := Seq(digest),
+    Compile / scalafmtOnCompile := true,
+    Test / scalafmtOnCompile := true,
+    scalacOptions ++= Seq(
+      "-feature",
+      "-deprecation",
+      "-Wconf:src=html/.*:s",
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:src=target/.*:s",
+      "-Wconf:msg=unused import:s",
+      "-Wconf:msg=Flag.*repeatedly:s"
+    ),
+    PlayKeys.playDefaultPort := 10400,
+    TwirlKeys.templateImports ++= Seq(
+      "play.twirl.api.HtmlFormat",
+      "play.twirl.api.HtmlFormat._",
+      "uk.gov.hmrc.govukfrontend.views.html.components._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
+      "uk.gov.hmrc.hmrcfrontend.views.config._",
+      "views.ViewUtils._",
+      "controllers.routes._"
+    )
   )
 
 lazy val it = project

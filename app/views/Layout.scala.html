@@ -15,9 +15,9 @@
  *@
 
 @import config.AppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.TemplateOverrides
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.ServiceURLs
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 
 @this(
@@ -25,7 +25,7 @@
   hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: Option[String] = None, showBackLink: Boolean = true)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: Option[String] = None, showBackLink: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @additionalHead = {
        <link href="@routes.Assets.versioned("stylesheets/application.css")" media="all" rel="stylesheet" type="text/css" />
@@ -37,6 +37,10 @@
 
     templateOverrides = TemplateOverrides(
       additionalHeadBlock = Some(additionalHead)
+    ),
+
+    serviceURLs = ServiceURLs(
+      signOutUrl = if (showSignOut) Some(routes.IndexController.onPageLoad.url) else None
     ),
 
     isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,

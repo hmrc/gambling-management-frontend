@@ -24,10 +24,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class IndexController @Inject()(val controllerComponents: MessagesControllerComponents,
-                                indexView: IndexView
-)  extends FrontendBaseController with I18nSupport {
+class IndexController @Inject() (val controllerComponents: MessagesControllerComponents, indexView: IndexView)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] =  Action:
-    { implicit request => Ok(indexView()) }
+  def onPageLoad: Action[AnyContent] = Action:
+    implicit request => Ok(indexView())
 }

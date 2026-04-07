@@ -1,4 +1,3 @@
-
 # gambling-management-frontend
 
 ## Project Title
@@ -7,36 +6,44 @@ Gambling Management Frontend
 
 ## Project Description
 
-Gambling Management Frontend will complement HMRC's traditional screens.
+Gambling Management Frontend is a Scala 3 Play application that provides user-facing functionality for HMRC's Gambling Management services, complementing existing legacy interfaces.
 
-## Requirements
+This service follows HMRC frontend standards and integrates with backend services within the DASS platform.
+
+## Tech Stack
+
+Developed using Scala 3 with the Play Framework and suitable to run on JRE platform.
+
 ```
-Developed using Scala 3 with the Play Framework and suitable to run on JRE 21 or later.
+- Scala 3
+- Play Framework 3
+- Java 21+
+- SBT
+- HMRC bootstrap (play-30)
 ```
 
 ## Running the service
 
-### To run the whole stack under Service Manager
+### Install/Update the Service Manager configuration (Prerequisite)
 ```
-<<<<<<< HEAD
-sm2 --start VAPING_STAMPS_API_ALL
-=======
-sm2 --start DASS_GAMBLING_ALL
->>>>>>> 8067b6d (DTR-3794: MGD Index page presenting the user with a view of their dashboard and all screens they can access.)
+sm2 -update-config
 ```
 
-### To control the service locally from the console
+### Run the whole stack under Service Manager
+
+The service runs on port 10400. To start the service under service manager:
+```
+sm2 --start DASS_GAMBLING_ALL
+```
+
+To stop the service:
+```
+sm2 --stop DASS_GAMBLING_ALL
+```
+
+### To run the service locally from the console
 ```
 sbt run
-```
-
-To stop the service running:
-```
-<<<<<<< HEAD
-sm2 --start DASS_GAMBLING_ALL
-=======
-sm2 --stop DASS_GAMBLING_ALL
->>>>>>> 8067b6d (DTR-3794: MGD Index page presenting the user with a view of their dashboard and all screens they can access.)
 ```
 
 ## Endpoints
@@ -45,11 +52,21 @@ sm2 --stop DASS_GAMBLING_ALL
 
 The service's landing page can be reached at 
 
+http://localhost:10400/gambling-management-frontend
+
+The application context is defined in `prod.routes`
+
 ```
-GET /gambling-management-frontend/
+GET         /gambling-management-frontend/
 ```
 
-Behaviour
+The application routes are defined in `app.routes`
+
+```
+GET        /
+```
+
+#### Behaviour
 
 When the application is running:
 
@@ -64,7 +81,7 @@ Returns 503
 The service cannot complete the health-check. 
 ```
 
-## Build
+### Build
 
 ### 1. To Format the files we are using 'scalafmt' code formatter
 

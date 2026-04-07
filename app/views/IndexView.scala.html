@@ -18,55 +18,55 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = Some("Manage your Machine Games Duty")) {
+@layout(pageTitle = Some(titleNoForm("index.title")), showBackLink = true)  {
 
 <div class="govuk-width-container">
  <main class="govuk-main-wrapper" id="main-content">
   <div class="govuk-grid-row">
    <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Manage your Machine Games Duty</h1>
-    <p class="govuk-body">MGD registration number: XWM00000001770</p>
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">@messages("index.heading")</h1>
+    <p class="govuk-body">@messages("mgd.registration.number"): XWM00000001770</p>
     <br>
     <div class="flex-container govuk-grid-row"  style="display:flex; gap:20px;">
      <div class="card" id="statement">
       <div class="card-body" style="width:275px;">
        <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
-        Statement
+        @messages("index.statement")
        </h2>
        <p class="govuk-body govuk-!-margin-bottom-2">As of 12 January 2026, your balance is £82,768 in debit.</p>
       </div>
       <div class="card-action">
        <ul class="govuk-list">
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">View account statement</a></li>
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" target="_blank" href="https://www.tax.service.gov.uk/pay/enter-machine-games-duty-reference">Make a payment (opens in a new tab)</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">@messages("index.link.viewAccountStatement")</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" target="_blank" href="https://www.tax.service.gov.uk/pay/enter-machine-games-duty-reference">@messages("index.link.makePayment")</a></li>
        </ul>
       </div>
      </div>
      <div class="card" id="returns">
       <div class="card-body" style="width:275px;">
        <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
-        Returns
+        @messages("index.returns")
        </h2>
        <p class="govuk-body govuk-!-margin-bottom-2">You have 4 overdue returns.</p>
       </div>
       <div class="card-action">
        <ul class="govuk-list">
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">File a return</a></li>
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">View filed returns</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">@messages("index.link.fileReturn")</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">@messages("index.link.viewFiledReturns")</a></li>
        </ul>
       </div>
      </div>
      <div class="card" id="registration">
       <div class="card-body" style="width:275px;">
        <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">
-        Registration
+         @messages("index.registration")
        </h2>
       </div>
       <div class="card-action">
        <ul class="govuk-list">
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="view-certificate/rg-crt-certificate-org.html">View registration certificate</a></li>
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="../change-registration-details/ch-reg-task-list.html">Change registration details</a></li>
-        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">Cancel registration </a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="view-certificate/rg-crt-certificate-org.html">@messages("index.link.viewRegistrationCertificate")</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="../change-registration-details/ch-reg-task-list.html">@messages("index.link.changeRegistrationDetails")</a></li>
+        <li class="govuk-!-margin-bottom-2"><a class="govuk-link" href="#">@messages("index.link.cancelRegistration")</a></li>
        </ul>
       </div>
      </div>
