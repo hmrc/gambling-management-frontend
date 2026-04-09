@@ -1,2 +1,21 @@
-service.name = gambling-management-frontend
+service.name = Machine Games Duty
 service.text = This is your new service
+
+
+mgd.registration.number = MGD registration number
+
+# Index page links
+index.title = Machine Games Duty
+index.heading = Manage your Machine Games Duty
+
+index.statement=Statement
+index.returns=Returns
+index.registration=Registration
+
+index.link.viewAccountStatement=View account statement
+index.link.makePayment=Make a payment (opens in a new tab)
+index.link.fileReturn=File a return
+index.link.viewFiledReturns=View filed returns
+index.link.viewRegistrationCertificate=View registration certificate
+index.link.changeRegistrationDetails=Change registration details
+index.link.cancelRegistration=Cancel registration
