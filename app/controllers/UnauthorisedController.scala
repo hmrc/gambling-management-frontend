@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package controllers
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.UnauthorisedView
 
-@layout(pageTitle = pageTitle) {
+import javax.inject.Inject
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
+class UnauthorisedController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  view: UnauthorisedView
+) extends FrontendBaseController
+    with I18nSupport {
 
-    <p class="govuk-body">@messages(message)</p>
-}
-
-@{
-    //$COVERAGE-OFF$
+  def onPageLoad(): Action[AnyContent] = Action { implicit request =>
+    Ok(view())
+  }
 }

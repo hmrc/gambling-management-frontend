@@ -18,9 +18,27 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.mvc.RequestHeader
 
 @Singleton
 class AppConfig @Inject() (config: Configuration):
 
   val welshLanguageSupportEnabled: Boolean =
     config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+
+  val loginUrl: String                   = config.get[String]("urls.login")
+  val loginContinueUrl: String           = config.get[String]("urls.loginContinue")
+  val signOutUrl: String                 = config.get[String]("urls.signOut")
+  lazy val hmrcOnlineServiceDesk: String = config.get[String]("urls.hmrcOnlineServiceDesk")
+  val exitSurveyBaseUrl: String          = config.get[Service]("microservice.services.feedback-frontend").baseUrl
+  val exitSurveyUrl: String              = s"$exitSurveyBaseUrl/feedback/gambling-filing-frontend"
+  val cacheTtl: Long                     = config.get[Int]("mongodb.timeToLiveInSeconds")
+  val timeout: Int                       = config.get[Int]("timeout-dialog.timeout")
+  val countdown: Int                     = config.get[Int]("timeout-dialog.countdown")
+
+  val host: String                                         = config.get[String]("host")
+  val appName: String                                      = config.get[String]("appName")
+  private val contactHost                                  = config.get[Service]("microservice.services.contact-frontend").baseUrl
+  private val contactFormServiceIdentifier                 = "gambling-filing-frontend"
+  def feedbackUrl(implicit request: RequestHeader): String =
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"

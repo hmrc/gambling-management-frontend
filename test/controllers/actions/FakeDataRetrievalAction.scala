@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package controllers.actions
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import models.UserAnswers
+import models.requests.{IdentifierRequest, OptionalDataRequest}
 
-@layout(pageTitle = pageTitle) {
+import scala.concurrent.{ExecutionContext, Future}
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
+class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRetrievalAction {
 
-    <p class="govuk-body">@messages(message)</p>
-}
+  override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
+    Future(OptionalDataRequest(request.request, request.userId, dataToReturn))
 
-@{
-    //$COVERAGE-OFF$
+  override protected implicit val executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
 }

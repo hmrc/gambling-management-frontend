@@ -1,4 +1,5 @@
 import uk.gov.hmrc.DefaultBuildSettings
+import play.sbt.routes.RoutesKeys
 
 lazy val appName: String = "gambling-management-frontend"
 
@@ -37,14 +38,19 @@ ThisBuild / coverageHighlighting := true
 
 // --------------------------------------------
 
-lazy val root = Project(appName, file("."))
+lazy val root = (project in file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
+  .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
     pipelineStages := Seq(gzip),
+    RoutesKeys.routesImport ++= Seq(
+      "models._",
+      "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
+    ),
     coverageExcludedPackages := (ThisBuild / coverageExcludedPackages).value,
     coverageExcludedFiles := (ThisBuild / coverageExcludedFiles).value,
     retrieveManaged := true,
@@ -69,7 +75,8 @@ lazy val root = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.config._",
       "views.ViewUtils._",
-      "controllers.routes._"
+      "controllers.routes._",
+      "viewmodels.govuk.all._"
     )
   )
 

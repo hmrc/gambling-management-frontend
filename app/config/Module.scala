@@ -16,16 +16,22 @@
 
 package config
 
-import play.api.inject.{Binding, Module as AppModule}
-import play.api.{Configuration, Environment}
+import com.google.inject.AbstractModule
+import controllers.actions._
+import java.time.{Clock, ZoneOffset}
 
-import java.time.Clock
+class Module extends AbstractModule {
 
-class Module extends AppModule:
+  override def configure(): Unit = {
 
-  override def bindings(
-    environment: Environment,
-    configuration: Configuration
-  ): Seq[Binding[_]] =
-    bind[Clock].toInstance(Clock.systemDefaultZone) :: // inject if current time needs to be controlled in unit tests
-      Nil
+    // Bind actions for authentication & data retrieval
+    bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
+    bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
+
+    // Use AuthenticatedIdentifierAction (cookie/session based) instead of Mongo-backed SessionIdentifierAction
+    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
+
+    // Clock binding
+    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
+  }
+}

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package models.requests
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import play.api.mvc.{Request, WrappedRequest}
+import models.UserAnswers
 
-@layout(pageTitle = pageTitle) {
+case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers])
+    extends WrappedRequest[A](request)
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
-
-    <p class="govuk-body">@messages(message)</p>
-}
-
-@{
-    //$COVERAGE-OFF$
-}
+case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers)
+    extends WrappedRequest[A](request)

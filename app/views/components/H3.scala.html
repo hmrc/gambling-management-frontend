@@ -1,5 +1,5 @@
 @*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  *@
 
-@this(layout: templates.Layout)
+@import utils.Utils.emptyString
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+@this()
 
-@layout(pageTitle = pageTitle) {
+@(
+  msg: String,
+  classes: String = "govuk-heading-s",
+  id: Option[String] = None
+)(implicit messages: Messages)
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
-
-    <p class="govuk-body">@messages(message)</p>
-}
-
-@{
-    //$COVERAGE-OFF$
-}
+<h3 @{id.fold(emptyString)(id => s"id=$id")} class="@classes">@messages(msg)</h3>

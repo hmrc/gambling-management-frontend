@@ -1,5 +1,5 @@
-@*
- * Copyright 2026 HM Revenue & Customs
+/*
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package utils
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-@layout(pageTitle = pageTitle) {
+object Utils {
+  val emptyString  = ""
+  val firstRadioId = "value_0"
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
-
-    <p class="govuk-body">@messages(message)</p>
-}
-
-@{
-    //$COVERAGE-OFF$
+  def withIds(items: Seq[RadioItem], prefix: String = "value"): Seq[RadioItem] =
+    items.zipWithIndex.map { case (item, i) => item.copy(id = Some(s"${prefix}_$i")) }
 }

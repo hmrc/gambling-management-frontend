@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package viewmodels
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import play.api.data.Field
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 
-@layout(pageTitle = pageTitle) {
+trait ErrorMessageAwareness {
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
-
-    <p class="govuk-body">@messages(message)</p>
-}
-
-@{
-    //$COVERAGE-OFF$
+  def errorMessage(field: Field)(implicit messages: Messages): Option[ErrorMessage] =
+    field.error
+      .map { err =>
+        ErrorMessage(
+          content = Text(messages(err.message, err.args*)),
+          visuallyHiddenText = Some(messages("error.prefix"))
+        )
+      }
 }

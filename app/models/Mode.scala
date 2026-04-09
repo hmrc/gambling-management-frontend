@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: templates.Layout)
+package models
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
+import play.api.mvc.JavascriptLiteral
 
-@layout(pageTitle = pageTitle) {
+sealed trait Mode
 
-    <h1 class="govuk-heading-xl">@messages(heading)</h1>
+case object CheckMode extends Mode
+case object NormalMode extends Mode
 
-    <p class="govuk-body">@messages(message)</p>
-}
+object Mode {
 
-@{
-    //$COVERAGE-OFF$
+  implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
+    override def to(value: Mode): String = value match {
+      case NormalMode => "NormalMode"
+      case CheckMode  => "CheckMode"
+    }
+  }
 }
