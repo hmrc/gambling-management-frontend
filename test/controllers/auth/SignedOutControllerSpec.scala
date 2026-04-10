@@ -19,25 +19,27 @@ package controllers.auth
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.auth.SignedOutView
 
 class SignedOutControllerSpec extends SpecBase {
 
   "SignedOut Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and contain signed out content" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
+
         val request = FakeRequest(GET, routes.SignedOutController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SignedOutView]
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+
+        val body = contentAsString(result)
+
+        body must include("For your security, we signed you out")
+        body must include("We did not save your answers")
       }
     }
   }

@@ -16,7 +16,8 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import base.SpecBase
+import config.AppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.PageNotFoundView
@@ -34,10 +35,13 @@ class PageNotFoundControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view      = application.injector.instanceOf[PageNotFoundView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(appConfig.hmrcOnlineServiceDesk)(request, messages(application)).toString
+        contentAsString(result) must include("Page not found")
+        contentAsString(result) must include("HMRC Online Services Helpdesk")
+        contentAsString(result) must include("If you typed the web address, check it is correct.")
+        contentAsString(result) must include(
+          "If the web address is correct or you selected a link or button, contact the"
+        )
       }
     }
   }

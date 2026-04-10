@@ -29,10 +29,16 @@
     hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false, includeCustomCss: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
-<link href="@routes.Assets.versioned("stylesheets/application.css")" rel="stylesheet" type="text/css" media="all" />
+    @if(includeCustomCss) {
+        <link href="@routes.Assets.versioned("stylesheets/application.css")"
+        rel="stylesheet"
+        type="text/css"
+        media="all" />
+    }
+
     @if(timeout) {
         @hmrcTimeoutDialog(TimeoutDialog(
             timeout             = Some(appConfig.timeout),
@@ -59,7 +65,7 @@
         additionalHeadBlock = Some(head)
     ),
     serviceURLs = ServiceURLs(
-        serviceUrl = Some(routes.IndexController.onPageLoad.url),
+        serviceUrl = Some(routes.IndexController.onPageLoad().url),
         signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None
     ),
     banners = Banners(

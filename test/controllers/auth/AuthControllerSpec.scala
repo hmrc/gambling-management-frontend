@@ -17,7 +17,7 @@
 package controllers.auth
 
 import base.SpecBase
-import config.FrontendAppConfig
+import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -45,7 +45,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val appConfig = application.injector.instanceOf[AppConfig]
         val request   = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
@@ -74,7 +74,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val appConfig = application.injector.instanceOf[AppConfig]
         val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value

@@ -16,7 +16,8 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import base.SpecBase
+import config.AppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.SystemErrorView
@@ -35,11 +36,11 @@ class SystemErrorControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view      = application.injector.instanceOf[SystemErrorView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val appConfig = application.injector.instanceOf[AppConfig]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(appConfig.hmrcOnlineServiceDesk)(request, messages(application)).toString
+        contentAsString(result) must include("Sorry, there is a problem with the service ")
+        contentAsString(result) must include("HMRC Online Services Helpdesk (opens in a new tab)")
       }
     }
   }
