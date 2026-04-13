@@ -47,3 +47,8 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+accessDenied.title = Sorry, there is a problem with the service
+accessDenied.heading = Sorry, there is a problem with the service
+accessDenied.p1 = You do not have access to this service.
+accessDenied.p1.link = Continue to your account

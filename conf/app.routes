@@ -1,8 +1,8 @@
 # microservice specific routes
 
-->         /hmrc-frontend           hmrcfrontend.Routes
+->         /hmrc-frontend                                hmrcfrontend.Routes
 
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+GET        /assets/*file                                controllers.Assets.versioned(path = "/public", file: Asset)
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
@@ -15,5 +15,6 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET        /                                             controllers.IndexController.onPageLoad()
 GET        /there-is-a-problem-with-the-service          controllers.SystemErrorController.onPageLoad()
+GET        /there-is-a-problem-access-denied             controllers.AccessDeniedController.onPageLoad()
 GET        /page-not-found                               controllers.PageNotFoundController.onPageLoad()
 
