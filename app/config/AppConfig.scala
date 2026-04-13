@@ -31,7 +31,7 @@ class AppConfig @Inject() (config: Configuration):
   val signOutUrl: String                 = config.get[String]("urls.signOut")
   lazy val hmrcOnlineServiceDesk: String = config.get[String]("urls.hmrcOnlineServiceDesk")
   val exitSurveyBaseUrl: String          = config.get[Service]("microservice.services.feedback-frontend").baseUrl
-  val exitSurveyUrl: String              = s"$exitSurveyBaseUrl/feedback/gambling-filing-frontend"
+  val exitSurveyUrl: String              = s"$exitSurveyBaseUrl/feedback/gambling-management-frontend"
   val cacheTtl: Long                     = config.get[Int]("mongodb.timeToLiveInSeconds")
   val timeout: Int                       = config.get[Int]("timeout-dialog.timeout")
   val countdown: Int                     = config.get[Int]("timeout-dialog.countdown")
@@ -39,6 +39,6 @@ class AppConfig @Inject() (config: Configuration):
   val host: String                                         = config.get[String]("host")
   val appName: String                                      = config.get[String]("appName")
   private val contactHost                                  = config.get[Service]("microservice.services.contact-frontend").baseUrl
-  private val contactFormServiceIdentifier                 = "gambling-filing-frontend"
+  private val contactFormServiceIdentifier                 = "gambling-management-frontend"
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"
