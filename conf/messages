@@ -19,3 +19,31 @@ index.link.viewFiledReturns=View filed returns
 index.link.viewRegistrationCertificate=View registration certificate
 index.link.changeRegistrationDetails=Change registration details
 index.link.cancelRegistration=Cancel registration
+
+systemError.title = Sorry, there is a problem with the service
+systemError.heading = Sorry, there is a problem with the service
+systemError.p1 = Try again later or contact the
+systemError.p1.link = HMRC Online Services Helpdesk (opens in a new tab)
+
+pageNotFound.title = Page not found
+pageNotFound.heading = Page not found
+pageNotFound.p1 = If you typed the web address, check it is correct.
+pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
+pageNotFound.p3 = If the web address is correct or you selected a link or button, contact the
+pageNotFound.p3.link = HMRC Online Services Helpdesk (opens in a new tab)
+pageNotFound.home.link = Continue to your account
+pageNotFound.p3.after = if you need to speak to someone.
+
+journeyRecovery.continue.title = Sorry, there is a problem with the service
+journeyRecovery.continue.heading = Sorry, there is a problem with the service
+journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
+journeyRecovery.startAgain.title = Sorry, there is a problem with the service
+journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
+journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
+
+signedOut.title = For your security, we signed you out
+signedOut.heading = For your security, we signed you out
+signedOut.guidance = We did not save your answers.
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account

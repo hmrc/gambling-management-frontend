@@ -16,29 +16,40 @@
 
 package controllers
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.http.Status
-import play.api.inject.guice.GuiceApplicationBuilder
+import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
+import play.api.http.Status
 
-class IndexControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite:
+class IndexControllerSpec extends SpecBase {
 
-  override def fakeApplication(): Application =
-    new GuiceApplicationBuilder().build()
+  "IndexController" - {
 
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val controller  = app.injector.instanceOf[IndexController]
+    "must return OK for a GET" in {
 
-  "GET /" should:
-    "return 200" in:
-      val result = controller.onPageLoad()(fakeRequest)
-      status(result) shouldBe Status.OK
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-    "return HTML" in:
-      val result = controller.onPageLoad()(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result)     shouldBe Some("utf-8")
+      val controller = application.injector.instanceOf[IndexController]
+
+      val request = FakeRequest(GET, "/")
+
+      val result = controller.onPageLoad()(request)
+
+      status(result) mustBe Status.OK
+    }
+
+    "must return HTML" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val controller = application.injector.instanceOf[IndexController]
+
+      val request = FakeRequest(GET, "/")
+
+      val result = controller.onPageLoad()(request)
+
+      contentType(result) mustBe Some("text/html")
+      charset(result) mustBe Some("utf-8")
+    }
+  }
+}
