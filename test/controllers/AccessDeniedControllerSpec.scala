@@ -17,24 +17,31 @@
 package controllers
 
 import base.SpecBase
+import config.AppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.UnauthorisedView
+import views.html.AccessDeniedView
 
-class UnauthorisedControllerSpec extends SpecBase {
+class AccessDeniedControllerSpec extends SpecBase {
 
-  "Unauthorised Controller" - {
+  "AccessDenied Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.AccessDeniedController.onPageLoad().url)
 
         val result = route(application, request).value
 
+        val view      = application.injector.instanceOf[AccessDeniedView]
+        val appConfig = application.injector.instanceOf[AppConfig]
+
         status(result) mustEqual OK
+        contentAsString(result) must include("Sorry, there is a problem with the service")
+        contentAsString(result) must include("Continue to your account")
+
       }
     }
   }

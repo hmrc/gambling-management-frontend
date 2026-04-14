@@ -1,6 +1,32 @@
 service.name = Machine Games Duty
 service.text = This is your new service
 
+site.back = Back
+site.remove = Remove
+site.change = Change
+site.no = No
+site.yes = Yes
+site.continue = Continue
+site.start = Start now
+site.startAgain = Start again
+site.signIn = Sign in
+site.govuk = GOV.UK
+
+date.day = Day
+date.month = Month
+date.year = Year
+date.error.day = day
+date.error.month = month
+date.error.year = year
+
+timeout.title = You’re about to be signed out
+timeout.message = For security reasons, you will be signed out of this service in
+timeout.keepAlive = Stay signed in
+timeout.signOut = Sign out
+
+error.title.prefix = Error:
+error.prefix = Error
+error.summary.title = There is a problem
 
 mgd.registration.number = MGD registration number
 
@@ -47,3 +73,8 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+accessDenied.title = Sorry, there is a problem with the service
+accessDenied.heading = Sorry, there is a problem with the service
+accessDenied.p1 = You do not have access to this service.
+accessDenied.p1.link = Continue to your account

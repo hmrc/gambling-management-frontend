@@ -16,26 +16,21 @@
 
 package controllers
 
-import base.SpecBase
-import play.api.test.FakeRequest
-import play.api.test.Helpers.*
-import views.html.UnauthorisedView
+import controllers.actions.*
+import javax.inject.Inject
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.AccessDeniedView
 
-class UnauthorisedControllerSpec extends SpecBase {
+class AccessDeniedController @Inject() (
+  override val messagesApi: MessagesApi,
+  val controllerComponents: MessagesControllerComponents,
+  view: AccessDeniedView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  "Unauthorised Controller" - {
-
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-      }
-    }
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(view())
   }
 }
