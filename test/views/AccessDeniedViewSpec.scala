@@ -28,7 +28,7 @@ class AccessDeniedViewSpec extends SpecBase {
 
     "must render the page with correct heading and service desk link" in new Setup {
 
-      val html = view("/")
+      val html = view()
       val doc  = Jsoup.parse(html.body)
 
       doc.title must include(messages("accessDenied.title"))
