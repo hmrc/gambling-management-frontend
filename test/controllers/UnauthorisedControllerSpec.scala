@@ -34,7 +34,6 @@ class UnauthorisedControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-
         status(result) mustEqual OK
       }
     }
