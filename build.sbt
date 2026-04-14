@@ -38,7 +38,7 @@ ThisBuild / coverageHighlighting := true
 
 // --------------------------------------------
 
-lazy val root = (project in file("."))
+lazy val root = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
