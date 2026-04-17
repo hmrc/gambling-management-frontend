@@ -33,6 +33,6 @@ class IndexController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = authorise { implicit request =>
-    Ok(view())
+    Ok(view(request.mgdRefNum))
   }
 }

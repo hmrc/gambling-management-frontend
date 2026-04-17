@@ -16,7 +16,7 @@
 
 @this(layout: templates.Layout)
 
-@()(implicit request: Request[_], messages: Messages)
+@(mgdRefNum: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm("index.title"), showBackLink = true, includeCustomCss = true)  {
 
@@ -25,7 +25,7 @@
   <div class="govuk-grid-row">
    <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l govuk-!-margin-bottom-2">@messages("index.heading")</h1>
-    <p class="govuk-body">@messages("mgd.registration.number"): XWM00000001770</p>
+    <p class="govuk-body">@messages("mgd.registration.number"): @mgdRefNum</p>
     <br>
     <div class="flex-container govuk-grid-row"  style="display:flex; gap:20px;">
      <div class="card" id="statement">
