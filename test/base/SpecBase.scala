@@ -16,13 +16,18 @@
 
 package base
 
+import com.typesafe.config.ConfigFactory
+import config.AppConfig
 import controllers.actions.*
 import models.UserAnswers
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
-import play.api.Application
+import play.api.{Application, Configuration}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,6 +42,9 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
+  implicit val actorSystem: ActorSystem = ActorSystem("unit-tests")
+  implicit val mat: Materializer        = Materializer.createMaterializer(actorSystem)
+
   val userAnswersId: String = "id"
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -47,7 +55,52 @@ trait SpecBase
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[AuthorisedAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  protected val testAppConfig = new AppConfig(
+    Configuration(ConfigFactory.parseString("""
+                                              |host = "http://localhost:9000"
+                                              | mongodb {
+                                              |  timeToLiveInSeconds = 900
+                                              | }
+                                              | urls {
+                                              |  login = "http://foo.com/login"
+                                              |  loginContinue = "http://foo.com/bar"
+                                              |  signOut = "http://foo.com/sign-out"
+                                              |  homePageUrl = "http://foo.com/home"
+                                              |  accessibilityStatementUrl = "http://foo.com/accessibility-statement"
+                                              |  betaFeedbackUrl = "http://foo.com/beta-feedback"
+                                              |  researchUrl = "http://foo.com/research"
+                                              | }
+                                              |  timeout-dialog {
+                                              |   timeout   = 10
+                                              |   countdown = 5
+                                              | }
+                                              | contact-frontend {
+                                              |  host      = "http://localhost:9250"
+                                              |  serviceId = "gambling-management-frontend"
+                                              |}
+                                              |microservice {
+                                              |    services {
+                                              |      auth {
+                                              |        protocol = http
+                                              |        host     = localhost
+                                              |        port     = 8500
+                                              |      }
+                                              |
+                                              |      feedback-frontend {
+                                              |        protocol = http
+                                              |        host     = localhost
+                                              |        port     = 9514
+                                              |      }
+                                              |    }
+                                              |}
+                                              |features {
+                                              |  welsh-translation: false
+                                              |}
+                                              |""".stripMargin))
+  )
+
 }
