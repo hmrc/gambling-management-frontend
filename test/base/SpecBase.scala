@@ -40,7 +40,8 @@ trait SpecBase
     with TryValues
     with OptionValues
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with MockFactory {
 
   implicit val actorSystem: ActorSystem = ActorSystem("unit-tests")
   implicit val mat: Materializer        = Materializer.createMaterializer(actorSystem)

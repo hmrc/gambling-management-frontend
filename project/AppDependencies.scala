@@ -17,7 +17,7 @@ object AppDependencies {
     "org.jsoup"          % "jsoup"                   % "1.13.1"         % Test,
     "org.scalacheck"    %% "scalacheck"              % "1.19.0"         % Test,
     "org.scalatestplus" %% "scalacheck-1-19"         % "3.2.19.0"       % Test,
-    "org.scalamock"     %% "scalamock"               % "7.5.5"
+    "org.scalamock"     %% "scalamock"               % "7.5.5"          % Test
 
   )
 
