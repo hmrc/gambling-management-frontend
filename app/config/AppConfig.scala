@@ -37,7 +37,6 @@ class AppConfig @Inject() (config: Configuration):
   val countdown: Int                     = config.get[Int]("timeout-dialog.countdown")
 
   val host: String                                         = config.get[String]("host")
-  val appName: String                                      = config.get[String]("appName")
   private val contactHost                                  = config.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier                 = "gambling-management-frontend"
   def feedbackUrl(implicit request: RequestHeader): String =
