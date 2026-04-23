@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+sealed trait ReturnSummaryError
 
-final case class AuthorisedRequest[A](
-  request: Request[A],
-  affinityGroup: AffinityGroup,
-  mgdRegNum: String
-) extends WrappedRequest[A](request)
+object ReturnSummaryError:
+  case object NotFound extends ReturnSummaryError
+  case object UpstreamError extends ReturnSummaryError
+  case object UnexpectedError extends ReturnSummaryError

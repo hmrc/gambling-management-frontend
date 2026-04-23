@@ -16,40 +16,111 @@
 
 package controllers
 
-import base.SpecBase
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.api.http.Status
+import controllers.actions.AuthorisedAction
+import models.{ReturnSummary, ReturnSummaryError}
+import models.requests.AuthorisedRequest
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.*
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
+import play.api.mvc.*
+import play.api.test.*
+import play.api.test.Helpers.*
+import services.ReturnSummaryService
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.IndexView
 
-class IndexControllerSpec extends SpecBase {
+import scala.concurrent.{ExecutionContext, Future}
 
-  "IndexController" - {
+class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar with ScalaFutures {
 
-    "must return OK for a GET" in {
+  given ExecutionContext = ExecutionContext.global
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+  private val stubView = new IndexView(null) {
+    override def apply(summary: ReturnSummary)(implicit
+      request: Request[_],
+      messages: Messages
+    ) =
+      play.twirl.api.Html("ok")
+  }
 
-      val controller = application.injector.instanceOf[IndexController]
+  private val mockAuthorisedAction = mock[AuthorisedAction]
 
-      val request = FakeRequest(GET, "/")
+  when(
+    mockAuthorisedAction.async(
+      any[AuthorisedRequest[AnyContent] => Future[Result]]
+    )
+  ).thenAnswer { invocation =>
 
-      val result = controller.onPageLoad()(request)
+    val block =
+      invocation.getArgument[AuthorisedRequest[AnyContent] => Future[Result]](0)
 
-      status(result) mustBe Status.OK
+    actionBuilder.async { implicit request =>
+      val authorisedRequest =
+        AuthorisedRequest(
+          request,
+          AffinityGroup.Individual,
+          "test-mgd-ref"
+        )
+
+      block(authorisedRequest)
+    }
+  }
+
+  private val mcc           = stubMessagesControllerComponents()
+  private val actionBuilder = DefaultActionBuilder(stubBodyParser())
+  private val fakeRequest   = FakeRequest(GET, "/")
+
+  "IndexController.onPageLoad" should {
+
+    "return 200 OK when service succeeds" in {
+
+      val summary = mock[ReturnSummary]
+
+      val stubService = new ReturnSummaryService(null) {
+        override def getReturnSummary(
+          mgdRegNumber: String
+        )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
+          Future.successful(Right(summary))
+      }
+
+      val controller =
+        new IndexController(
+          mockAuthorisedAction,
+          mcc,
+          stubView,
+          stubService
+        )
+
+      controller.onPageLoad()(fakeRequest).map { result =>
+        result.header.status mustBe OK
+      }
     }
 
-    "must return HTML" in {
+    "return 404 when service returns NotFound" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val stubService = new ReturnSummaryService(null) {
+        override def getReturnSummary(
+          mgdRegNumber: String
+        )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
+          Future.successful(Left(ReturnSummaryError.NotFound))
+      }
 
-      val controller = application.injector.instanceOf[IndexController]
+      val controller =
+        new IndexController(
+          mockAuthorisedAction,
+          mcc,
+          stubView,
+          stubService
+        )
 
-      val request = FakeRequest(GET, "/")
-
-      val result = controller.onPageLoad()(request)
-
-      contentType(result) mustBe Some("text/html")
-      charset(result) mustBe Some("utf-8")
+      controller.onPageLoad()(fakeRequest).map { result =>
+        result.header.status mustBe NOT_FOUND
+      }
     }
   }
 }

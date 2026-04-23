@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package models.requests
+package services
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import connectors.GamblingConnector
+import models.{ReturnSummary, ReturnSummaryError}
+import uk.gov.hmrc.http.HeaderCarrier
 
-final case class AuthorisedRequest[A](
-  request: Request[A],
-  affinityGroup: AffinityGroup,
-  mgdRegNum: String
-) extends WrappedRequest[A](request)
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class ReturnSummaryService @Inject() (
+  connector: GamblingConnector
+)(using ExecutionContext):
+
+  def getReturnSummary(
+    mgdRegNumber: String
+  )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
+    connector.getReturnSummary(mgdRegNumber)

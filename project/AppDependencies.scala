@@ -18,7 +18,6 @@ object AppDependencies {
     "org.scalacheck"    %% "scalacheck"              % "1.19.0"         % Test,
     "org.scalatestplus" %% "scalacheck-1-19"         % "3.2.19.0"       % Test,
     "org.scalamock"     %% "scalamock"               % "7.5.5"          % Test
-
   )
 
   val it = Seq.empty
