@@ -18,17 +18,17 @@
 
 @(rows: Seq[(String, Seq[(String, String, String)])])(implicit messages: Messages)
 
-<dl class="govuk-summary-list hmrc-list-with-actions hmrc-list-with-actions--short">
+<dl class="govuk-returnSummary-list hmrc-list-with-actions hmrc-list-with-actions--short">
     @for((item, links) <- rows) {
-        <div class="govuk-summary-list__row">
-            <dt id="name-label" class="govuk-summary-list__key govuk-!-font-weight-regular hmrc-summary-list__key">
+        <div class="govuk-returnSummary-list__row">
+            <dt id="name-label" class="govuk-returnSummary-list__key govuk-!-font-weight-regular hmrc-returnSummary-list__key">
                 @item
             </dt>
-            <dd class="govuk-summary-list__actions hmrc-summary-list__actions">
+            <dd class="govuk-returnSummary-list__actions hmrc-returnSummary-list__actions">
                 @if(links.nonEmpty) {
-                    <ul class="govuk-summary-list__actions-list">
+                    <ul class="govuk-returnSummary-list__actions-list">
                         @for((url, linkText, hiddenKey) <- links) {
-                            <li class="govuk-summary-list__actions-list-item">
+                            <li class="govuk-returnSummary-list__actions-list-item">
                                 <a class="govuk-link" href="@url">
                                     <span class="link-text" aria-hidden="true">@messages(linkText)</span>
                                     <span class="govuk-visually-hidden"> @messages(hiddenKey, item)</span>

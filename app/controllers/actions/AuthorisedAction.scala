@@ -53,17 +53,17 @@ class DefaultAuthorisedAction @Inject() (
     authorised()
       .retrieve(Retrievals.affinityGroup.and(Retrievals.allEnrolments)) {
         case Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
-              mgdRefNum
+              mgdRegNum
             ) =>
-          block(AuthorisedRequest(request, affinityGroup, mgdRefNum))
+          block(AuthorisedRequest(request, affinityGroup, mgdRegNum))
         case Some(AffinityGroup.Agent) ~ _ =>
           logger.warn(s"Agent auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Agent enrolment missing or not activated"))
 
         case Some(affinityGroup @ AffinityGroup.Organisation) ~ AuthorisedAction.HasActiveOrganisationEnrolment(
-              mgdRefNum
+              mgdRegNum
             ) =>
-          block(AuthorisedRequest(request, affinityGroup, mgdRefNum))
+          block(AuthorisedRequest(request, affinityGroup, mgdRegNum))
         case Some(AffinityGroup.Organisation) ~ _ =>
           logger.warn(s"Organisation auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Organisation enrolment missing or not activated"))

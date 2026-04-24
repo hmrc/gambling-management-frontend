@@ -32,7 +32,7 @@ class AuthorisedActionSpec extends SpecBase {
 
   class Harness(authorisedAction: AuthorisedAction) {
     def onPageLoad: Action[AnyContent] = authorisedAction { request =>
-      Results.Ok(request.mgdRefNum)
+      Results.Ok(request.mgdRegNum)
     }
   }
 

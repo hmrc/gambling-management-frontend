@@ -37,7 +37,7 @@ class AuthController @Inject() (
 
   def signOut(): Action[AnyContent] = authorise.async { implicit request =>
     sessionRepository
-      .clear(request.mgdRefNum)
+      .clear(request.mgdRegNum)
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
       }
@@ -45,7 +45,7 @@ class AuthController @Inject() (
 
   def signOutNoSurvey(): Action[AnyContent] = authorise.async { implicit request =>
     sessionRepository
-      .clear(request.mgdRefNum)
+      .clear(request.mgdRegNum)
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad().url)))
       }

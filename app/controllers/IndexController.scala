@@ -17,22 +17,46 @@
 package controllers
 
 import controllers.actions.AuthorisedAction
+import models.ReturnSummaryError
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReturnSummaryService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.IndexView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class IndexController @Inject() (
+  authorise: AuthorisedAction,
   val controllerComponents: MessagesControllerComponents,
   view: IndexView,
-  authorise: AuthorisedAction
-) extends FrontendBaseController
-    with I18nSupport {
+  returnSummaryService: ReturnSummaryService
+)(using ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport:
 
-  def onPageLoad(): Action[AnyContent] = authorise { implicit request =>
-    Ok(view(request.mgdRefNum))
+  def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
+
+    val mgdRegNumber    = request.mgdRegNum
+    given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    returnSummaryService
+      .getReturnSummary(mgdRegNumber)
+      .map {
+        case Right(returnSummary) =>
+          Ok(view(returnSummary))
+
+        case Left(ReturnSummaryError.NotFound) =>
+          NotFound("Return summary not found")
+
+        case Left(ReturnSummaryError.UpstreamError) =>
+          BadGateway("Upstream service error")
+
+        case Left(ReturnSummaryError.UnexpectedError) =>
+          InternalServerError("Unexpected error")
+      }
   }
-}
