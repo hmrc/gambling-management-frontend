@@ -41,7 +41,7 @@ class GamblingConnector @Inject() (
     mgdRegNumber: String
   )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
 
-    val url = s"$baseUrl/gambling/return-summary/$mgdRegNumber"
+    val url = s"$baseUrl/gambling/return-summary/mgd/$mgdRegNumber"
 
     httpClient
       .get(url"$url")
