@@ -1,21 +1,18 @@
+/*
+    Styling in this and other .scss files will be compiled by the sbt-sass-compiler plugin: https://github.com/hmrc/sbt-sass-compiler
+    If you encounter any issue with Sass compilation using the plugin, please reach out to the PlatUI team.
+ */
 
+@import "lib/govuk-frontend/dist/govuk/base";
 @import "lib/govuk-frontend/dist/govuk/base";
 @import "lib/hmrc-frontend/hmrc/all";
 
-$govuk-global-styles: true;
-$govuk-assets-path: "/gambling-management-frontend/hmrc-frontend/assets/govuk/";
-$hmrc-assets-path: "/gambling-management-frontend/hmrc-frontend/assets/";
-$govuk-suppressed-warnings: "govuk-typography-scale-14";
-$govuk-suppressed-warnings: ("libsass", "import-using-all", "legacy-organisation-colours");
 
-@charset "UTF-8";
-
-body {
-  font-family: "nta", Arial, sans-serif;
+.js-visible {
+  display: none !important;
 }
-
-.govuk-width-container {
-  max-width: 1360px;
+.js-enabled .js-visible {
+  display: inline-block !important;
 }
 
 .card {
@@ -61,18 +58,4 @@ body {
 
 .card .card-action ul li {
   margin: 0 0 1em;
-}
-
-// ------------------------------------------
-// Optional: Improve spacing between columns
-// ------------------------------------------
-
-.govuk-grid-column-one-third {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.govuk-grid-row {
-  margin-left: -10px;
-  margin-right: -10px;
 }

@@ -76,7 +76,7 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
         )
 
       wireMockServer.stubFor(
-        get(urlEqualTo(s"/gambling/return-summary/$mgdRegNumber"))
+        get(urlEqualTo(s"/gambling/return-summary/mgd/$mgdRegNumber"))
           .willReturn(okJson(responseJson.toString()))
       )
 
@@ -88,7 +88,7 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
     "return Left(NotFound) when backend returns 404" in {
 
       wireMockServer.stubFor(
-        get(urlEqualTo(s"/gambling/return-summary/$mgdRegNumber"))
+        get(urlEqualTo(s"/gambling/return-summary/mgd/$mgdRegNumber"))
           .willReturn(aResponse().withStatus(404))
       )
 
@@ -100,7 +100,7 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
     "return Left(UnexpectedError) when backend returns 500" in {
 
       wireMockServer.stubFor(
-        get(urlEqualTo(s"/gambling/return-summary/$mgdRegNumber"))
+        get(urlEqualTo(s"/gambling/return-summary/mgd/$mgdRegNumber"))
           .willReturn(serverError())
       )
 
