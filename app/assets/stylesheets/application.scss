@@ -1,3 +1,4 @@
+
 @import "lib/govuk-frontend/dist/govuk/base";
 @import "lib/hmrc-frontend/hmrc/all";
 
@@ -10,53 +11,35 @@ $govuk-suppressed-warnings: ("libsass", "import-using-all", "legacy-organisation
 @charset "UTF-8";
 
 body {
-    font-family: "nta", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
+}
+
+.govuk-width-container {
+  max-width: 1360px;
 }
 
 .card {
-  flex-grow: 0;
-  flex-basis: 100%;
-  margin-bottom: 2em;
-}
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-@media screen and (min-width: 600px) and (max-width: 900px) {
-  .card {
-    flex-basis: 45.99%;
-  }
-  .card:nth-child(2n-1) {
-    margin-right: 3%;
-  }
-  .card:nth-child(2n-2) {
-    margin-left: 3%;
-  }
-}
-@media screen and (min-width: 900px) {
-  .card {
-    flex-basis: 30.5%;
-  }
-  .card:nth-child(3n-1) {
-    margin-left: 3%;
-    margin-right: 3%;
-  }
-}
-html[data-useragent*="MSIE 10.0"] .flex-container .card {
-  flex-basis: 35%;
-  margin: 3%;
-}
-
-.card {
-  background-colour: #f0f0f0;
+  background-color: #f0f0f0; // fixed typo
   border: 1px solid #dee0e2;
+  margin-bottom: 20px;
 }
 
+// Card body
 .card .card-body {
   border-bottom: 1px solid #dee0e2;
   display: block;
   padding: 12px;
-  min-height: 83px;
+  min-height: 120px; // slightly increased for visual balance
   background-color: #f0f0f0;
 }
 
+// Sub-heading styles
 .card .card-body .card-sub-heading span {
   display: block;
   color: #505a5f;
@@ -68,8 +51,8 @@ html[data-useragent*="MSIE 10.0"] .flex-container .card {
 }
 
 .card .card-action {
-  border-top: 0;
-  padding: 12px 12px 12px 12px;
+  padding: 12px;
+  background-color: #ffffff;
 }
 
 .card .card-action ul {
@@ -80,12 +63,16 @@ html[data-useragent*="MSIE 10.0"] .flex-container .card {
   margin: 0 0 1em;
 }
 
-.card-container {
-  margin-bottom: 2em;
-  padding: 1em 0.5em 1.5em;
-  background-color: #ffffff;
-  border: 1px solid #b1b4b6;
+// ------------------------------------------
+// Optional: Improve spacing between columns
+// ------------------------------------------
+
+.govuk-grid-column-one-third {
+  padding-left: 10px;
+  padding-right: 10px;
 }
-.card-container .card-body *:last-child {
-  margin-bottom: 0;
+
+.govuk-grid-row {
+  margin-left: -10px;
+  margin-right: -10px;
 }
