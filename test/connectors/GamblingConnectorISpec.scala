@@ -20,7 +20,10 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.{ReturnSummary, ReturnSummaryError}
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.concurrent.Futures.PatienceConfig
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.time.{Millis, Span}
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -28,14 +31,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
-class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
+class GamblingConnectorISpec
+    extends AsyncWordSpec
+    with Matchers
+    with BeforeAndAfterAll
+    with ScalaFutures
+    with IntegrationPatience {
 
   given ExecutionContext = ExecutionContext.global
   given HeaderCarrier    = HeaderCarrier()
-
-  // ------------------------------------------
-  // WireMock setup
-  // ------------------------------------------
 
   private val wireMockServer = new WireMockServer(0)
 
@@ -46,10 +50,6 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
 
   override def afterAll(): Unit =
     wireMockServer.stop()
-
-  // ------------------------------------------
-  // Test App (AFTER WireMock starts)
-  // ------------------------------------------
 
   private lazy val app =
     new GuiceApplicationBuilder()
@@ -80,9 +80,10 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
           .willReturn(okJson(responseJson.toString()))
       )
 
-      connector.getReturnSummary(mgdRegNumber).map { result =>
-        result.isRight mustBe true
-      }
+      val result =
+        connector.getReturnSummary(mgdRegNumber).futureValue
+
+      result mustBe Right(ReturnSummary(mgdRegNumber, 5, 2))
     }
 
     "return Left(NotFound) when backend returns 404" in {
@@ -92,9 +93,10 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
           .willReturn(aResponse().withStatus(404))
       )
 
-      connector.getReturnSummary(mgdRegNumber).map { result =>
-        result mustBe Left(ReturnSummaryError.NotFound)
-      }
+      val result =
+        connector.getReturnSummary(mgdRegNumber).futureValue
+
+      result mustBe Left(ReturnSummaryError.NotFound)
     }
 
     "return Left(UnexpectedError) when backend returns 500" in {
@@ -104,9 +106,10 @@ class GamblingConnectorISpec extends AsyncWordSpec with Matchers with BeforeAndA
           .willReturn(serverError())
       )
 
-      connector.getReturnSummary(mgdRegNumber).map { result =>
-        result mustBe Left(ReturnSummaryError.UnexpectedError)
-      }
+      val result =
+        connector.getReturnSummary(mgdRegNumber).futureValue
+
+      result mustBe Left(ReturnSummaryError.UnexpectedError)
     }
   }
 }
