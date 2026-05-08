@@ -37,7 +37,7 @@ class SystemErrorControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) must include("Sorry, there is a problem with the service ")
-        contentAsString(result) must include("HMRC Online Services Helpdesk (opens in a new tab)")
+        contentAsString(result) must include("HMRC Online Services Helpdesk (opens in new tab)")
       }
     }
   }
