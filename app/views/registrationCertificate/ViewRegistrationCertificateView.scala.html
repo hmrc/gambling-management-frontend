@@ -99,16 +99,16 @@ Option(formattedAddress).filter(_.nonEmpty).map { addr =>
 
     certificate.businessTradeClass.map { tc =>
         val label = tc match {
-        case 1 => "Amusement or gaming machine supplier"
-        case 2 => "Adult gaming centre"
-        case 3 => "Family entertainment centre"
-        case 4 => "Bookmaker or betting activities"
-        case 5 => "Bingo promoter"
-        case 6 => "Casino"
-        case 7 => "Public house"
-        case 8 => "Club"
-        case 9 => "Other"
-        case _ => "Unknown"
+            case 1 => messages("viewRegistrationCertificate.businessTradeClass.1")
+            case 2 => messages("viewRegistrationCertificate.businessTradeClass.2")
+            case 3 => messages("viewRegistrationCertificate.businessTradeClass.3")
+            case 4 => messages("viewRegistrationCertificate.businessTradeClass.4")
+            case 5 => messages("viewRegistrationCertificate.businessTradeClass.5")
+            case 6 => messages("viewRegistrationCertificate.businessTradeClass.6")
+            case 7 => messages("viewRegistrationCertificate.businessTradeClass.7")
+            case 8 => messages("viewRegistrationCertificate.businessTradeClass.8")
+            case 9 => messages("viewRegistrationCertificate.businessTradeClass.9")
+            case _ => messages("viewRegistrationCertificate.businessTradeClass.unknown")
         }
 
         SummaryListRow(

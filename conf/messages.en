@@ -101,6 +101,17 @@ viewRegistrationCertificate.print = You can print this page for your records usi
 viewRegistrationCertificate.dashboard.link = Return to your manage your Machine Games Duty
 viewRegistrationCertificate.change-registration.link = Change registration details
 
+viewRegistrationCertificate.businessTradeClass.1 = Amusement or gaming machine supplier
+viewRegistrationCertificate.businessTradeClass.2 = Adult gaming centre
+viewRegistrationCertificate.businessTradeClass.3 = Family entertainment centre
+viewRegistrationCertificate.businessTradeClass.4 = Bookmaker or betting activities
+viewRegistrationCertificate.businessTradeClass.5 = Bingo promoter
+viewRegistrationCertificate.businessTradeClass.6 = Casino
+viewRegistrationCertificate.businessTradeClass.7 = Public house
+viewRegistrationCertificate.businessTradeClass.8 = Club
+viewRegistrationCertificate.businessTradeClass.9 = Other
+viewRegistrationCertificate.businessTradeClass.unknown = Unknown
+
 viewRegistrationCertificate.tradingName = Trading name
 viewRegistrationCertificate.partnershipDetails = Partnership registration details
 viewRegistrationCertificate.partner = Partner {0}

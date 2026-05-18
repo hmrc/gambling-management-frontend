@@ -31,7 +31,6 @@ import scala.concurrent.ExecutionContext
 class ViewRegistrationCertificateController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
-  getData: DataRetrievalAction,
   val controllerComponents: MessagesControllerComponents,
   view: ViewRegistrationCertificateView,
   gamblingService: GamblingService
@@ -40,67 +39,66 @@ class ViewRegistrationCertificateController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] =
-    (authorise andThen getData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
 
-      val mgdRefNum = request.userId
+    val mgdRegNum = request.mgdRegNum
 
-      gamblingService
-        .retrieveCertificate(mgdRefNum)
-        .map { certificate =>
+    gamblingService
+      .retrieveCertificate(mgdRegNum)
+      .map { certificate =>
 
-          val (displayName, displayLabelKey) =
-            certificate.typeOfBusiness.map(_.trim.toLowerCase) match {
+        val (displayName, displayLabelKey) =
+          certificate.typeOfBusiness.map(_.trim.toLowerCase) match {
 
-              case Some("sole proprietor") =>
-                certificate.individualName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.soleProprietor"
+            case Some("sole proprietor") =>
+              certificate.individualName.getOrElse("") ->
+                "viewRegistrationCertificate.label.soleProprietor"
 
-              case Some(b) if b.startsWith("unincorporated body") =>
-                certificate.businessName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.unincorporatedBody"
+            case Some(b) if b.startsWith("unincorporated body") =>
+              certificate.businessName.getOrElse("") ->
+                "viewRegistrationCertificate.label.unincorporatedBody"
 
-              case Some("corporate body") =>
-                certificate.businessName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.corporateBody"
+            case Some("corporate body") =>
+              certificate.businessName.getOrElse("") ->
+                "viewRegistrationCertificate.label.corporateBody"
 
-              case Some("partnership") =>
-                certificate.businessName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.partnership"
+            case Some("partnership") =>
+              certificate.businessName.getOrElse("") ->
+                "viewRegistrationCertificate.label.partnership"
 
-              case Some("limited liability partnership") =>
-                certificate.businessName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.limitedLiabilityPartnership"
+            case Some("limited liability partnership") =>
+              certificate.businessName.getOrElse("") ->
+                "viewRegistrationCertificate.label.limitedLiabilityPartnership"
 
-              case _ =>
-                certificate.businessName.getOrElse("") ->
-                  "viewRegistrationCertificate.label.default"
-            }
+            case _ =>
+              certificate.businessName.getOrElse("") ->
+                "viewRegistrationCertificate.label.default"
+          }
 
-          val formattedAddress =
-            Seq(
-              certificate.busAddrLine1,
-              certificate.busAddrLine2,
-              certificate.busAddrLine3,
-              certificate.busAddrLine4,
-              certificate.busPostcode
-            ).flatten.filter(_.nonEmpty).mkString("<br>")
+        val formattedAddress =
+          Seq(
+            certificate.busAddrLine1,
+            certificate.busAddrLine2,
+            certificate.busAddrLine3,
+            certificate.busAddrLine4,
+            certificate.busPostcode
+          ).flatten.filter(_.nonEmpty).mkString("<br>")
 
-          Ok(
-            view(
-              certificate,
-              displayName,
-              displayLabelKey,
-              formattedAddress
-            )
+        Ok(
+          view(
+            certificate,
+            displayName,
+            displayLabelKey,
+            formattedAddress
           )
-        }
-        .recover { case ex =>
-          logger.error(
-            s"[ViewRegistrationCertificateController] retrieveCertificate failed for mgdRefNum=$mgdRefNum",
-            ex
-          )
-          Redirect(controllers.routes.SystemErrorController.onPageLoad())
-        }
-    }
+        )
+      }
+      .recover { case ex =>
+        logger.error(
+          s"[ViewRegistrationCertificateController] retrieveCertificate failed for mgdRegNum=$mgdRegNum",
+          ex
+        )
+        Redirect(controllers.routes.SystemErrorController.onPageLoad())
+      }
+  }
 }

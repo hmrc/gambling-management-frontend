@@ -57,7 +57,7 @@ class GamblingConnector @Inject() (
 
   def getCertificate(mgdRegNumber: String)(implicit hc: HeaderCarrier): Future[MgdCertificate] =
     httpClient
-      .get(url"$baseUrl/certificate/mgd/$mgdRegNumber")
+      .get(url"$baseUrl/gambling/certificate/mgd/$mgdRegNumber")
       .execute[HttpResponse]
       .map { response =>
         response.status match {

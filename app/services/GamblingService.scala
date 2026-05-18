@@ -29,9 +29,7 @@ class GamblingService @Inject() (
   connector: GamblingConnector
 )(using ExecutionContext):
 
-  def retrieveCertificate(
-    mgdRegNumber: String
-  )(using hc: HeaderCarrier): Future[MgdCertificate] =
+  def retrieveCertificate(mgdRegNumber: String)(implicit hc: HeaderCarrier): Future[MgdCertificate] =
     connector.getCertificate(mgdRegNumber)
 
   def getReturnSummary(
