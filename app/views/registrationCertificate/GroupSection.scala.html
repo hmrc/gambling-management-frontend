@@ -1,0 +1,95 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.MgdCertificate
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.panel._
+
+@this(
+    h2: H2,
+    govukSummaryList: GovukSummaryList
+)
+
+@(
+    certificate: MgdCertificate,
+    displayName: String
+)(implicit request: Request[_], messages: Messages)
+
+@if(certificate.groupReg == "Y") {
+
+    @* ---- Group registration details ---- *@
+    @if(
+        certificate.repMemName.isDefined ||
+        Seq(
+            certificate.repMemLine1,
+            certificate.repMemLine2,
+            certificate.repMemLine3,
+            certificate.repMemLine4,
+            certificate.repMemPostcode
+        ).flatten.exists(_.nonEmpty)
+    ) {
+
+        @h2(messages("viewRegistrationCertificate.groupDetails"))
+
+        @govukSummaryList(SummaryList(
+        rows = {
+            val repMemberRow = certificate.repMemName.map { name =>
+                SummaryListRow(
+                    key = Key(Text(messages("viewRegistrationCertificate.representativeMember"))),
+                    value = Value(Text(name))
+                )
+        }
+
+        val addressLines = Seq(
+            certificate.repMemLine1,
+            certificate.repMemLine2,
+            certificate.repMemLine3,
+            certificate.repMemLine4,
+            certificate.repMemPostcode
+        ).flatten.filter(_.nonEmpty)
+
+        val addressRow =
+            if (addressLines.nonEmpty)
+                Some(
+                    SummaryListRow(
+                        key = Key(Text(messages("viewRegistrationCertificate.repMemberAddress"))),
+                        value = Value(HtmlContent(addressLines.mkString("<br>")))
+                    )
+                )
+            else None
+
+            Seq(repMemberRow, addressRow).flatten
+        }
+    ))
+    }
+
+    @* ---- Group members (separate heading) ---- *@
+    @if(certificate.groupMembers.nonEmpty) {
+    
+        @h2(messages("viewRegistrationCertificate.groupMembers"))
+
+        @govukSummaryList(SummaryList(
+            rows = certificate.groupMembers.zipWithIndex.map { case (m, i) =>
+                SummaryListRow(
+                    key = Key(Text(messages("viewRegistrationCertificate.groupMember", i + 1))),
+                    value = Value(Text(m.namesOfGroupMems))
+                )
+            }
+        ))
+    }
+}

@@ -23,7 +23,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ViewRegistrationCertificateView
+import views.html.registrationCertificate.ViewRegistrationCertificateView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

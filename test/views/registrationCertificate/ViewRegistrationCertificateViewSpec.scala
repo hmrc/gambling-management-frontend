@@ -21,6 +21,7 @@ import models.BusinessType.Soleproprietor
 import models.{GroupMember, MgdCertificate, PartnerMember, ReturnPeriodEndDate}
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
+import views.html.registrationCertificate.ViewRegistrationCertificateView
 
 import java.time.LocalDate
 
@@ -65,7 +66,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
     "must render core certificate details correctly" in {
 
       val app     = applicationBuilder().build()
-      val view    = app.injector.instanceOf[views.html.ViewRegistrationCertificateView]
+      val view    = app.injector.instanceOf[ViewRegistrationCertificateView]
       val request = FakeRequest()
 
       val cert = baseCertificate
@@ -104,7 +105,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
     "must render partnership section when partners exist" in {
 
       val app     = applicationBuilder().build()
-      val view    = app.injector.instanceOf[views.html.ViewRegistrationCertificateView]
+      val view    = app.injector.instanceOf[ViewRegistrationCertificateView]
       val request = FakeRequest()
 
       val cert = baseCertificate.copy(
@@ -130,7 +131,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
     "must render group registration details and group members separately" in {
 
       val app     = applicationBuilder().build()
-      val view    = app.injector.instanceOf[views.html.ViewRegistrationCertificateView]
+      val view    = app.injector.instanceOf[ViewRegistrationCertificateView]
       val request = FakeRequest()
 
       val cert = baseCertificate.copy(
@@ -167,7 +168,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
     "must not render group members section when no members exist" in {
 
       val app     = applicationBuilder().build()
-      val view    = app.injector.instanceOf[views.html.ViewRegistrationCertificateView]
+      val view    = app.injector.instanceOf[ViewRegistrationCertificateView]
       val request = FakeRequest()
 
       val cert = baseCertificate.copy(
@@ -189,7 +190,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
     "must display correct trade class label for businessTradeClass" in {
 
       val app     = applicationBuilder().build()
-      val view    = app.injector.instanceOf[views.html.ViewRegistrationCertificateView]
+      val view    = app.injector.instanceOf[ViewRegistrationCertificateView]
       val request = FakeRequest()
 
       val cert = baseCertificate.copy(

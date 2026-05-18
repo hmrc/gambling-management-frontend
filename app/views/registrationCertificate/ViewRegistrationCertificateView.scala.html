@@ -28,7 +28,9 @@
     h2: H2,
     p: Paragraph,
     link: Link,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    partnershipDetails: PartnershipDetails,
+    groupSection: GroupSection
 )
 
 @(certificate: MgdCertificate,
@@ -130,98 +132,13 @@ Option(formattedAddress).filter(_.nonEmpty).map { addr =>
 
     }
 
-@* ================= PARTNERSHIP SECTION ================= *@
+    @partnershipDetails(certificate, displayName)
 
-@if(certificate.partMembers.nonEmpty) {
-        @h2(messages("viewRegistrationCertificate.partnershipDetails"))
+    @groupSection(certificate, displayName)
 
-        @govukSummaryList(SummaryList(
-        rows = certificate.partMembers.zipWithIndex.map { case (p, i) =>
-
-        // Use the optional value, fallback to concatenated soleProp names if None
-        val displayName = p.namesOfPartMems.getOrElse {
-        Seq(p.solePropTitle, p.solePropFirstName, p.solePropMiddleName, p.solePropLastName)
-        .flatten
-        .mkString(" ")
-        }
-
-        SummaryListRow(
-        key = Key(Text(messages("viewRegistrationCertificate.partner", i + 1))),
-        value = Value(Text(displayName))
-        )
-        }
-        ))
-}
-
-@* ================= GROUP SECTION ================= *@
-    @if(certificate.groupReg == "Y") {
-
-    @* ---- Group registration details ---- *@
-    @if(
-    certificate.repMemName.isDefined ||
-    Seq(
-    certificate.repMemLine1,
-    certificate.repMemLine2,
-    certificate.repMemLine3,
-    certificate.repMemLine4,
-    certificate.repMemPostcode
-    ).flatten.exists(_.nonEmpty)
-    ) {
-
-    @h2(messages("viewRegistrationCertificate.groupDetails"))
-
-    @govukSummaryList(SummaryList(
-    rows = {
-
-    val repMemberRow = certificate.repMemName.map { name =>
-    SummaryListRow(
-    key = Key(Text(messages("viewRegistrationCertificate.representativeMember"))),
-    value = Value(Text(name))
-    )
-    }
-
-    val addressLines = Seq(
-    certificate.repMemLine1,
-    certificate.repMemLine2,
-    certificate.repMemLine3,
-    certificate.repMemLine4,
-    certificate.repMemPostcode
-    ).flatten.filter(_.nonEmpty)
-
-    val addressRow =
-    if (addressLines.nonEmpty)
-    Some(
-    SummaryListRow(
-    key = Key(Text(messages("viewRegistrationCertificate.repMemberAddress"))),
-    value = Value(HtmlContent(addressLines.mkString("<br>")))
-    )
-    )
-    else None
-
-    Seq(repMemberRow, addressRow).flatten
-    }
-    ))
-}
-
-@* ---- Group members (separate heading) ---- *@
-@if(certificate.groupMembers.nonEmpty) {
-
-    @h2(messages("viewRegistrationCertificate.groupMembers"))
-
-    @govukSummaryList(SummaryList(
-    rows = certificate.groupMembers.zipWithIndex.map { case (m, i) =>
-    SummaryListRow(
-    key = Key(Text(messages("viewRegistrationCertificate.groupMember", i + 1))),
-    value = Value(Text(m.namesOfGroupMems))
-    )
-    }
-    ))
-    }
-}
-
-<div class="govuk-inset-text">
-    @messages("viewRegistrationCertificate.print")
-</div>
+    <div class="govuk-inset-text">
+        @messages("viewRegistrationCertificate.print")
+    </div>
 
     @link(
         messages("viewRegistrationCertificate.dashboard.link"),
