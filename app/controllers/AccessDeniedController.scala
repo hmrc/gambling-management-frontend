@@ -16,7 +16,9 @@
 
 package controllers
 
+import config.AppConfig
 import controllers.actions.*
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,11 +28,12 @@ import views.html.AccessDeniedView
 class AccessDeniedController @Inject() (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
-  view: AccessDeniedView
+  view: AccessDeniedView,
+  appConfig: AppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view())
+    Ok(view(appConfig.loginUrl))
   }
 }
