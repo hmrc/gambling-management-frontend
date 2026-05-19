@@ -1,4 +1,4 @@
-service.name = Manage your Machine Games Duty
+service.name = Manage your gambling tax
 service.text = This is your new service
 
 site.back = Back
@@ -32,7 +32,7 @@ mgd.registration.number = MGD registration number
 
 # Index page links
 index.title = Machine Games Duty
-index.heading = Manage your Machine Games Duty
+index.heading = Manage your gambling tax
 
 index.statement=Statement
 index.returns=Returns
