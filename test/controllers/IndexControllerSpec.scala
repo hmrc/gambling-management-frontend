@@ -29,7 +29,7 @@ import play.api.i18n.Messages
 import play.api.mvc.*
 import play.api.test.*
 import play.api.test.Helpers.*
-import services.ReturnSummaryService
+import services.GamblingService
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.IndexView
@@ -81,7 +81,7 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
 
       val summary = mock[ReturnSummary]
 
-      val stubService = new ReturnSummaryService(null) {
+      val stubService = new GamblingService(null) {
         override def getReturnSummary(
           mgdRegNumber: String
         )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
@@ -103,7 +103,7 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
 
     "return 404 when service returns NotFound" in {
 
-      val stubService = new ReturnSummaryService(null) {
+      val stubService = new GamblingService(null) {
         override def getReturnSummary(
           mgdRegNumber: String
         )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =

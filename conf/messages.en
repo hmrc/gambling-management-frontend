@@ -78,3 +78,45 @@ accessDenied.title = Sorry, there is a problem with the service
 accessDenied.heading = Sorry, there is a problem with the service
 accessDenied.p1 = You do not have access to this service.
 accessDenied.p1.link = Continue to your account
+
+viewRegistrationCertificate.title = Registration certificate
+viewRegistrationCertificate.panel.title = Registration certificate
+viewRegistrationCertificate.panel.body = Your MGD registration number is {0}
+viewRegistrationCertificate.h2 = Registration details
+viewRegistrationCertificate.p1 = It may take up to 48 hours for any changes to the registration details to be shown on this certificate.
+
+viewRegistrationCertificate.registrationDate = Registration date
+viewRegistrationCertificate.certificateIssued = Certificate issued
+viewRegistrationCertificate.label.soleProprietor=Sole proprietor’s name
+viewRegistrationCertificate.label.unincorporatedBody=Unincorporated body’s name
+viewRegistrationCertificate.label.corporateBody=Corporate body’s name
+viewRegistrationCertificate.label.partnership=Partnership’s name
+viewRegistrationCertificate.label.limitedLiabilityPartnership=Limited liability partnership’s name
+viewRegistrationCertificate.label.default=-
+viewRegistrationCertificate.businessAddress = Business address
+viewRegistrationCertificate.typeOfBusiness = Type of business
+viewRegistrationCertificate.tradeClass = Trade class
+viewRegistrationCertificate.h2.upcoming = Upcoming return period end dates
+viewRegistrationCertificate.print = You can print this page for your records using the print function on your browser.
+viewRegistrationCertificate.dashboard.link = Return to your manage your Machine Games Duty
+viewRegistrationCertificate.change-registration.link = Change registration details
+
+viewRegistrationCertificate.businessTradeClass.1 = Amusement or gaming machine supplier
+viewRegistrationCertificate.businessTradeClass.2 = Adult gaming centre
+viewRegistrationCertificate.businessTradeClass.3 = Family entertainment centre
+viewRegistrationCertificate.businessTradeClass.4 = Bookmaker or betting activities
+viewRegistrationCertificate.businessTradeClass.5 = Bingo promoter
+viewRegistrationCertificate.businessTradeClass.6 = Casino
+viewRegistrationCertificate.businessTradeClass.7 = Public house
+viewRegistrationCertificate.businessTradeClass.8 = Club
+viewRegistrationCertificate.businessTradeClass.9 = Other
+viewRegistrationCertificate.businessTradeClass.unknown = Unknown
+
+viewRegistrationCertificate.tradingName = Trading name
+viewRegistrationCertificate.partnershipDetails = Partnership registration details
+viewRegistrationCertificate.partner = Partner {0}
+viewRegistrationCertificate.groupDetails = Group registration details
+viewRegistrationCertificate.representativeMember = Representative member
+viewRegistrationCertificate.repMemberAddress = Representative member's address
+viewRegistrationCertificate.groupMembers = Group members
+viewRegistrationCertificate.groupMember = Group member {0}

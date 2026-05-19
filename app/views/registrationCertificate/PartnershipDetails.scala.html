@@ -1,0 +1,50 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.MgdCertificate
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.panel._
+
+@this(
+    h2: H2,
+    govukSummaryList: GovukSummaryList
+)
+
+@(
+    certificate: MgdCertificate,
+    displayName: String
+)(implicit request: Request[_], messages: Messages)
+
+@if(certificate.partMembers.nonEmpty) {
+@h2(messages("viewRegistrationCertificate.partnershipDetails"))
+    @govukSummaryList(SummaryList(
+        rows = certificate.partMembers.zipWithIndex.map { case (p, i) =>
+            // Use the optional value, fallback to concatenated soleProp names if None
+            val displayName = p.namesOfPartMems.getOrElse {
+                Seq(p.solePropTitle, p.solePropFirstName, p.solePropMiddleName, p.solePropLastName)
+                .flatten
+                .mkString(" ")
+            }
+
+            SummaryListRow(
+                key = Key(Text(messages("viewRegistrationCertificate.partner", i + 1))),
+                value = Value(Text(displayName))
+            )
+            }
+        ))
+}

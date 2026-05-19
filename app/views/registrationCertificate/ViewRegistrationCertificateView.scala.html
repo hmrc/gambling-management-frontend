@@ -1,0 +1,157 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.MgdCertificate
+@import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.panel._
+
+@this(
+    layout: templates.Layout,
+    govukButton: GovukButton,
+    govukPanel: GovukPanel,
+    h2: H2,
+    p: Paragraph,
+    link: Link,
+    govukSummaryList: GovukSummaryList,
+    partnershipDetails: PartnershipDetails,
+    groupSection: GroupSection
+)
+
+@(certificate: MgdCertificate,
+    displayName: String,
+    displayLabelKey: String,
+    formattedAddress: String
+)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("viewRegistrationCertificate.title"))) {
+
+@govukPanel(Panel(
+    title = messages("viewRegistrationCertificate.panel.title"),
+    content = HtmlContent(messages(
+    "viewRegistrationCertificate.panel.body",
+    s"<strong>${certificate.mgdRegNumber}</strong>"
+    ))
+))
+
+@p("viewRegistrationCertificate.p1")
+
+@h2(messages("viewRegistrationCertificate.h2"))
+
+@govukSummaryList(SummaryList(
+rows = Seq(
+    certificate.registrationDate.map { d =>
+    SummaryListRow(
+    key = Key(Text(messages("viewRegistrationCertificate.registrationDate"))),
+    value = Value(HtmlContent(d.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
+    )
+},
+
+certificate.dateCertIssued.map { d =>
+    SummaryListRow(
+    key = Key(Text(messages("viewRegistrationCertificate.certificateIssued"))),
+    value = Value(HtmlContent(d.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
+    )
+},
+
+Option(displayName).filter(_.nonEmpty).map { name =>
+    SummaryListRow(
+    key = Key(Text(messages(displayLabelKey))),
+    value = Value(HtmlContent(name))
+    )
+},
+
+Option(formattedAddress).filter(_.nonEmpty).map { addr =>
+    SummaryListRow(
+    key = Key(Text(messages("viewRegistrationCertificate.businessAddress"))),
+    value = Value(HtmlContent(addr))
+    )
+},
+
+    certificate.tradingName.filter(_.nonEmpty).map { tn =>
+        SummaryListRow(
+        key = Key(Text(messages("viewRegistrationCertificate.tradingName"))),
+        value = Value(HtmlContent(tn))
+        )
+    },
+
+    certificate.typeOfBusiness.map { b =>
+        SummaryListRow(
+        key = Key(Text(messages("viewRegistrationCertificate.typeOfBusiness"))),
+        value = Value(HtmlContent(b))
+        )
+    },
+
+    certificate.businessTradeClass.map { tc =>
+        val label = tc match {
+            case 1 => messages("viewRegistrationCertificate.businessTradeClass.1")
+            case 2 => messages("viewRegistrationCertificate.businessTradeClass.2")
+            case 3 => messages("viewRegistrationCertificate.businessTradeClass.3")
+            case 4 => messages("viewRegistrationCertificate.businessTradeClass.4")
+            case 5 => messages("viewRegistrationCertificate.businessTradeClass.5")
+            case 6 => messages("viewRegistrationCertificate.businessTradeClass.6")
+            case 7 => messages("viewRegistrationCertificate.businessTradeClass.7")
+            case 8 => messages("viewRegistrationCertificate.businessTradeClass.8")
+            case 9 => messages("viewRegistrationCertificate.businessTradeClass.9")
+            case _ => messages("viewRegistrationCertificate.businessTradeClass.unknown")
+        }
+
+        SummaryListRow(
+        key = Key(Text(messages("viewRegistrationCertificate.tradeClass"))),
+        value = Value(HtmlContent(label))
+        )
+    }
+
+    ).flatten
+    ))
+
+    @if(certificate.returnPeriodEndDates.nonEmpty) {
+
+    @h2(messages("viewRegistrationCertificate.h2.upcoming"))
+
+    <ul class="govuk-list">
+        @for(rped <- certificate.returnPeriodEndDates) {
+        <li>@rped.returnPeriodEndDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))</li>
+        }
+    </ul>
+
+    }
+
+    @partnershipDetails(certificate, displayName)
+
+    @groupSection(certificate, displayName)
+
+    <div class="govuk-inset-text">
+        @messages("viewRegistrationCertificate.print")
+    </div>
+
+    @link(
+        messages("viewRegistrationCertificate.dashboard.link"),
+        controllers.routes.IndexController.onPageLoad().url,
+        extraClasses = "dashboard-page-link"
+    )
+
+    @link(
+        messages("viewRegistrationCertificate.change-registration.link"),
+        controllers.routes.IndexController.onPageLoad().url,
+        extraClasses = "change-registration-page-link govuk-!-margin-bottom-8"
+    )
+
+
+}
+
