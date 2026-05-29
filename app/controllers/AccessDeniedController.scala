@@ -34,6 +34,6 @@ class AccessDeniedController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view(appConfig.loginUrl))
+    Forbidden(view(appConfig.accountUrl))
   }
 }

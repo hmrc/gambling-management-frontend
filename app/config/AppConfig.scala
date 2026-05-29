@@ -30,6 +30,7 @@ class AppConfig @Inject() (config: Configuration):
   val loginContinueUrl: String           = config.get[String]("urls.loginContinue")
   val signOutUrl: String                 = config.get[String]("urls.signOut")
   lazy val hmrcOnlineServiceDesk: String = config.get[String]("urls.hmrcOnlineServiceDesk")
+  lazy val accountUrl: String            = config.get[String]("urls.account")
   val exitSurveyBaseUrl: String          = config.get[Service]("microservice.services.feedback-frontend").baseUrl
   val exitSurveyUrl: String              = s"$exitSurveyBaseUrl/feedback/gambling-management-frontend"
   val cacheTtl: Long                     = config.get[Int]("mongodb.timeToLiveInSeconds")
