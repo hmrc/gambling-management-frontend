@@ -31,7 +31,7 @@ error.returnSummary.title = There is a problem
 mgd.registration.number = MGD registration number
 
 # Index page links
-index.title = Machine Games Duty
+index.title = Manage your gambling tax
 index.heading = Manage your gambling tax
 
 index.statement=Statement
