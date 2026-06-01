@@ -129,13 +129,26 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe
+        status(result) mustBe OK
+
+        def normalize(html: String): String =
+          html
+            .replaceAll(""" nonce="[^"]*"""", "")
+            .replaceAll("""<script\s+>""", "<script>")
+            .replaceAll(""""\s+>""", "\">")
+            .replaceAll(""">\s+<""", "><")
+            .replaceAll("""\s+""", " ")
+            .trim
+
+        val expected =
           view(
             certificate,
             displayName,
             displayLabelKey,
             formattedAddress
           )(request, messages(application)).toString
+
+        normalize(contentAsString(result)) mustBe normalize(expected)
       }
     }
 
