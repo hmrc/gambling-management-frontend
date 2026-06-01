@@ -42,3 +42,10 @@ class AppConfig @Inject() (config: Configuration):
   private val contactFormServiceIdentifier                 = "gambling-management-frontend"
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"
+
+  lazy val gamblingVariationsBaseUrl: String =
+    s"${Service(
+        config.get[String]("microservice.services.gambling-variations-frontend.host"),
+        config.get[String]("microservice.services.gambling-variations-frontend.port"),
+        config.get[String]("microservice.services.gambling-variations-frontend.protocol")
+      ).baseUrl}/gambling-variations"

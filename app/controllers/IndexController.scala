@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.IndexView
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -34,6 +36,7 @@ class IndexController @Inject() (
   authorise: AuthorisedAction,
   val controllerComponents: MessagesControllerComponents,
   view: IndexView,
+  appConfig: AppConfig,
   returnSummaryService: ReturnSummaryService
 )(using ExecutionContext)
     extends FrontendBaseController
@@ -42,13 +45,14 @@ class IndexController @Inject() (
   def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
 
     val mgdRegNumber    = request.mgdRegNum
+    val changeRegUrl    = s"${appConfig.gamblingVariationsBaseUrl}/change-registration-details"
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     returnSummaryService
       .getReturnSummary(mgdRegNumber)
       .map {
         case Right(returnSummary) =>
-          Ok(view(returnSummary))
+          Ok(view(returnSummary, changeRegUrl))
 
         case Left(ReturnSummaryError.NotFound) =>
           NotFound("Return summary not found")
