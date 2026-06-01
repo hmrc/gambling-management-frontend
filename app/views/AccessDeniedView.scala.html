@@ -24,7 +24,7 @@
         h1:H1
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(login: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("accessDenied.title")),
     showBackLink = true,
@@ -35,7 +35,7 @@
     @paragraph(message= "accessDenied.p1")
     @link(
         "accessDenied.p1.link",
-        controllers.routes.IndexController.onPageLoad().url,
+        login,
         extraClasses = "page-not-found-home-page-link"
         )
 

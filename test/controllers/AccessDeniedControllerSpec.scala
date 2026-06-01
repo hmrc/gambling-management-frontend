@@ -38,7 +38,7 @@ class AccessDeniedControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[AccessDeniedView]
         val appConfig = application.injector.instanceOf[AppConfig]
 
-        status(result) mustEqual OK
+        status(result) mustEqual 403
         contentAsString(result) must include("Sorry, there is a problem with the service")
         contentAsString(result) must include("Continue to your account")
 

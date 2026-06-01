@@ -27,9 +27,9 @@ class AccessDeniedViewSpec extends SpecBase {
   "AccessDeniedView" - {
 
     "must render the page with correct heading and service desk link" in new Setup {
-
-      val html = view()
-      val doc  = Jsoup.parse(html.body)
+      val login = "http://localhost:9949/auth-login-stub/gg-sign-in"
+      val html  = view(login)
+      val doc   = Jsoup.parse(html.body)
 
       doc.title must include(messages("accessDenied.title"))
 
@@ -38,7 +38,7 @@ class AccessDeniedViewSpec extends SpecBase {
       doc.select("p").text must include(messages("accessDenied.p1"))
       val link = doc.select(".page-not-found-home-page-link a").attr("href")
 
-      link mustEqual controllers.routes.IndexController.onPageLoad().url
+      link mustEqual login
 
     }
   }
