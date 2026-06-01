@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.IndexView
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
