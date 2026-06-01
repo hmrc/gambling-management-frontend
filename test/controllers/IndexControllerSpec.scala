@@ -40,7 +40,7 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
 
   given ExecutionContext = ExecutionContext.global
 
-  private val stubView = new IndexView(null) {
+  private val stubView = new IndexView(null, null) {
     override def apply(summary: ReturnSummary)(implicit
       request: Request[_],
       messages: Messages

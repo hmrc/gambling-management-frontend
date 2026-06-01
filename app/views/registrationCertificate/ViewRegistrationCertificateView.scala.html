@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import models.MgdCertificate
+@import config.AppConfig
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -30,7 +31,8 @@
     link: Link,
     govukSummaryList: GovukSummaryList,
     partnershipDetails: PartnershipDetails,
-    groupSection: GroupSection
+    groupSection: GroupSection,
+    appConfig: AppConfig
 )
 
 @(certificate: MgdCertificate,
@@ -148,7 +150,7 @@ Option(formattedAddress).filter(_.nonEmpty).map { addr =>
 
     @link(
         messages("viewRegistrationCertificate.change-registration.link"),
-        controllers.routes.IndexController.onPageLoad().url,
+        appConfig.gamblingVariationsBaseUrl + "/change-registration-details",
         extraClasses = "change-registration-page-link govuk-!-margin-bottom-8"
     )
 
