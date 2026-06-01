@@ -44,8 +44,4 @@ class AppConfig @Inject() (config: Configuration):
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"
 
   lazy val gamblingVariationsBaseUrl: String =
-    s"${Service(
-        config.get[String]("microservice.services.gambling-variations-frontend.host"),
-        config.get[String]("microservice.services.gambling-variations-frontend.port"),
-        config.get[String]("microservice.services.gambling-variations-frontend.protocol")
-      ).baseUrl}/gambling-variations"
+    s"${config.get[Service]("microservice.services.gambling-variations-frontend").baseUrl}/gambling-variations"
