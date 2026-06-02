@@ -67,6 +67,7 @@ trait SpecBase
                                               |  timeToLiveInSeconds = 900
                                               | }
                                               | urls {
+                                              |  variationsFrontend = "http://foo.com/variations"
                                               |  login = "http://foo.com/login"
                                               |  loginContinue = "http://foo.com/bar"
                                               |  signOut = "http://foo.com/sign-out"
