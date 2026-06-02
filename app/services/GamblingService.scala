@@ -17,16 +17,20 @@
 package services
 
 import connectors.GamblingConnector
-import models.{ReturnSummary, ReturnSummaryError}
+import models.{MgdCertificate, ReturnSummary, ReturnSummaryError}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReturnSummaryService @Inject() (
+class GamblingService @Inject() (
   connector: GamblingConnector
 )(using ExecutionContext):
+
+  def retrieveCertificate(mgdRegNumber: String)(implicit hc: HeaderCarrier): Future[MgdCertificate] =
+    connector.getCertificate(mgdRegNumber)
 
   def getReturnSummary(
     mgdRegNumber: String

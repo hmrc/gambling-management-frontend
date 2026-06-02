@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@this(layout: templates.Layout)
+@import config.AppConfig
 
-@(returnsSummary: models.ReturnSummary, changeRegUrl: String)(implicit request: Request[_], messages: Messages)
+@this(layout: templates.Layout, appConfig: AppConfig)
+
+@(returnsSummary: models.ReturnSummary)(implicit request: Request[_], messages: Messages)
 
 @layout(
   pageTitle = titleNoForm("index.title"),
   showBackLink = true,
-  includeCustomCss = true
+  includeCustomCss = true,
+  fullWidth = true
 ) {
 
 
@@ -118,12 +121,12 @@
             <div class="card-action">
               <ul class="govuk-list">
                 <li class="govuk-!-margin-bottom-2">
-                  <a class="govuk-link" href="/gambling-filing/registration-certificate">
+                  <a class="govuk-link" href="/gambling/registration-certificate">
                     @messages("index.link.viewRegistrationCertificate")
                   </a>
                 </li>
                 <li class="govuk-!-margin-bottom-2">
-                  <a class="govuk-link" href="@changeRegUrl">
+                  <a class="govuk-link" href="@{appConfig.gamblingVariationsBaseUrl}/change-registration-details">
                     @messages("index.link.changeRegistrationDetails")
                   </a>
                 </li>

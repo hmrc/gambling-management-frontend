@@ -20,7 +20,7 @@ import controllers.actions.AuthorisedAction
 import models.ReturnSummaryError
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ReturnSummaryService
+import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -36,8 +36,7 @@ class IndexController @Inject() (
   authorise: AuthorisedAction,
   val controllerComponents: MessagesControllerComponents,
   view: IndexView,
-  appConfig: AppConfig,
-  returnSummaryService: ReturnSummaryService
+  gamblingService: GamblingService
 )(using ExecutionContext)
     extends FrontendBaseController
     with I18nSupport:
@@ -45,14 +44,13 @@ class IndexController @Inject() (
   def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
 
     val mgdRegNumber    = request.mgdRegNum
-    val changeRegUrl    = s"${appConfig.gamblingVariationsBaseUrl}/change-registration-details"
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    returnSummaryService
+    gamblingService
       .getReturnSummary(mgdRegNumber)
       .map {
         case Right(returnSummary) =>
-          Ok(view(returnSummary, changeRegUrl))
+          Ok(view(returnSummary))
 
         case Left(ReturnSummaryError.NotFound) =>
           NotFound("Return summary not found")

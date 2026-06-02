@@ -29,7 +29,7 @@
     hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false, includeCustomCss: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false, includeCustomCss: Boolean = false, fullWidth: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
     @if(includeCustomCss) {
@@ -63,7 +63,7 @@
     pageTitle = Some(pageTitle),
     templateOverrides = TemplateOverrides(
         additionalHeadBlock = Some(head),
-        mainContentLayout = Some((content: Html) => content)
+        mainContentLayout = if(fullWidth) Some((content: Html) => content) else None
     ),
     serviceURLs = ServiceURLs(
         serviceUrl = Some(routes.IndexController.onPageLoad().url),
