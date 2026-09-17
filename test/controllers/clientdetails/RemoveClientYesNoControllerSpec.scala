@@ -18,11 +18,13 @@ package controllers.clientdetails
 
 import base.SpecBase
 import controllers.actions.*
-import forms.clientdetails.ChangeClientReferenceFormProvider
+import forms.clientdetails.RemoveClientYesNoFormProvider
 import models.UserAnswers
+import models.agent.AgentClient
 import navigation.ClientListCheckNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.mvc.PlayBodyParsers
 import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
@@ -30,36 +32,38 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{GamblingService, ManageService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.clientdetails.ChangeClientReferenceView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ChangeClientReferenceControllerSpec extends SpecBase {
+class RemoveClientYesNoControllerSpec extends SpecBase {
 
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[ChangeClientReferenceView]
+  private val view        = app.injector.instanceOf[views.html.clientdetails.RemoveClientYesNoView]
+
+  private val client = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref"))
+  private val ua: UserAnswers =
+    UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
 
   private class StubManageService extends ManageService(null, null) {
-    override def updateClient(uniqueId: String, ua: UserAnswers, clientRef: String)(using HeaderCarrier): Future[Unit] =
-      Future.unit
+    override def removeClient(uniqueId: String, ua: UserAnswers)(using HeaderCarrier): Future[Unit] = Future.unit
   }
 
   private def controller = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
     when(repo.set(any)).thenReturn(Future.successful(true))
-    new ChangeClientReferenceController(
+    new RemoveClientYesNoController(
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
       new PassThroughStatusGuard(new GamblingService(null)),
       new ClientListCheckNavigator(),
-      new FakeDataRetrievalAction(Some(emptyUserAnswers)),
+      new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
-      new ChangeClientReferenceFormProvider(),
+      new RemoveClientYesNoFormProvider(),
       new StubManageService(),
       mcc,
       view
@@ -67,25 +71,35 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
   }
 
   "onPageLoad" - {
-    "renders the change-reference form" in {
+    "renders the confirmation page for a known client" in {
       val result = controller.onPageLoad("u1")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
-      contentAsString(result) must include(messages(app)("changeClientReference.heading"))
+      contentAsString(result) must include("Acme Casinos")
+    }
+
+    "redirects to JourneyRecovery for an unknown client" in {
+      val result = controller.onPageLoad("missing")(addCSRFToken(FakeRequest()))
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 
   "onSubmit" - {
-    "updates the client reference and redirects to the confirmation page" in {
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "new-ref")
+    "removes the client and redirects to client-removed when Yes" in {
+      val request = FakeRequest().withFormUrlEncodedBody("value" -> "true")
       val result  = controller.onSubmit("u1")(request)
-      redirectLocation(result).value mustBe routes.ClientRefUpdateConfirmationController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ClientRemovedController.onPageLoad().url
     }
 
-    "returns BadRequest and re-renders the form when the value is empty" in {
-      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> ""))
+    "redirects back to manage-client-details when No" in {
+      val request = FakeRequest().withFormUrlEncodedBody("value" -> "false")
+      val result  = controller.onSubmit("u1")(request)
+      redirectLocation(result).value mustBe routes.ManageClientDetailsController.onPageLoad().url
+    }
+
+    "returns BadRequest when nothing is selected" in {
+      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody())
       val result  = controller.onSubmit("u1")(request)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("changeClientReference.error.required"))
     }
   }
 }

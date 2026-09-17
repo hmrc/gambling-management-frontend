@@ -18,7 +18,8 @@ package connectors
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import models.agent.{AgentClient, ClientListStatus}
+import models.agent.{AgentClient, AgentClientData, ClientListStatus, UpdateAgentClientRequest}
+import models.requests.RemoveAgentClientRequest
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -116,6 +117,40 @@ class GamblingConnectorAgentISpec
           .willReturn(serverError())
       )
       recoverToSucceededIf[UpstreamErrorResponse](connector.getAllClients)
+    }
+  }
+
+  "updateClient" should {
+    "complete on 204" in {
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/update-client")).willReturn(aResponse().withStatus(204))
+      )
+      connector.updateClient(UpdateAgentClientRequest("mgd", "RN1", "ref")).map(_ => succeed)
+    }
+
+    "fail on a non-204 response" in {
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/update-client")).willReturn(serverError())
+      )
+      recoverToSucceededIf[UpstreamErrorResponse](connector.updateClient(UpdateAgentClientRequest("mgd", "RN1", "ref")))
+    }
+  }
+
+  "removeClient" should {
+    "complete on 204" in {
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/remove-client")).willReturn(aResponse().withStatus(204))
+      )
+      connector.removeClient(RemoveAgentClientRequest("mgd", "RN1")).map(_ => succeed)
+    }
+  }
+
+  "saveAgentClient" should {
+    "complete on 200" in {
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/user-cache/agent-client/user-1")).willReturn(okJson("{}"))
+      )
+      connector.saveAgentClient("user-1", AgentClientData("u1", "mgd", "RN1", Some("Acme"))).map(_ => succeed)
     }
   }
 }

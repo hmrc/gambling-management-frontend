@@ -28,11 +28,11 @@ class PassThroughStatusGuard(service: GamblingService)(implicit ec: ExecutionCon
     extends ClientListStatusGuard(service) {
 
   private def pass: ActionFilter[AuthorisedRequest] = new ActionFilter[AuthorisedRequest] {
-    override protected def executionContext: ExecutionContext                              = ec
+    override protected def executionContext: ExecutionContext                               = ec
     override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
   }
 
-  override def groupB(securityCheckCall: Call): ActionFilter[AuthorisedRequest] = pass
+  override def groupB(securityCheckCall: Call): ActionFilter[AuthorisedRequest]      = pass
   override def checkGroupA[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
@@ -45,7 +45,7 @@ class PassThroughHasClientGuard(
     extends HasClientGuard(service, sessionRepository, audit) {
 
   private def pass: ActionFilter[DataRequest] = new ActionFilter[DataRequest] {
-    override protected def executionContext: ExecutionContext                          = ec
+    override protected def executionContext: ExecutionContext                         = ec
     override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = Future.successful(None)
   }
 

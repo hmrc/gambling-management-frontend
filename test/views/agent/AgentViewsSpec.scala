@@ -26,14 +26,14 @@ import views.html.agent.*
 
 class AgentViewsSpec extends SpecBase {
 
-  private val app                                = applicationBuilder().build()
-  private implicit val request: Request[?]       = FakeRequest()
-  private implicit val messages: Messages        = app.injector.instanceOf[MessagesApi].preferred(request)
+  private val app                          = applicationBuilder().build()
+  private implicit val request: Request[?] = FakeRequest()
+  private implicit val messages: Messages  = app.injector.instanceOf[MessagesApi].preferred(request)
 
   "RetrievingClientView" - {
     "renders the retrieving heading" in {
       val doc = Jsoup.parse(app.injector.instanceOf[RetrievingClientView].apply().body)
-      doc.title       must include(messages("retrievingClient.title"))
+      doc.title             must include(messages("retrievingClient.title"))
       doc.select("h1").text must include(messages("retrievingClient.heading"))
     }
   }
@@ -82,10 +82,10 @@ class AgentViewsSpec extends SpecBase {
         ClientListViewModel("u1", "Acme Casinos", "RN1", "ref1"),
         ClientListViewModel("u2", "Bingo Ltd", "RN2", "ref2")
       )
-      val doc = Jsoup.parse(view(clients, "").body)
+      val doc     = Jsoup.parse(view(clients, "").body)
 
       doc.select("tbody tr").size mustBe 2
-      doc.text                    must include("Acme Casinos")
+      doc.text                                 must include("Acme Casinos")
       doc.select("a").eachAttr("href").toArray must contain(
         controllers.agent.routes.AgentLandingController.onPageLoad("u1").url
       )

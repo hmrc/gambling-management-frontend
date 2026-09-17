@@ -18,8 +18,8 @@ package models.agent
 
 import play.api.libs.json.{Json, OFormat}
 
-/** A single client in an agent's client list. Keyed by (regime, regNumber); `regNumber`
-  * becomes the working registration number once the client is selected.
+/** A single client in an agent's client list. Keyed by (regime, regNumber); `regNumber` becomes the working
+  * registration number once the client is selected.
   */
 case class AgentClient(
   uniqueId: String,

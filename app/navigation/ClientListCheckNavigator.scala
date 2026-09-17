@@ -21,9 +21,9 @@ import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
-/** Builds the SecurityCheck in-progress spinner Call for each GroupB return target. When a GroupB
-  * page finds the client-list retrieval still in progress, it redirects here; the spinner polls
-  * until the retrieval succeeds, then returns to the original page.
+/** Builds the SecurityCheck in-progress spinner Call for each GroupB return target. When a GroupB page finds the
+  * client-list retrieval still in progress, it redirects here; the spinner polls until the retrieval succeeds, then
+  * returns to the original page.
   */
 @Singleton
 class ClientListCheckNavigator @Inject() () {

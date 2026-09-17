@@ -31,27 +31,48 @@ class StaticAgentControllersSpec extends SpecBase {
   private def auth        = new FakeAgentIdentifierAction(bodyParsers)
 
   "AgentLostAccessController.onPageLoad returns OK" in {
-    val controller = new AgentLostAccessController(mcc.messagesApi, mcc, app.injector.instanceOf[views.html.agent.AgentLostAccessView])
+    val controller =
+      new AgentLostAccessController(mcc.messagesApi, mcc, app.injector.instanceOf[views.html.agent.AgentLostAccessView])
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
   "FailedToRetrieveClientController.onPageLoad returns OK" in {
-    val controller = new FailedToRetrieveClientController(mcc.messagesApi, mcc, auth, app.injector.instanceOf[views.html.agent.FailedToRetrieveClientView])
+    val controller = new FailedToRetrieveClientController(
+      mcc.messagesApi,
+      mcc,
+      auth,
+      app.injector.instanceOf[views.html.agent.FailedToRetrieveClientView]
+    )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
   "NoAuthorisedClientsController.onPageLoad returns OK" in {
-    val controller = new NoAuthorisedClientsController(mcc.messagesApi, mcc, auth, app.injector.instanceOf[views.html.agent.NoAuthorisedClientsView])
+    val controller = new NoAuthorisedClientsController(
+      mcc.messagesApi,
+      mcc,
+      auth,
+      app.injector.instanceOf[views.html.agent.NoAuthorisedClientsView]
+    )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
   "ClientRemovedController.onPageLoad returns OK" in {
-    val controller = new ClientRemovedController(mcc.messagesApi, mcc, auth, app.injector.instanceOf[views.html.clientdetails.ClientRemovedView])
+    val controller = new ClientRemovedController(
+      mcc.messagesApi,
+      mcc,
+      auth,
+      app.injector.instanceOf[views.html.clientdetails.ClientRemovedView]
+    )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
   "ClientRefUpdateConfirmationController.onPageLoad returns OK" in {
-    val controller = new ClientRefUpdateConfirmationController(mcc.messagesApi, mcc, auth, app.injector.instanceOf[views.html.clientdetails.ClientRefUpdateConfirmationView])
+    val controller = new ClientRefUpdateConfirmationController(
+      mcc.messagesApi,
+      mcc,
+      auth,
+      app.injector.instanceOf[views.html.clientdetails.ClientRefUpdateConfirmationView]
+    )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 }

@@ -35,8 +35,8 @@ class ManageService @Inject() (
 )(using ExecutionContext)
     extends Logging {
 
-  /** Returns the agent's client list, using the session-cached copy if present, otherwise fetching
-    * from the backend and caching it in the agent's UserAnswers.
+  /** Returns the agent's client list, using the session-cached copy if present, otherwise fetching from the backend and
+    * caching it in the agent's UserAnswers.
     */
   def resolveAndStoreAgentClients(
     userAnswers: UserAnswers

@@ -41,13 +41,21 @@ class SecurityCheckControllerSpec extends SpecBase {
   }
 
   private def controller(poll: ClientListStatus = ClientListStatus.InProgress) =
-    new SecurityCheckController(mcc.messagesApi, new FakeAgentIdentifierAction(bodyParsers), new StubService(poll), mcc, view)
+    new SecurityCheckController(
+      mcc.messagesApi,
+      new FakeAgentIdentifierAction(bodyParsers),
+      new StubService(poll),
+      mcc,
+      view
+    )
 
   "onClientListCheck" - {
     "renders the spinner with a poll Refresh header for a valid return target" in {
       val result = controller().onClientListCheck("client-list", None)(FakeRequest())
       status(result) mustBe OK
-      header("Refresh", result).value must include(routes.SecurityCheckController.pollClientListCheck("client-list", None, 0).url)
+      header("Refresh", result).value must include(
+        routes.SecurityCheckController.pollClientListCheck("client-list", None, 0).url
+      )
     }
 
     "redirects to system error for an unknown return target" in {
@@ -58,14 +66,17 @@ class SecurityCheckControllerSpec extends SpecBase {
 
   "pollClientListCheck" - {
     "redirects to the resolved destination when the status succeeds" in {
-      val result = controller(ClientListStatus.Succeeded).pollClientListCheck("agent-landing", Some("u1"), 0)(FakeRequest())
+      val result =
+        controller(ClientListStatus.Succeeded).pollClientListCheck("agent-landing", Some("u1"), 0)(FakeRequest())
       redirectLocation(result).value mustBe controllers.agent.routes.AgentLandingController.onPageLoad("u1").url
     }
 
     "refreshes when still in progress" in {
       val result = controller(ClientListStatus.InProgress).pollClientListCheck("client-list", None, 0)(FakeRequest())
       status(result) mustBe OK
-      header("Refresh", result).value must include(routes.SecurityCheckController.pollClientListCheck("client-list", None, 1).url)
+      header("Refresh", result).value must include(
+        routes.SecurityCheckController.pollClientListCheck("client-list", None, 1).url
+      )
     }
 
     "redirects to system error on Failed" in {

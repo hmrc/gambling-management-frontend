@@ -42,9 +42,10 @@ class ClientListSearchControllerSpec extends SpecBase {
 
   private val client = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref1"))
 
-  private class StubManageService(clients: List[AgentClient])
-      extends ManageService(null, null) {
-    override def resolveAndStoreAgentClients(ua: UserAnswers)(using HeaderCarrier): Future[(List[AgentClient], UserAnswers)] =
+  private class StubManageService(clients: List[AgentClient]) extends ManageService(null, null) {
+    override def resolveAndStoreAgentClients(ua: UserAnswers)(using
+      HeaderCarrier
+    ): Future[(List[AgentClient], UserAnswers)] =
       Future.successful((clients, ua))
   }
 

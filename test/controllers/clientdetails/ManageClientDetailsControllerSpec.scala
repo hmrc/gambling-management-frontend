@@ -18,74 +18,59 @@ package controllers.clientdetails
 
 import base.SpecBase
 import controllers.actions.*
-import forms.clientdetails.ChangeClientReferenceFormProvider
 import models.UserAnswers
+import models.agent.AgentClient
 import navigation.ClientListCheckNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.mvc.PlayBodyParsers
-import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{GamblingService, ManageService}
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.clientdetails.ChangeClientReferenceView
+import services.GamblingService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ChangeClientReferenceControllerSpec extends SpecBase {
+class ManageClientDetailsControllerSpec extends SpecBase {
 
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[ChangeClientReferenceView]
+  private val view        = app.injector.instanceOf[views.html.clientdetails.ManageClientDetailsView]
 
-  private class StubManageService extends ManageService(null, null) {
-    override def updateClient(uniqueId: String, ua: UserAnswers, clientRef: String)(using HeaderCarrier): Future[Unit] =
-      Future.unit
-  }
+  private val client = AgentClient("u1", "mgd", "XMM00000000123", Some("Acme Casinos"), Some("myref"))
 
-  private def controller = {
+  private def controller(ua: UserAnswers) = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
     when(repo.set(any)).thenReturn(Future.successful(true))
-    new ChangeClientReferenceController(
+    new ManageClientDetailsController(
       mcc.messagesApi,
-      repo,
       new FakeAgentIdentifierAction(bodyParsers),
       new PassThroughStatusGuard(new GamblingService(null)),
       new ClientListCheckNavigator(),
-      new FakeDataRetrievalAction(Some(emptyUserAnswers)),
+      new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
-      new ChangeClientReferenceFormProvider(),
-      new StubManageService(),
+      repo,
       mcc,
       view
     )
   }
 
   "onPageLoad" - {
-    "renders the change-reference form" in {
-      val result = controller.onPageLoad("u1")(addCSRFToken(FakeRequest()))
+    "renders the selected client's details" in {
+      val ua = UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
+      val result = controller(ua).onPageLoad(FakeRequest())
       status(result) mustBe OK
-      contentAsString(result) must include(messages(app)("changeClientReference.heading"))
-    }
-  }
-
-  "onSubmit" - {
-    "updates the client reference and redirects to the confirmation page" in {
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "new-ref")
-      val result  = controller.onSubmit("u1")(request)
-      redirectLocation(result).value mustBe routes.ClientRefUpdateConfirmationController.onPageLoad().url
+      contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123") and include("myref"))
     }
 
-    "returns BadRequest and re-renders the form when the value is empty" in {
-      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> ""))
-      val result  = controller.onSubmit("u1")(request)
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("changeClientReference.error.required"))
+    "redirects to JourneyRecovery when no client is selected" in {
+      val ua     = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
+      val result = controller(ua).onPageLoad(FakeRequest())
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }

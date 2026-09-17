@@ -33,14 +33,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClientListStatusGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures with OptionValues with MockitoSugar {
+class ClientListStatusGuardSpec
+    extends AnyFreeSpec
+    with Matchers
+    with ScalaFutures
+    with OptionValues
+    with MockitoSugar {
 
   given ExecutionContext = ExecutionContext.global
 
   private val agentRequest =
     AuthorisedRequest(FakeRequest(), AffinityGroup.Agent, mgdRegNum = "", userId = "internal-id", isAgent = true)
 
-  private val systemErrorUrl    = controllers.routes.SystemErrorController.onPageLoad().url
+  private val systemErrorUrl     = controllers.routes.SystemErrorController.onPageLoad().url
   private val agentLostAccessUrl = controllers.agent.routes.AgentLostAccessController.onPageLoad().url
   private val securityCheckCall  = Call("GET", "/security-check")
 
@@ -59,12 +64,11 @@ class ClientListStatusGuardSpec extends AnyFreeSpec with Matchers with ScalaFutu
       guardWith(Future.successful(ClientListStatus.Succeeded)).checkGroupA(agentRequest).futureValue mustBe None
     }
 
-    "redirects to agent lost access for non-Succeeded statuses" in {
+    "redirects to agent lost access for non-Succeeded statuses" in
       Seq(ClientListStatus.InProgress, ClientListStatus.Failed, ClientListStatus.InitiateDownload).foreach { status =>
         val result = guardWith(Future.successful(status)).checkGroupA(agentRequest).futureValue.value
         redirectLocation(Future.successful(result)).value mustBe agentLostAccessUrl
       }
-    }
 
     "redirects to system error when the service fails" in {
       val result = guardWith(Future.failed(new RuntimeException("boom"))).checkGroupA(agentRequest).futureValue.value
@@ -91,11 +95,10 @@ class ClientListStatusGuardSpec extends AnyFreeSpec with Matchers with ScalaFutu
       redirectLocation(Future.successful(result)).value mustBe securityCheckCall.url
     }
 
-    "redirects to system error when Failed or InitiateDownload" in {
+    "redirects to system error when Failed or InitiateDownload" in
       Seq(ClientListStatus.Failed, ClientListStatus.InitiateDownload).foreach { s =>
         val result = runFilter(Future.successful(s))
         redirectLocation(Future.successful(result)).value mustBe systemErrorUrl
       }
-    }
   }
 }

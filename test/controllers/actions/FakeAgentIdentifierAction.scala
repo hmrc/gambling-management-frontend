@@ -22,11 +22,10 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/** A test AuthorisedAction that injects an authenticated AGENT request (isAgent = true) so agent
-  * controllers can be exercised without the real enforcer/auth.
+/** A test AuthorisedAction that injects an authenticated AGENT request (isAgent = true) so agent controllers can be
+  * exercised without the real enforcer/auth.
   */
-class FakeAgentIdentifierAction(bodyParsers: PlayBodyParsers, userId: String = "internal-id")
-    extends AuthorisedAction {
+class FakeAgentIdentifierAction(bodyParsers: PlayBodyParsers, userId: String = "internal-id") extends AuthorisedAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthorisedRequest[A] => Future[Result]): Future[Result] =
     block(

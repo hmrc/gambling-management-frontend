@@ -59,9 +59,9 @@ class ClientListSearchController @Inject() (
       manageService
         .resolveAndStoreAgentClients(userAnswers)
         .map {
-          case (Nil, _)      =>
+          case (Nil, _)     =>
             Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
-          case (clients, _)  =>
+          case (clients, _) =>
             val allClients      = ClientListViewModel.fromAgentClients(clients)
             val filteredClients = ClientListViewModel.filterByName(searchQuery, allClients)
             Ok(view(filteredClients, searchQuery))

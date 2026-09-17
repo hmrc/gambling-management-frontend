@@ -52,7 +52,9 @@ class ManageClientDetailsController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.currentClient).async { implicit request =>
-      request.userAnswers.get(SelectedClientPage).flatMap(id => AgentClientsPage.findClient(request.userAnswers, id)) match {
+      request.userAnswers
+        .get(SelectedClientPage)
+        .flatMap(id => AgentClientsPage.findClient(request.userAnswers, id)) match {
         case Some(client) =>
           val clientReference = client.agentOwnRef.getOrElse("")
           for {

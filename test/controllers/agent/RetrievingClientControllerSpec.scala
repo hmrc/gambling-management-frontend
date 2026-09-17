@@ -32,14 +32,13 @@ import scala.concurrent.Future
 
 class RetrievingClientControllerSpec extends SpecBase {
 
-  private val app                     = applicationBuilder().build()
-  private val mcc                     = stubMessagesControllerComponents()
+  private val app                           = applicationBuilder().build()
+  private val mcc                           = stubMessagesControllerComponents()
   private implicit val appConfig: AppConfig = testAppConfig
-  private val view                    = app.injector.instanceOf[RetrievingClientView]
-  private val bodyParsers             = app.injector.instanceOf[PlayBodyParsers]
+  private val view                          = app.injector.instanceOf[RetrievingClientView]
+  private val bodyParsers                   = app.injector.instanceOf[PlayBodyParsers]
 
-  private class StubService(start: ClientListStatus, poll: ClientListStatus)
-      extends GamblingService(null) {
+  private class StubService(start: ClientListStatus, poll: ClientListStatus) extends GamblingService(null) {
     override def startClientListRetrieval(using HeaderCarrier): Future[ClientListStatus] = Future.successful(start)
     override def getClientListStatus(using HeaderCarrier): Future[ClientListStatus]      = Future.successful(poll)
   }

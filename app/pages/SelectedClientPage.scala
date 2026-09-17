@@ -19,8 +19,8 @@ package pages
 import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
-/** The `uniqueId` of the client the agent currently has selected. Its `regNumber`
-  * becomes the working registration number for downstream requests.
+/** The `uniqueId` of the client the agent currently has selected. Its `regNumber` becomes the working registration
+  * number for downstream requests.
   */
 case object SelectedClientPage extends Gettable[String] with Settable[String] {
 

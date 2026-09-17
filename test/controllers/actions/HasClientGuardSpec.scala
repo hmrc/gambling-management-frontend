@@ -42,7 +42,8 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
   given ExecutionContext = ExecutionContext.global
 
   private val userId  = "internal-id"
-  private val client  = AgentClient("u1", regime = "MGD", regNumber = "RN1", clientName = Some("Acme"), agentOwnRef = Some("ref"))
+  private val client  =
+    AgentClient("u1", regime = "MGD", regNumber = "RN1", clientName = Some("Acme"), agentOwnRef = Some("ref"))
   private val request =
     AuthorisedRequest(FakeRequest(), AffinityGroup.Agent, mgdRegNum = "", userId = userId, isAgent = true)
 
@@ -102,6 +103,35 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
 
       guard.checkForInstanceId(orgRequest, "u1").futureValue mustBe None
       verify(service, never).hasClient(anyString, anyString)(using any[HeaderCarrier])
+    }
+
+    "returns None for an agent who still has the client" in {
+      val (guard, _, service, _) = newGuard()
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+      val request                = models.requests.DataRequest(FakeRequest(), userId, userAnswersWithSelectedClient, isAgent = true)
+
+      guard.checkForInstanceId(request, "u1").futureValue mustBe None
+    }
+
+    "audits and redirects to system error when the agent no longer has the client" in {
+      val (guard, _, service, audit) = newGuard()
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(false))
+      when(audit.sendEvent(any)(using any, any)).thenReturn(Future.successful(AuditResult.Success))
+      val request                    = models.requests.DataRequest(FakeRequest(), userId, userAnswersWithSelectedClient, isAgent = true)
+
+      redirectLocation(
+        Future.successful(guard.checkForInstanceId(request, "u1").futureValue.value)
+      ).value mustBe systemErrorUrl
+      verify(audit).sendEvent(any)(using any, any)
+    }
+
+    "redirects to system error when the client is not found for the agent" in {
+      val (guard, _, _, _) = newGuard()
+      val request          = models.requests.DataRequest(FakeRequest(), userId, UserAnswers(userId), isAgent = true)
+
+      redirectLocation(
+        Future.successful(guard.checkForInstanceId(request, "missing").futureValue.value)
+      ).value mustBe systemErrorUrl
     }
   }
 }

@@ -49,9 +49,9 @@ class ClientListCheckEnforcerSpec extends AnyFreeSpec with Matchers with ScalaFu
     groupAStatus: Option[Result] = None,
     hasClientResult: Option[Result] = None
   ): ClientListCheckEnforcer = {
-    val resolver   = mock[ClientListCheckPolicyResolver]
+    val resolver    = mock[ClientListCheckPolicyResolver]
     val statusGuard = mock[ClientListStatusGuard]
-    val hasClient  = mock[HasClientGuard]
+    val hasClient   = mock[HasClientGuard]
 
     when(resolver.resolve(any[RequestHeader])).thenReturn(policy)
     when(resolver.shouldRunCentralHasClient(any[RequestHeader])).thenReturn(centralHasClient)
@@ -69,12 +69,11 @@ class ClientListCheckEnforcerSpec extends AnyFreeSpec with Matchers with ScalaFu
       contentAsString(Future.successful(result)) mustBe "passed"
     }
 
-    "runs the block for GroupB and Exempt policies" in {
+    "runs the block for GroupB and Exempt policies" in
       Seq(ClientListCheckPolicy.GroupB, ClientListCheckPolicy.Exempt).foreach { policy =>
         val result = enforcerWith(policy)(agentRequest())(block).futureValue
         contentAsString(Future.successful(result)) mustBe "passed"
       }
-    }
 
     "returns the status-guard result for GroupA when the status check fails" in {
       val enforcer = enforcerWith(ClientListCheckPolicy.GroupA, groupAStatus = Some(guardRedirect))
@@ -85,7 +84,7 @@ class ClientListCheckEnforcerSpec extends AnyFreeSpec with Matchers with ScalaFu
     "returns the has-client result for GroupA when status passes but has-client fails" in {
       val enforcer =
         enforcerWith(ClientListCheckPolicy.GroupA, groupAStatus = None, hasClientResult = Some(guardRedirect))
-      val result = enforcer(agentRequest())(block).futureValue
+      val result   = enforcer(agentRequest())(block).futureValue
       status(Future.successful(result)) mustBe SEE_OTHER
     }
 
@@ -98,7 +97,7 @@ class ClientListCheckEnforcerSpec extends AnyFreeSpec with Matchers with ScalaFu
     "runs the block for GroupA when central has-client is skipped for the route" in {
       val enforcer =
         enforcerWith(ClientListCheckPolicy.GroupA, centralHasClient = false, groupAStatus = None)
-      val result = enforcer(agentRequest())(block).futureValue
+      val result   = enforcer(agentRequest())(block).futureValue
       contentAsString(Future.successful(result)) mustBe "passed"
     }
   }
