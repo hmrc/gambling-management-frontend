@@ -120,3 +120,69 @@ viewRegistrationCertificate.representativeMember = Representative member
 viewRegistrationCertificate.repMemberAddress = Representative member's address
 viewRegistrationCertificate.groupMembers = Group members
 viewRegistrationCertificate.groupMember = Group member {0}
+
+# Agent client-list flow
+agentLostAccess.title = You cannot access this service
+agentLostAccess.heading = You cannot access this service
+agentLostAccess.p1 = We are unable to retrieve your client list at the moment. Try again later.
+
+retrievingClient.title = Retrieving your client list
+retrievingClient.heading = Retrieving your client list
+retrievingClient.p1 = We are retrieving your client list. This may take a few moments.
+
+failedToRetrieveClient.title = We could not retrieve your client list
+failedToRetrieveClient.heading = We could not retrieve your client list
+failedToRetrieveClient.p1 = There was a problem retrieving your client list. Try again later.
+
+noAuthorisedClients.title = You have no authorised clients
+noAuthorisedClients.heading = You have no authorised clients
+noAuthorisedClients.p1 = You are not currently authorised to act for any clients for this service.
+
+agentLanding.title = Client
+agentLanding.heading = {0}
+agentLanding.regNumber = Registration number: {0}
+agentLanding.link.registrationCertificate = View registration certificate
+agentLanding.link.backToClientList = Back to your client list
+
+clientListSearch.title = Your clients
+clientListSearch.heading = Your clients
+clientListSearch.search.label = Search by client name
+clientListSearch.search.button = Search
+clientListSearch.noResults = No clients match your search.
+clientListSearch.th.clientName = Client name
+clientListSearch.th.regNumber = Registration number
+clientListSearch.th.clientReference = Client reference
+
+error.summary.title = There is a problem
+
+manageClientDetails.title = Manage client details
+manageClientDetails.heading = {0}
+manageClientDetails.clientName = Client name
+manageClientDetails.regNumber = Registration number
+manageClientDetails.clientReference = Client reference
+manageClientDetails.change = Change
+manageClientDetails.remove = Remove this client
+
+changeClientReference.title = Change client reference
+changeClientReference.heading = Enter a client reference
+changeClientReference.error.required = Enter a client reference
+changeClientReference.error.length = Client reference must be 20 characters or fewer
+
+clientRefUpdateConfirmation.title = Client reference updated
+clientRefUpdateConfirmation.heading = Client reference updated
+clientRefUpdateConfirmation.p1 = The client reference has been updated.
+clientRefUpdateConfirmation.link.backToClientList = Back to your client list
+
+removeClientYesNo.title = Remove client
+removeClientYesNo.heading = Are you sure you want to remove {0}?
+removeClientYesNo.error.required = Select yes if you want to remove this client
+
+clientRemoved.title = Client removed
+clientRemoved.heading = Client removed
+clientRemoved.p1 = You are no longer authorised to act for this client.
+clientRemoved.link.backToClientList = Back to your client list
+agentLanding.link.manageClientDetails = Manage client details
+
+securityCheck.title = Checking your authorisation
+securityCheck.heading = Checking your authorisation
+securityCheck.p1 = We are checking your authorisation for this client. This may take a few moments.

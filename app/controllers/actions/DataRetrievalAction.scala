@@ -18,6 +18,7 @@ package controllers.actions
 
 import javax.inject.Inject
 import models.requests.{AuthorisedRequest, OptionalDataRequest}
+import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
 
@@ -28,11 +29,24 @@ class DataRetrievalActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends DataRetrievalAction {
 
-  override protected def transform[A](request: AuthorisedRequest[A]): Future[OptionalDataRequest[A]] =
+  override protected def transform[A](request: AuthorisedRequest[A]): Future[OptionalDataRequest[A]] = {
+    // Agents key their session on the stable internalId (no client reg number until one is selected);
+    // organisations continue to key on their mgdRegNum.
+    val sessionKey = if request.isAgent then request.userId else request.mgdRegNum
 
-    sessionRepository.get(request.mgdRegNum).map {
-      OptionalDataRequest(request.request, request.mgdRegNum, _)
+    sessionRepository.get(sessionKey).map { userAnswers =>
+      val effectiveRegNum =
+        if request.isAgent then
+          (for {
+            ua       <- userAnswers
+            selected <- ua.get(SelectedClientPage)
+            client   <- AgentClientsPage.findClient(ua, selected)
+          } yield client.regNumber).getOrElse(request.mgdRegNum)
+        else request.mgdRegNum
+
+      OptionalDataRequest(request.request, effectiveRegNum, userAnswers, request.userId, request.isAgent)
     }
+  }
 }
 
 trait DataRetrievalAction extends ActionTransformer[AuthorisedRequest, OptionalDataRequest]

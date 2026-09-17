@@ -40,7 +40,8 @@ trait AuthorisedAction
 class DefaultAuthorisedAction @Inject() (
   override val authConnector: AuthConnector,
   config: AppConfig,
-  val parser: BodyParsers.Default
+  val parser: BodyParsers.Default,
+  clientListCheckEnforcer: ClientListCheckEnforcer
 )(implicit val executionContext: ExecutionContext)
     extends AuthorisedAction
     with AuthorisedFunctions
@@ -51,20 +52,31 @@ class DefaultAuthorisedAction @Inject() (
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised()
-      .retrieve(Retrievals.affinityGroup.and(Retrievals.allEnrolments)) {
-        case Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
-              mgdRegNum
+      .retrieve(Retrievals.internalId and Retrievals.affinityGroup and Retrievals.allEnrolments) {
+        case internalIdOpt ~ Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
+              agentReference
             ) =>
-          block(AuthorisedRequest(request, affinityGroup, mgdRegNum))
-        case Some(AffinityGroup.Agent) ~ _ =>
+          // Agents no longer resolve a client reg number from their own enrolment. They select a
+          // client (client list retrieval + selection); the ClientListCheckEnforcer gates access.
+          val authorisedRequest = AuthorisedRequest(
+            request,
+            affinityGroup,
+            mgdRegNum = "",
+            userId = internalIdOpt.getOrElse(""),
+            isAgent = true,
+            agentReference = Some(agentReference)
+          )
+          clientListCheckEnforcer(authorisedRequest)(block)
+        case _ ~ Some(AffinityGroup.Agent) ~ _ =>
           logger.warn(s"Agent auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Agent enrolment missing or not activated"))
 
-        case Some(affinityGroup @ AffinityGroup.Organisation) ~ AuthorisedAction.HasActiveOrganisationEnrolment(
-              mgdRegNum
-            ) =>
-          block(AuthorisedRequest(request, affinityGroup, mgdRegNum))
-        case Some(AffinityGroup.Organisation) ~ _ =>
+        case internalIdOpt ~ Some(affinityGroup @ AffinityGroup.Organisation) ~ AuthorisedAction
+              .HasActiveOrganisationEnrolment(
+                mgdRegNum
+              ) =>
+          block(AuthorisedRequest(request, affinityGroup, mgdRegNum, userId = internalIdOpt.getOrElse("")))
+        case _ ~ Some(AffinityGroup.Organisation) ~ _ =>
           logger.warn(s"Organisation auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Organisation enrolment missing or not activated"))
 

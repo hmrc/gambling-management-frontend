@@ -32,7 +32,7 @@ ThisBuild / coverageExcludedFiles :=
     ".*target/scala-3.*/routes/.*"
   ).mkString(";")
 
-ThisBuild / coverageMinimumStmtTotal := 76
+ThisBuild / coverageMinimumStmtTotal := 85
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageHighlighting := true
 

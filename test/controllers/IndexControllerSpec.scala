@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.AppConfig
 import controllers.actions.AuthorisedAction
 import models.{ReturnSummary, ReturnSummaryError}
 import models.requests.AuthorisedRequest
@@ -48,8 +47,6 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
     ) =
       play.twirl.api.Html("ok")
   }
-
-  private val mockAppConfig = mock[AppConfig]
 
   private val mockAuthorisedAction = mock[AuthorisedAction]
 

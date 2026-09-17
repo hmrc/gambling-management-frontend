@@ -1,0 +1,68 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.*
+@import viewmodels.agent.ClientListViewModel
+
+@this(
+        layout: templates.Layout,
+        h1: H1,
+        paragraph: Paragraph
+)
+
+@(clients: Seq[ClientListViewModel], searchQuery: String)(implicit request: Request[_], messages: Messages)
+
+@layout(
+    pageTitle = titleNoForm(messages("clientListSearch.title")),
+    showBackLink = false,
+    showSignOut = true
+) {
+
+    @h1("clientListSearch.heading", classes = "govuk-heading-l")
+
+    <form method="get" action="@controllers.agent.routes.ClientListSearchController.onPageLoad().url" class="govuk-!-margin-bottom-6">
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="search">@messages("clientListSearch.search.label")</label>
+            <input class="govuk-input govuk-input--width-20" id="search" name="search" type="text" value="@searchQuery">
+        </div>
+        <button class="govuk-button" data-module="govuk-button">@messages("clientListSearch.search.button")</button>
+    </form>
+
+    @if(clients.isEmpty) {
+        @paragraph(message = "clientListSearch.noResults")
+    } else {
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.clientName")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.regNumber")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.clientReference")</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @for(client <- clients) {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.uniqueId).url">@client.clientName</a>
+                        </td>
+                        <td class="govuk-table__cell">@client.regNumber</td>
+                        <td class="govuk-table__cell">@client.clientReference</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
