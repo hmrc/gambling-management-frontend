@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.agent
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+sealed trait ClientListCheckReturnTarget(val key: String)
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
-
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+object ClientListCheckReturnTarget {
+  case object AgentLanding extends ClientListCheckReturnTarget("agent-landing")
+  case object ClientList extends ClientListCheckReturnTarget("client-list")
+  case object ManageClientDetails extends ClientListCheckReturnTarget("manage-client-details")
+  case object ChangeClientReference extends ClientListCheckReturnTarget("change-client-reference")
+  case object RemoveClient extends ClientListCheckReturnTarget("remove-client")
+}

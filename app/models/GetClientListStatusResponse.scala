@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import models.agent.ClientListStatus
+import play.api.libs.json.{Json, Reads}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+case class GetClientListStatusResponse(result: ClientListStatus)
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+object GetClientListStatusResponse {
+  implicit val reads: Reads[GetClientListStatusResponse] = Json.reads[GetClientListStatusResponse]
+}

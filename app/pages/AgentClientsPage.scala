@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
+import models.agent.AgentClient
+import play.api.libs.json.JsPath
+import queries.{Gettable, Settable}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+/** The agent's client list, cached in session UserAnswers after retrieval. */
+case object AgentClientsPage extends Gettable[List[AgentClient]] with Settable[List[AgentClient]] {
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "agentClients"
+
+  def findClient(ua: UserAnswers, instanceId: String): Option[AgentClient] =
+    ua.get(AgentClientsPage).flatMap(_.find(_.uniqueId == instanceId))
+}

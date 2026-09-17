@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.libs.json.JsPath
+import queries.{Gettable, Settable}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+/** The `uniqueId` of the client the agent currently has selected. Its `regNumber`
+  * becomes the working registration number for downstream requests.
+  */
+case object SelectedClientPage extends Gettable[String] with Settable[String] {
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "selectedClient"
+}

@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package models.requests
+package controllers.actions
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+private[actions] object ClientListCheckRedirects {
+  def systemError: Result =
+    Redirect(controllers.routes.SystemErrorController.onPageLoad())
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+  def agentLostAccess: Result =
+    Redirect(controllers.agent.routes.AgentLostAccessController.onPageLoad())
+}

@@ -43,9 +43,17 @@ class IndexController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
 
-    val mgdRegNumber    = request.mgdRegNum
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+    if request.isAgent then
+      // Agents must retrieve and select a client before landing on a return summary.
+      scala.concurrent.Future.successful(
+        Redirect(controllers.agent.routes.RetrievingClientController.onPageLoad())
+      )
+    else indexForOrganisation(request.mgdRegNum)
+  }
+
+  private def indexForOrganisation(mgdRegNumber: String)(using HeaderCarrier, play.api.mvc.Request[?]) =
     gamblingService
       .getReturnSummary(mgdRegNumber)
       .map {
@@ -61,4 +69,3 @@ class IndexController @Inject() (
         case Left(ReturnSummaryError.UnexpectedError) =>
           InternalServerError("Unexpected error")
       }
-  }

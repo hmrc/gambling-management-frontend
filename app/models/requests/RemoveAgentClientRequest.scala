@@ -16,21 +16,13 @@
 
 package models.requests
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.libs.json.{Json, OFormat}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+case class RemoveAgentClientRequest(
+  regime: String,
+  regNumber: String
+)
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+object RemoveAgentClientRequest {
+  given format: OFormat[RemoveAgentClientRequest] = Json.format[RemoveAgentClientRequest]
+}

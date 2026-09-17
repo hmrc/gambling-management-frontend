@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms.clientdetails
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.data.Form
+import play.api.data.Forms.{boolean, optional, single}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+import javax.inject.Inject
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+class RemoveClientYesNoFormProvider @Inject() () {
+
+  def apply(): Form[Boolean] =
+    Form(
+      single(
+        "value" -> optional(boolean)
+          .verifying("removeClientYesNo.error.required", _.isDefined)
+          .transform[Boolean](_.getOrElse(false), Some(_))
+      )
+    )
+}

@@ -18,3 +18,27 @@ GET         /there-is-a-problem-access-denied               controllers.AccessDe
 GET         /page-not-found                                 controllers.PageNotFoundController.onPageLoad()
 
 GET         /registration-certificate                       controllers.ViewRegistrationCertificateController.onPageLoad()
+
+# Agent client-list flow
+GET         /agent/retrieving-client                        controllers.agent.RetrievingClientController.onPageLoad()
+GET         /agent/retrieving-client/start                  controllers.agent.RetrievingClientController.start()
+GET         /agent/retrieving-client/poll                   controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
+GET         /agent/client-list                              controllers.agent.ClientListSearchController.onPageLoad()
+GET         /agent/client/:uniqueId                         controllers.agent.AgentLandingController.onPageLoad(uniqueId: String)
+GET         /agent/failed-to-retrieve-client                controllers.agent.FailedToRetrieveClientController.onPageLoad()
+GET         /agent/no-authorised-clients                    controllers.agent.NoAuthorisedClientsController.onPageLoad()
+GET         /agent/cannot-access-service                    controllers.agent.AgentLostAccessController.onPageLoad()
+
+# Client details management
+GET         /agent/manage-client                            controllers.clientdetails.ManageClientDetailsController.onPageLoad()
+GET         /agent/change-client-reference/:uniqueId        controllers.clientdetails.ChangeClientReferenceController.onPageLoad(uniqueId: String)
+POST        /agent/change-client-reference/:uniqueId        controllers.clientdetails.ChangeClientReferenceController.onSubmit(uniqueId: String)
+GET         /agent/client-reference-updated                 controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
+GET         /agent/remove-client/:uniqueId                  controllers.clientdetails.RemoveClientYesNoController.onPageLoad(uniqueId: String)
+POST        /agent/remove-client/:uniqueId                  controllers.clientdetails.RemoveClientYesNoController.onSubmit(uniqueId: String)
+GET         /agent/client-removed                           controllers.clientdetails.ClientRemovedController.onPageLoad()
+
+# Security check (client-list retrieval in-progress spinner)
+GET         /agent/authorisation-check                      controllers.SecurityCheckController.onClientListCheck(returnTo: String, instanceId: Option[String] ?= None)
+GET         /agent/authorisation-check/poll                 controllers.SecurityCheckController.pollClientListCheck(returnTo: String, instanceId: Option[String] ?= None, retryCount: Int ?= 0)
+GET         /agent/authorisation-check/in-progress          controllers.SecurityCheckController.onPageLoad()

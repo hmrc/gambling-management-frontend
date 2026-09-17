@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.agent
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+sealed trait ClientListCheckPolicy
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
-
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+object ClientListCheckPolicy {
+  case object GroupA extends ClientListCheckPolicy
+  case object GroupB extends ClientListCheckPolicy
+  case object Exempt extends ClientListCheckPolicy
+}

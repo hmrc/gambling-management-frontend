@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms.clientdetails
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.data.Form
+import play.api.data.Forms.{single, text}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+import javax.inject.Inject
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+class ChangeClientReferenceFormProvider @Inject() () {
+
+  private val maxLength = 20
+
+  def apply(): Form[String] =
+    Form(
+      single(
+        "value" -> text
+          .verifying("changeClientReference.error.required", _.trim.nonEmpty)
+          .verifying("changeClientReference.error.length", _.trim.length <= maxLength)
+      )
+    )
+}

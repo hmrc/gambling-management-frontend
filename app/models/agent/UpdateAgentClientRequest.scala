@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.agent
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.libs.json.{Json, OFormat}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+case class UpdateAgentClientRequest(
+  regime: String,
+  regNumber: String,
+  clientRef: String
+)
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+object UpdateAgentClientRequest {
+  given format: OFormat[UpdateAgentClientRequest] = Json.format[UpdateAgentClientRequest]
+}

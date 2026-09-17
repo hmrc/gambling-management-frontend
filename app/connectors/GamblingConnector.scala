@@ -17,10 +17,14 @@
 package connectors
 
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.{MgdCertificate, ReturnSummary, ReturnSummaryError}
-import play.api.http.Status.OK
+import models.{GetClientListStatusResponse, MgdCertificate, ReturnSummary, ReturnSummaryError}
+import models.agent.{AgentClient, AgentClientData, HasClientResponse, UpdateAgentClientRequest}
+import models.requests.RemoveAgentClientRequest
+import play.api.http.Status.{NO_CONTENT, OK}
+import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,8 +39,16 @@ class GamblingConnector @Inject() (
   private val baseUrl =
     servicesConfig.baseUrl("gambling")
 
+  private val agentBaseUrl = s"$baseUrl/gambling/agent"
+
   private given HttpReads[ReturnSummary] =
     HttpReads.Implicits.readFromJson[ReturnSummary]
+
+  private given HttpReads[GetClientListStatusResponse] =
+    HttpReads.Implicits.readFromJson[GetClientListStatusResponse]
+
+  private given HttpReads[HasClientResponse] =
+    HttpReads.Implicits.readFromJson[HasClientResponse]
 
   def getReturnSummary(
     mgdRegNumber: String
@@ -75,5 +87,68 @@ class GamblingConnector @Inject() (
               s"Unexpected status while fetching MGD certificate: $status",
               status
             )
+        }
+      }
+
+  def startClientList(using HeaderCarrier): Future[GetClientListStatusResponse] =
+    httpClient
+      .post(url"$agentBaseUrl/client-list/retrieval/start")
+      .execute[GetClientListStatusResponse]
+
+  def getClientListStatus(using HeaderCarrier): Future[GetClientListStatusResponse] =
+    httpClient
+      .post(url"$agentBaseUrl/client-list/retrieval/status")
+      .execute[GetClientListStatusResponse]
+
+  def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[HasClientResponse] =
+    httpClient
+      .get(url"$agentBaseUrl/has-client/$regime/$regNumber")
+      .execute[HasClientResponse]
+
+  def getAllClients(using HeaderCarrier): Future[List[AgentClient]] =
+    httpClient
+      .get(url"$agentBaseUrl/client-list")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK     => (response.json \ "clients").as[List[AgentClient]]
+          case status =>
+            throw UpstreamErrorResponse(s"Unexpected status while fetching client list: $status", status)
+        }
+      }
+
+  def saveAgentClient(userId: String, agentClientData: AgentClientData)(using HeaderCarrier): Future[Unit] =
+    httpClient
+      .post(url"$baseUrl/gambling/user-cache/agent-client/$userId")
+      .withBody(Json.toJson(agentClientData))
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK => ()
+          case _  => throw new HttpException(response.body, response.status)
+        }
+      }
+
+  def updateClient(request: UpdateAgentClientRequest)(using HeaderCarrier): Future[Unit] =
+    httpClient
+      .post(url"$agentBaseUrl/update-client")
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
+      .flatMap { response =>
+        response.status match {
+          case NO_CONTENT => Future.unit
+          case status     => Future.failed(UpstreamErrorResponse(response.body, status, status))
+        }
+      }
+
+  def removeClient(request: RemoveAgentClientRequest)(using HeaderCarrier): Future[Unit] =
+    httpClient
+      .post(url"$agentBaseUrl/remove-client")
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
+      .flatMap { response =>
+        response.status match {
+          case NO_CONTENT => Future.unit
+          case status     => Future.failed(UpstreamErrorResponse(response.body, status, status))
         }
       }

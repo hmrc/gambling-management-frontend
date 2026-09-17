@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.requests
+@import views.html.components.*
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+@this(
+        layout: templates.Layout,
+        h1: H1,
+        paragraph: Paragraph
+)
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  mgdRegNum: String,
-  userAnswers: Option[UserAnswers],
-  userId: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+@()(implicit request: Request[_], messages: Messages)
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  userAnswers: UserAnswers,
-  mgdRegNum: String = "",
-  isAgent: Boolean = false
-) extends WrappedRequest[A](request)
+@layout(
+    pageTitle = titleNoForm(messages("noAuthorisedClients.title")),
+    showBackLink = false,
+    showSignOut = true
+) {
+
+    @h1("noAuthorisedClients.heading", classes = "govuk-heading-l")
+    @paragraph(message = "noAuthorisedClients.p1")
+}

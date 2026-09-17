@@ -18,7 +18,7 @@ package services
 
 import connectors.GamblingConnector
 import models.{MgdCertificate, ReturnSummary, ReturnSummaryError}
-import play.api.mvc.Request
+import models.agent.ClientListStatus
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -36,3 +36,12 @@ class GamblingService @Inject() (
     mgdRegNumber: String
   )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =
     connector.getReturnSummary(mgdRegNumber)
+
+  def startClientListRetrieval(using HeaderCarrier): Future[ClientListStatus] =
+    connector.startClientList.map(_.result)
+
+  def getClientListStatus(using HeaderCarrier): Future[ClientListStatus] =
+    connector.getClientListStatus.map(_.result)
+
+  def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[Boolean] =
+    connector.hasClient(regime, regNumber).map(_.hasClient)
