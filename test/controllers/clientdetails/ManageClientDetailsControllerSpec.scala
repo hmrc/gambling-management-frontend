@@ -61,7 +61,8 @@ class ManageClientDetailsControllerSpec extends SpecBase {
 
   "onPageLoad" - {
     "renders the selected client's details" in {
-      val ua = UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
+      val ua     =
+        UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
       val result = controller(ua).onPageLoad(FakeRequest())
       status(result) mustBe OK
       contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123") and include("myref"))

@@ -17,10 +17,8 @@
 package controllers
 
 import base.SpecBase
-import config.AppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.AccessDeniedView
 
 class AccessDeniedControllerSpec extends SpecBase {
 
@@ -34,9 +32,6 @@ class AccessDeniedControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.AccessDeniedController.onPageLoad().url)
 
         val result = route(application, request).value
-
-        val view      = application.injector.instanceOf[AccessDeniedView]
-        val appConfig = application.injector.instanceOf[AppConfig]
 
         status(result) mustEqual 403
         contentAsString(result) must include("Sorry, there is a problem with the service")

@@ -50,6 +50,9 @@ class GamblingConnector @Inject() (
   private given HttpReads[HasClientResponse] =
     HttpReads.Implicits.readFromJson[HasClientResponse]
 
+  // Non-deprecated HttpReads[HttpResponse] (avoids HttpReads.readRaw deprecation on .execute[HttpResponse]).
+  private given HttpReads[HttpResponse] = HttpReads.Implicits.readRaw
+
   def getReturnSummary(
     mgdRegNumber: String
   )(using hc: HeaderCarrier): Future[Either[ReturnSummaryError, ReturnSummary]] =

@@ -26,7 +26,8 @@ class AgentModelsSpec extends AnyFreeSpec with Matchers {
   "AgentClient round-trips through JSON" in {
     val model = AgentClient("u1", "mgd", "XMM00000000123", Some("Acme"), Some("ref"))
     Json.toJson(model).as[AgentClient] mustBe model
-    Json.parse("""{"uniqueId":"u1","regime":"mgd","regNumber":"RN","clientName":null,"agentOwnRef":null}""")
+    Json
+      .parse("""{"uniqueId":"u1","regime":"mgd","regNumber":"RN","clientName":null,"agentOwnRef":null}""")
       .as[AgentClient] mustBe AgentClient("u1", "mgd", "RN", None, None)
   }
 
@@ -74,11 +75,11 @@ class AgentModelsSpec extends AnyFreeSpec with Matchers {
   }
 
   "ClientListCheckReturnTarget exposes a key per target" in {
-    ClientListCheckReturnTarget.AgentLanding.key must not be empty
-    ClientListCheckReturnTarget.ClientList.key must not be empty
-    ClientListCheckReturnTarget.ManageClientDetails.key must not be empty
+    ClientListCheckReturnTarget.AgentLanding.key          must not be empty
+    ClientListCheckReturnTarget.ClientList.key            must not be empty
+    ClientListCheckReturnTarget.ManageClientDetails.key   must not be empty
     ClientListCheckReturnTarget.ChangeClientReference.key must not be empty
-    ClientListCheckReturnTarget.RemoveClient.key must not be empty
+    ClientListCheckReturnTarget.RemoveClient.key          must not be empty
   }
 
   "ClientListCheckPolicy values are distinct" in {

@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import config.AppConfig
 import controllers.actions.AuthorisedAction
 import models.agent.ClientListStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +33,7 @@ class RetrievingClientController @Inject() (
   authorise: AuthorisedAction,
   gamblingService: GamblingService,
   view: RetrievingClientView
-)(implicit appConfig: AppConfig, ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

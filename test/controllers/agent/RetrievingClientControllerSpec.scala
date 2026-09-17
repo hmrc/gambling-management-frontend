@@ -17,7 +17,6 @@
 package controllers.agent
 
 import base.SpecBase
-import config.AppConfig
 import controllers.actions.FakeAgentIdentifierAction
 import models.agent.ClientListStatus
 import play.api.mvc.PlayBodyParsers
@@ -32,11 +31,10 @@ import scala.concurrent.Future
 
 class RetrievingClientControllerSpec extends SpecBase {
 
-  private val app                           = applicationBuilder().build()
-  private val mcc                           = stubMessagesControllerComponents()
-  private implicit val appConfig: AppConfig = testAppConfig
-  private val view                          = app.injector.instanceOf[RetrievingClientView]
-  private val bodyParsers                   = app.injector.instanceOf[PlayBodyParsers]
+  private val app         = applicationBuilder().build()
+  private val mcc         = stubMessagesControllerComponents()
+  private val view        = app.injector.instanceOf[RetrievingClientView]
+  private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
 
   private class StubService(start: ClientListStatus, poll: ClientListStatus) extends GamblingService(null) {
     override def startClientListRetrieval(using HeaderCarrier): Future[ClientListStatus] = Future.successful(start)

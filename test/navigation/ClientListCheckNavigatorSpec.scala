@@ -30,6 +30,6 @@ class ClientListCheckNavigatorSpec extends AnyFreeSpec with Matchers {
     navigator.manageClientDetails.url         must include("manage-client-details")
     navigator.changeClientReference("u2").url must (include("change-client-reference") and include("u2"))
     navigator.removeClient("u3").url          must (include("remove-client") and include("u3"))
-    navigator.clientList.method               mustBe "GET"
+    navigator.clientList.method mustBe "GET"
   }
 }

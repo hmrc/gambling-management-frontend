@@ -43,7 +43,7 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
   private val view        = app.injector.instanceOf[views.html.clientdetails.RemoveClientYesNoView]
 
-  private val client = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref"))
+  private val client          = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref"))
   private val ua: UserAnswers =
     UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
 

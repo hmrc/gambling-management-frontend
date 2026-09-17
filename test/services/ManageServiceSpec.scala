@@ -37,8 +37,8 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
   private given HeaderCarrier = HeaderCarrier()
 
-  private val client   = AgentClient("u1", "mgd", "RN1", Some("Acme"), Some("ref"))
-  private val userId   = "internal-id"
+  private val client = AgentClient("u1", "mgd", "RN1", Some("Acme"), Some("ref"))
+  private val userId = "internal-id"
 
   private def newService = {
     val connector = mock[GamblingConnector]
@@ -49,7 +49,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
   "resolveAndStoreAgentClients" should {
     "return the cached client list without calling the backend" in {
       val (service, connector, _) = newService
-      val ua = UserAnswers(userId).set(AgentClientsPage, List(client)).get
+      val ua                      = UserAnswers(userId).set(AgentClientsPage, List(client)).get
 
       service.resolveAndStoreAgentClients(ua).futureValue._1 mustBe List(client)
       verify(connector, org.mockito.Mockito.never).getAllClients(using any)
@@ -70,7 +70,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
   "updateClient" should {
     "send an update for the resolved client" in {
       val (service, connector, _) = newService
-      val ua = UserAnswers(userId).set(AgentClientsPage, List(client)).get
+      val ua                      = UserAnswers(userId).set(AgentClientsPage, List(client)).get
       when(connector.updateClient(any[UpdateAgentClientRequest])(using any)).thenReturn(Future.unit)
 
       service.updateClient("u1", ua, "newref").futureValue
@@ -86,7 +86,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
   "removeClient" should {
     "send a remove for the resolved client" in {
       val (service, connector, _) = newService
-      val ua = UserAnswers(userId).set(AgentClientsPage, List(client)).get
+      val ua                      = UserAnswers(userId).set(AgentClientsPage, List(client)).get
       when(connector.removeClient(any[RemoveAgentClientRequest])(using any)).thenReturn(Future.unit)
 
       service.removeClient("u1", ua).futureValue
