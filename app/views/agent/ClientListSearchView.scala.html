@@ -56,7 +56,7 @@
                 @for(client <- clients) {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.uniqueId).url">@client.clientName</a>
+                            <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.regNumber).url">@client.clientName</a>
                         </td>
                         <td class="govuk-table__cell">@client.regNumber</td>
                         <td class="govuk-table__cell">@client.clientReference</td>

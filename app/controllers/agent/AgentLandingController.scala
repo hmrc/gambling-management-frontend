@@ -53,32 +53,32 @@ class AgentLandingController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(uniqueId: String): Action[AnyContent] =
+  def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.agentLanding(uniqueId))
+      andThen clientListStatusGuard.groupB(clientListCheckNavigator.agentLanding(regNumber))
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(uniqueId)).async { implicit request =>
+      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
 
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      AgentClientsPage.findClient(request.userAnswers, uniqueId) match {
+      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
         case Some(client) =>
-          loadLandingPage(uniqueId, client)
+          loadLandingPage(regNumber, client)
 
         case None =>
-          logger.warn(s"[AgentLandingController][onPageLoad] Missing client in userAnswers for uniqueId=$uniqueId")
+          logger.warn(s"Missing client in userAnswers for regNumber=$regNumber")
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
   private def loadLandingPage(
-    uniqueId: String,
+    regNumber: String,
     client: AgentClient
   )(using request: DataRequest[?], hc: HeaderCarrier): Future[Result] =
     (for {
-      _                  <- auditClientDetailsRetrieved(client, uniqueId)
-      updatedUserAnswers <- Future.fromTry(request.userAnswers.set(SelectedClientPage, uniqueId))
+      _                  <- auditClientDetailsRetrieved(client, regNumber)
+      updatedUserAnswers <- Future.fromTry(request.userAnswers.set(SelectedClientPage, regNumber))
       _                  <- sessionRepository.set(updatedUserAnswers)
     } yield Ok(
       view(
@@ -86,15 +86,14 @@ class AgentLandingController @Inject() (
         regNumber = client.regNumber
       )
     )).recover { case NonFatal(ex) =>
-      logger.error(s"[AgentLandingController][onPageLoad] Failed for uniqueId=$uniqueId", ex)
+      logger.error(s"Failed for regNumber=$regNumber", ex)
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
 
   private def auditClientDetailsRetrieved(
     client: AgentClient,
-    uniqueId: String
+    regNumber: String
   )(using request: DataRequest[?], hc: HeaderCarrier): Future[Unit] = {
-    // Agent reference is not threaded into DataRequest in this lightweight flow; audit best-effort.
     given play.api.mvc.Request[?] = request
 
     val auditEvent = ClientDetailsRetrievedAuditEventModel(
@@ -106,7 +105,10 @@ class AgentLandingController @Inject() (
       .sendEvent(auditEvent)
       .map(_ => ())
       .recover { case NonFatal(ex) =>
-        logger.error(s"[AgentLandingController] failed to send ClientDetailsRetrieved audit for uniqueId=$uniqueId", ex)
+        logger.error(
+          s"failed to send ClientDetailsRetrieved audit for regNumber=$regNumber",
+          ex
+        )
         ()
       }
   }

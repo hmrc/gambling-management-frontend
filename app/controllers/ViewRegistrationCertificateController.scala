@@ -95,7 +95,7 @@ class ViewRegistrationCertificateController @Inject() (
       }
       .recover { case ex =>
         logger.error(
-          s"[ViewRegistrationCertificateController] retrieveCertificate failed for mgdRegNum=$mgdRegNum",
+          s"retrieveCertificate failed for mgdRegNum=$mgdRegNum",
           ex
         )
         Redirect(controllers.routes.SystemErrorController.onPageLoad())

@@ -21,7 +21,7 @@
         layout: templates.Layout
 )
 
-@(clientName: String, form: Form[Boolean], uniqueId: String)(implicit request: Request[_], messages: Messages)
+@(clientName: String, form: Form[Boolean], regNumber: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = title(form, messages("removeClientYesNo.title")),
@@ -44,7 +44,7 @@
         </div>
     }
 
-    <form method="post" action="@controllers.clientdetails.routes.RemoveClientYesNoController.onSubmit(uniqueId).url">
+    <form method="post" action="@controllers.clientdetails.routes.RemoveClientYesNoController.onSubmit(regNumber).url">
         @helper.CSRF.formField
 
         <div class="govuk-form-group @if(form.hasErrors){govuk-form-group--error}">

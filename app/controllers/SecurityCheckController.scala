@@ -54,7 +54,7 @@ class SecurityCheckController @Inject() (
       returnCall(returnTo, instanceId) match {
         case Some(_) => refreshResult(returnTo, instanceId, retryCount = 0)
         case None    =>
-          logger.warn(s"[SecurityCheckController] Invalid client list return target=$returnTo")
+          logger.warn(s"Invalid client list return target=$returnTo")
           systemError
       }
     }
@@ -80,7 +80,7 @@ class SecurityCheckController @Inject() (
                   systemError
               }
               .recover { case NonFatal(e) =>
-                logger.error("[SecurityCheckController] Client list polling failed", e)
+                logger.error("Client list polling failed", e)
                 systemError
               }
       }

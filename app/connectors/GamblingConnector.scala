@@ -23,7 +23,7 @@ import models.{GetClientListStatusResponse, MgdCertificate, ReturnSummary, Retur
 import models.agent.{AgentClient, AgentClientData, HasClientResponse, UpdateAgentClientRequest}
 import models.requests.RemoveAgentClientRequest
 import play.api.http.Status.{NO_CONTENT, OK}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
@@ -41,6 +41,8 @@ class GamblingConnector @Inject() (
 
   private val agentBaseUrl = s"$baseUrl/gambling/agent"
 
+  private val regime = "mgd"
+
   private given HttpReads[ReturnSummary] =
     HttpReads.Implicits.readFromJson[ReturnSummary]
 
@@ -50,7 +52,6 @@ class GamblingConnector @Inject() (
   private given HttpReads[HasClientResponse] =
     HttpReads.Implicits.readFromJson[HasClientResponse]
 
-  // Non-deprecated HttpReads[HttpResponse] (avoids HttpReads.readRaw deprecation on .execute[HttpResponse]).
   private given HttpReads[HttpResponse] = HttpReads.Implicits.readRaw
 
   def getReturnSummary(
@@ -95,12 +96,12 @@ class GamblingConnector @Inject() (
 
   def startClientList(using HeaderCarrier): Future[GetClientListStatusResponse] =
     httpClient
-      .post(url"$agentBaseUrl/client-list/retrieval/start")
+      .post(url"$agentBaseUrl/client-list/$regime/retrieval/start")
       .execute[GetClientListStatusResponse]
 
   def getClientListStatus(using HeaderCarrier): Future[GetClientListStatusResponse] =
     httpClient
-      .post(url"$agentBaseUrl/client-list/retrieval/status")
+      .post(url"$agentBaseUrl/client-list/$regime/retrieval/status")
       .execute[GetClientListStatusResponse]
 
   def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[HasClientResponse] =
@@ -110,11 +111,19 @@ class GamblingConnector @Inject() (
 
   def getAllClients(using HeaderCarrier): Future[List[AgentClient]] =
     httpClient
-      .get(url"$agentBaseUrl/client-list")
+      .get(url"$agentBaseUrl/client-list/$regime")
       .execute[HttpResponse]
       .map { response =>
         response.status match {
-          case OK     => (response.json \ "clients").as[List[AgentClient]]
+          case OK     =>
+            (response.json \ "clients").as[Seq[JsValue]].toList.map { client =>
+              AgentClient(
+                regime = regime,
+                regNumber = (client \ "regNumber").as[String],
+                clientName = (client \ "clientName").asOpt[String],
+                agentOwnRef = (client \ "agentOwnRef").asOpt[String]
+              )
+            }
           case status =>
             throw UpstreamErrorResponse(s"Unexpected status while fetching client list: $status", status)
         }

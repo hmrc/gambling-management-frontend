@@ -94,7 +94,7 @@ class ClientListCheckPolicyResolver @Inject() extends Logging {
       .getOrElse("UnknownHandler")
 
     logger.info(
-      s"[ClientListCheckPolicyResolver] method=${request.method} uri=${request.uri} handler=$handler policy=$policy "
+      s"method=${request.method} uri=${request.uri} handler=$handler policy=$policy "
     )
 
     policy

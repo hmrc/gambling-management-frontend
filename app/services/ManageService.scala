@@ -35,16 +35,13 @@ class ManageService @Inject() (
 )(using ExecutionContext)
     extends Logging {
 
-  /** Returns the agent's client list, using the session-cached copy if present, otherwise fetching from the backend and
-    * caching it in the agent's UserAnswers.
-    */
   def resolveAndStoreAgentClients(
     userAnswers: UserAnswers
   )(using HeaderCarrier): Future[(List[AgentClient], UserAnswers)] =
     userAnswers.get(AgentClientsPage) match {
       case Some(clientList) => Future.successful((clientList, userAnswers))
       case None             =>
-        logger.info("[resolveAndStoreAgentClients] cache-miss: fetching agent clients from backend")
+        logger.info("cache-miss: fetching agent clients from backend")
         for {
           clients        <- connector.getAllClients
           updatedAnswers <- Future.fromTry(userAnswers.set(AgentClientsPage, clients))
@@ -52,21 +49,21 @@ class ManageService @Inject() (
         } yield (clients, updatedAnswers)
     }
 
-  def updateClient(uniqueId: String, ua: UserAnswers, clientRef: String)(using HeaderCarrier): Future[Unit] =
-    ua.get(AgentClientsPage).flatMap(_.find(_.uniqueId == uniqueId)) match {
+  def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using HeaderCarrier): Future[Unit] =
+    ua.get(AgentClientsPage).flatMap(_.find(_.regNumber == regNumber)) match {
       case Some(client) =>
         connector.updateClient(UpdateAgentClientRequest(client.regime, client.regNumber, clientRef))
       case None         =>
-        logger.error(s"[updateClient] no client found with uniqueId $uniqueId in AgentClientsPage")
-        Future.failed(new RuntimeException(s"No client found with uniqueId $uniqueId in AgentClientsPage"))
+        logger.error(s"no client found with regNumber $regNumber in AgentClientsPage")
+        Future.failed(new RuntimeException(s"No client found with regNumber $regNumber in AgentClientsPage"))
     }
 
-  def removeClient(uniqueId: String, ua: UserAnswers)(using HeaderCarrier): Future[Unit] =
-    ua.get(AgentClientsPage).flatMap(_.find(_.uniqueId == uniqueId)) match {
+  def removeClient(regNumber: String, ua: UserAnswers)(using HeaderCarrier): Future[Unit] =
+    ua.get(AgentClientsPage).flatMap(_.find(_.regNumber == regNumber)) match {
       case Some(client) =>
         connector.removeClient(RemoveAgentClientRequest(client.regime, client.regNumber))
       case None         =>
-        logger.error(s"[removeClient] missing client in AgentClientsPage")
+        logger.error(s"missing client in AgentClientsPage")
         Future.failed(new RuntimeException("Missing client in AgentClientsPage"))
     }
 }

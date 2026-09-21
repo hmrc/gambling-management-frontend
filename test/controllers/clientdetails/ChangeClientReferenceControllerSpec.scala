@@ -43,7 +43,9 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
   private val view        = app.injector.instanceOf[ChangeClientReferenceView]
 
   private class StubManageService extends ManageService(null, null) {
-    override def updateClient(uniqueId: String, ua: UserAnswers, clientRef: String)(using HeaderCarrier): Future[Unit] =
+    override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
+      HeaderCarrier
+    ): Future[Unit] =
       Future.unit
   }
 

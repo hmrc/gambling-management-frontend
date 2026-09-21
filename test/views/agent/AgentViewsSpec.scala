@@ -79,15 +79,15 @@ class AgentViewsSpec extends SpecBase {
 
     "renders a row with a select link per client" in {
       val clients = Seq(
-        ClientListViewModel("u1", "Acme Casinos", "RN1", "ref1"),
-        ClientListViewModel("u2", "Bingo Ltd", "RN2", "ref2")
+        ClientListViewModel("Acme Casinos", "RN1", "ref1"),
+        ClientListViewModel("Bingo Ltd", "RN2", "ref2")
       )
       val doc     = Jsoup.parse(view(clients, "").body)
 
       doc.select("tbody tr").size mustBe 2
       doc.text                                 must include("Acme Casinos")
       doc.select("a").eachAttr("href").toArray must contain(
-        controllers.agent.routes.AgentLandingController.onPageLoad("u1").url
+        controllers.agent.routes.AgentLandingController.onPageLoad("RN1").url
       )
     }
 

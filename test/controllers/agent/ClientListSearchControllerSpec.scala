@@ -40,7 +40,7 @@ class ClientListSearchControllerSpec extends SpecBase {
   private val navigator   = new ClientListCheckNavigator()
   private val statusGuard = new PassThroughStatusGuard(new GamblingService(null))
 
-  private val client = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref1"))
+  private val client = AgentClient("mgd", "RN1", Some("Acme Casinos"), Some("ref1"))
 
   private class StubManageService(clients: List[AgentClient]) extends ManageService(null, null) {
     override def resolveAndStoreAgentClients(ua: UserAnswers)(using

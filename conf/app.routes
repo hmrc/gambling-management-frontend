@@ -24,18 +24,18 @@ GET         /agent/retrieving-client                        controllers.agent.Re
 GET         /agent/retrieving-client/start                  controllers.agent.RetrievingClientController.start()
 GET         /agent/retrieving-client/poll                   controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
 GET         /agent/client-list                              controllers.agent.ClientListSearchController.onPageLoad()
-GET         /agent/client/:uniqueId                         controllers.agent.AgentLandingController.onPageLoad(uniqueId: String)
+GET         /agent/client/:regNumber                        controllers.agent.AgentLandingController.onPageLoad(regNumber: String)
 GET         /agent/failed-to-retrieve-client                controllers.agent.FailedToRetrieveClientController.onPageLoad()
 GET         /agent/no-authorised-clients                    controllers.agent.NoAuthorisedClientsController.onPageLoad()
 GET         /agent/cannot-access-service                    controllers.agent.AgentLostAccessController.onPageLoad()
 
 # Client details management
 GET         /agent/manage-client                            controllers.clientdetails.ManageClientDetailsController.onPageLoad()
-GET         /agent/change-client-reference/:uniqueId        controllers.clientdetails.ChangeClientReferenceController.onPageLoad(uniqueId: String)
-POST        /agent/change-client-reference/:uniqueId        controllers.clientdetails.ChangeClientReferenceController.onSubmit(uniqueId: String)
+GET         /agent/change-client-reference/:regNumber       controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
+POST        /agent/change-client-reference/:regNumber       controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/client-reference-updated                 controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
-GET         /agent/remove-client/:uniqueId                  controllers.clientdetails.RemoveClientYesNoController.onPageLoad(uniqueId: String)
-POST        /agent/remove-client/:uniqueId                  controllers.clientdetails.RemoveClientYesNoController.onSubmit(uniqueId: String)
+GET         /agent/remove-client/:regNumber                 controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
+POST        /agent/remove-client/:regNumber                 controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
 GET         /agent/client-removed                           controllers.clientdetails.ClientRemovedController.onPageLoad()
 
 # Security check (client-list retrieval in-progress spinner)

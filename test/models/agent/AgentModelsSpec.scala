@@ -24,11 +24,11 @@ import play.api.libs.json.*
 class AgentModelsSpec extends AnyFreeSpec with Matchers {
 
   "AgentClient round-trips through JSON" in {
-    val model = AgentClient("u1", "mgd", "XMM00000000123", Some("Acme"), Some("ref"))
+    val model = AgentClient("mgd", "XMM00000000123", Some("Acme"), Some("ref"))
     Json.toJson(model).as[AgentClient] mustBe model
     Json
-      .parse("""{"uniqueId":"u1","regime":"mgd","regNumber":"RN","clientName":null,"agentOwnRef":null}""")
-      .as[AgentClient] mustBe AgentClient("u1", "mgd", "RN", None, None)
+      .parse("""{"regime":"mgd","regNumber":"RN","clientName":null,"agentOwnRef":null}""")
+      .as[AgentClient] mustBe AgentClient("mgd", "RN", None, None)
   }
 
   "AgentClientData round-trips through JSON" in {
