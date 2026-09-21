@@ -34,14 +34,16 @@ class ClientDetailsViewsSpec extends SpecBase {
   "ManageClientDetailsView" - {
     "renders the client details and change/remove links" in {
       val view = app.injector.instanceOf[ManageClientDetailsView]
-      val doc  = Jsoup.parse(view("u1", "Acme Casinos", "XMM00000000123", "myref").body)
+      val doc  = Jsoup.parse(view("Acme Casinos", "XMM00000000123", "myref").body)
 
       doc.text must include("Acme Casinos")
       doc.text must include("XMM00000000123")
       doc.text must include("myref")
       val hrefs = doc.select("a").eachAttr("href").toArray
-      hrefs must contain(controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("u1").url)
-      hrefs must contain(controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad("u1").url)
+      hrefs must contain(
+        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+      )
+      hrefs must contain(controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad("XMM00000000123").url)
     }
   }
 

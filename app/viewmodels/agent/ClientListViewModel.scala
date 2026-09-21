@@ -19,7 +19,6 @@ package viewmodels.agent
 import models.agent.AgentClient
 
 case class ClientListViewModel(
-  uniqueId: String,
   clientName: String,
   regNumber: String,
   clientReference: String
@@ -30,7 +29,6 @@ object ClientListViewModel {
   def fromAgentClients(clients: List[AgentClient]): Seq[ClientListViewModel] =
     clients.map { client =>
       ClientListViewModel(
-        uniqueId = client.uniqueId,
         clientName = client.clientName.getOrElse(""),
         regNumber = client.regNumber,
         clientReference = client.agentOwnRef.getOrElse("")

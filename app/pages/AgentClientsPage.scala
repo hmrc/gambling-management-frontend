@@ -21,13 +21,12 @@ import models.agent.AgentClient
 import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
-/** The agent's client list, cached in session UserAnswers after retrieval. */
 case object AgentClientsPage extends Gettable[List[AgentClient]] with Settable[List[AgentClient]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "agentClients"
 
-  def findClient(ua: UserAnswers, instanceId: String): Option[AgentClient] =
-    ua.get(AgentClientsPage).flatMap(_.find(_.uniqueId == instanceId))
+  def findClient(ua: UserAnswers, regNumber: String): Option[AgentClient] =
+    ua.get(AgentClientsPage).flatMap(_.find(_.regNumber == regNumber))
 }

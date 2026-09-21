@@ -55,38 +55,38 @@ class RemoveClientYesNoController @Inject() (
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(uniqueId: String): Action[AnyContent] =
+  def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.removeClient(uniqueId))
+      andThen clientListStatusGuard.groupB(clientListCheckNavigator.removeClient(regNumber))
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(uniqueId)).async { implicit request =>
-      AgentClientsPage.findClient(request.userAnswers, uniqueId) match {
+      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
         case Some(client) =>
           val preparedForm = request.userAnswers.get(RemoveClientYesNoPage).fold(form)(form.fill)
-          Future.successful(Ok(view(client.clientName.getOrElse(""), preparedForm, uniqueId)))
+          Future.successful(Ok(view(client.clientName.getOrElse(""), preparedForm, regNumber)))
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
-  def onSubmit(uniqueId: String): Action[AnyContent] =
+  def onSubmit(regNumber: String): Action[AnyContent] =
     (authorise
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(uniqueId)).async { implicit request =>
+      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      AgentClientsPage.findClient(request.userAnswers, uniqueId) match {
+      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
         case Some(client) =>
           form
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(client.clientName.getOrElse(""), formWithErrors, uniqueId))),
+                Future.successful(BadRequest(view(client.clientName.getOrElse(""), formWithErrors, regNumber))),
               value =>
-                if (value) removeAndConfirm(uniqueId)
+                if (value) removeAndConfirm(regNumber)
                 else Future.successful(Redirect(routes.ManageClientDetailsController.onPageLoad()))
             )
 
@@ -95,18 +95,18 @@ class RemoveClientYesNoController @Inject() (
       }
     }
 
-  private def removeAndConfirm(uniqueId: String)(using
+  private def removeAndConfirm(regNumber: String)(using
     request: models.requests.DataRequest[?],
     hc: HeaderCarrier
   ): Future[play.api.mvc.Result] =
     (for {
-      _                <- manageService.removeClient(uniqueId, request.userAnswers)
+      _                <- manageService.removeClient(regNumber, request.userAnswers)
       clearedClients   <- Future.fromTry(request.userAnswers.remove(AgentClientsPage))
       clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
       _                <- sessionRepository.set(clearedSelection)
     } yield Redirect(routes.ClientRemovedController.onPageLoad()))
       .recover { case ex =>
-        logger.error(s"[RemoveClientYesNoController][onSubmit] Failed to remove client uniqueId=$uniqueId", ex)
+        logger.error(s"Failed to remove client regNumber=$regNumber", ex)
         Redirect(controllers.routes.SystemErrorController.onPageLoad())
       }
 }

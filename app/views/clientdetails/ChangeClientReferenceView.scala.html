@@ -21,7 +21,7 @@
         layout: templates.Layout
 )
 
-@(form: Form[String], uniqueId: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], regNumber: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = title(form, messages("changeClientReference.title")),
@@ -44,7 +44,7 @@
         </div>
     }
 
-    <form method="post" action="@controllers.clientdetails.routes.ChangeClientReferenceController.onSubmit(uniqueId).url">
+    <form method="post" action="@controllers.clientdetails.routes.ChangeClientReferenceController.onSubmit(regNumber).url">
         @helper.CSRF.formField
 
         <div class="govuk-form-group @if(form.hasErrors){govuk-form-group--error}">

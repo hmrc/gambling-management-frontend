@@ -68,7 +68,7 @@ class ClientListStatusGuard @Inject() (
     gamblingService.startClientListRetrieval
       .map(handleStatus)
       .recover { case NonFatal(e) =>
-        logger.error("[ClientListStatusGuard] client list check failed", e)
+        logger.error("client list check failed", e)
         Some(systemError)
       }
   }

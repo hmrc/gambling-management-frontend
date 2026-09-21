@@ -43,12 +43,12 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
   private val view        = app.injector.instanceOf[views.html.clientdetails.RemoveClientYesNoView]
 
-  private val client          = AgentClient("u1", "mgd", "RN1", Some("Acme Casinos"), Some("ref"))
+  private val client          = AgentClient("mgd", "RN1", Some("Acme Casinos"), Some("ref"))
   private val ua: UserAnswers =
-    UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
+    UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "RN1")).get
 
   private class StubManageService extends ManageService(null, null) {
-    override def removeClient(uniqueId: String, ua: UserAnswers)(using HeaderCarrier): Future[Unit] = Future.unit
+    override def removeClient(regNumber: String, ua: UserAnswers)(using HeaderCarrier): Future[Unit] = Future.unit
   }
 
   private def controller = {
@@ -72,7 +72,7 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
 
   "onPageLoad" - {
     "renders the confirmation page for a known client" in {
-      val result = controller.onPageLoad("u1")(addCSRFToken(FakeRequest()))
+      val result = controller.onPageLoad("RN1")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
       contentAsString(result) must include("Acme Casinos")
     }
@@ -86,19 +86,19 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
   "onSubmit" - {
     "removes the client and redirects to client-removed when Yes" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "true")
-      val result  = controller.onSubmit("u1")(request)
+      val result  = controller.onSubmit("RN1")(request)
       redirectLocation(result).value mustBe routes.ClientRemovedController.onPageLoad().url
     }
 
     "redirects back to manage-client-details when No" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "false")
-      val result  = controller.onSubmit("u1")(request)
+      val result  = controller.onSubmit("RN1")(request)
       redirectLocation(result).value mustBe routes.ManageClientDetailsController.onPageLoad().url
     }
 
     "returns BadRequest when nothing is selected" in {
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody())
-      val result  = controller.onSubmit("u1")(request)
+      val result  = controller.onSubmit("RN1")(request)
       status(result) mustBe BAD_REQUEST
     }
   }

@@ -43,7 +43,7 @@ class AgentLandingControllerSpec extends SpecBase {
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
   private val view        = app.injector.instanceOf[views.html.agent.AgentLandingView]
 
-  private val client = AgentClient("u1", "mgd", "XMM00000000123", Some("Acme Casinos"), Some("ref"))
+  private val client = AgentClient("mgd", "XMM00000000123", Some("Acme Casinos"), Some("ref"))
 
   private def controller(ua: UserAnswers) = {
     val repo  = org.mockito.Mockito.mock(classOf[SessionRepository])
@@ -68,7 +68,7 @@ class AgentLandingControllerSpec extends SpecBase {
   "onPageLoad" - {
     "selects the client and renders the landing page" in {
       val ua     = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
-      val result = controller(ua).onPageLoad("u1")(FakeRequest())
+      val result = controller(ua).onPageLoad("XMM00000000123")(FakeRequest())
       status(result) mustBe OK
       contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123"))
     }

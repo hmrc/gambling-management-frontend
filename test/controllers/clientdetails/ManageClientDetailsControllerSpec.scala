@@ -40,7 +40,7 @@ class ManageClientDetailsControllerSpec extends SpecBase {
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
   private val view        = app.injector.instanceOf[views.html.clientdetails.ManageClientDetailsView]
 
-  private val client = AgentClient("u1", "mgd", "XMM00000000123", Some("Acme Casinos"), Some("myref"))
+  private val client = AgentClient("mgd", "XMM00000000123", Some("Acme Casinos"), Some("myref"))
 
   private def controller(ua: UserAnswers) = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
@@ -62,7 +62,10 @@ class ManageClientDetailsControllerSpec extends SpecBase {
   "onPageLoad" - {
     "renders the selected client's details" in {
       val ua     =
-        UserAnswers("internal-id").set(AgentClientsPage, List(client)).flatMap(_.set(SelectedClientPage, "u1")).get
+        UserAnswers("internal-id")
+          .set(AgentClientsPage, List(client))
+          .flatMap(_.set(SelectedClientPage, "XMM00000000123"))
+          .get
       val result = controller(ua).onPageLoad(FakeRequest())
       status(result) mustBe OK
       contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123") and include("myref"))

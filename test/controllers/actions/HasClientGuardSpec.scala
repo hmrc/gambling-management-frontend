@@ -43,7 +43,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
 
   private val userId  = "internal-id"
   private val client  =
-    AgentClient("u1", regime = "MGD", regNumber = "RN1", clientName = Some("Acme"), agentOwnRef = Some("ref"))
+    AgentClient(regime = "MGD", regNumber = "RN1", clientName = Some("Acme"), agentOwnRef = Some("ref"))
   private val request =
     AuthorisedRequest(FakeRequest(), AffinityGroup.Agent, mgdRegNum = "", userId = userId, isAgent = true)
 
@@ -52,7 +52,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
   private def userAnswersWithSelectedClient: UserAnswers =
     UserAnswers(userId)
       .set(AgentClientsPage, List(client))
-      .flatMap(_.set(SelectedClientPage, "u1"))
+      .flatMap(_.set(SelectedClientPage, "RN1"))
       .get
 
   private def newGuard(
@@ -101,7 +101,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       val (guard, _, service, _) = newGuard()
       val orgRequest             = models.requests.DataRequest(FakeRequest(), userId, UserAnswers(userId), isAgent = false)
 
-      guard.checkForInstanceId(orgRequest, "u1").futureValue mustBe None
+      guard.checkForInstanceId(orgRequest, "RN1").futureValue mustBe None
       verify(service, never).hasClient(anyString, anyString)(using any[HeaderCarrier])
     }
 
@@ -110,7 +110,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
       val request                = models.requests.DataRequest(FakeRequest(), userId, userAnswersWithSelectedClient, isAgent = true)
 
-      guard.checkForInstanceId(request, "u1").futureValue mustBe None
+      guard.checkForInstanceId(request, "RN1").futureValue mustBe None
     }
 
     "audits and redirects to system error when the agent no longer has the client" in {
@@ -120,7 +120,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       val request                    = models.requests.DataRequest(FakeRequest(), userId, userAnswersWithSelectedClient, isAgent = true)
 
       redirectLocation(
-        Future.successful(guard.checkForInstanceId(request, "u1").futureValue.value)
+        Future.successful(guard.checkForInstanceId(request, "RN1").futureValue.value)
       ).value mustBe systemErrorUrl
       verify(audit).sendEvent(any)(using any, any)
     }

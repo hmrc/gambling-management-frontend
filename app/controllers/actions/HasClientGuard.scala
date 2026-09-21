@@ -47,19 +47,19 @@ class HasClientGuard @Inject() (
       .get(request.userId)
       .flatMap {
         case None =>
-          logger.warn("[HasClientGuard] UserAnswers missing")
+          logger.warn("UserAnswers missing")
           Future.successful(Some(systemError))
 
         case Some(userAnswers) =>
           userAnswers.get(SelectedClientPage) match {
             case None =>
-              logger.warn("[HasClientGuard] selected client missing in UserAnswers")
+              logger.warn("selected client missing in UserAnswers")
               Future.successful(Some(systemError))
 
             case Some(instanceId) =>
               AgentClientsPage.findClient(userAnswers, instanceId) match {
                 case None =>
-                  logger.warn(s"[HasClientGuard] client not found for instanceId: $instanceId")
+                  logger.warn(s"client not found for instanceId: $instanceId")
                   Future.successful(Some(systemError))
 
                 case Some(client) =>
@@ -68,7 +68,7 @@ class HasClientGuard @Inject() (
           }
       }
       .recover { case NonFatal(ex) =>
-        logger.error("[HasClientGuard] hasClient check failed", ex)
+        logger.error("hasClient check failed", ex)
         Some(systemError)
       }
   }
@@ -102,7 +102,7 @@ class HasClientGuard @Inject() (
           checkClient(client.regime, client.regNumber, instanceId)
 
         case None =>
-          logger.warn(s"[HasClientGuard] client not found for instanceId: $instanceId")
+          logger.warn(s"client not found for instanceId: $instanceId")
           Future.successful(Some(systemError))
       }
     }
@@ -112,7 +112,7 @@ class HasClientGuard @Inject() (
       case Some(instanceId) =>
         checkForInstanceId(request, instanceId)
       case None             =>
-        logger.warn("[HasClientGuard] selected client missing in UserAnswers")
+        logger.warn("selected client missing in UserAnswers")
         Future.successful(Some(systemError))
     }
 
@@ -122,7 +122,7 @@ class HasClientGuard @Inject() (
     instanceId: String
   )(using HeaderCarrier, Request[?]): Future[Option[Result]] =
     if regime.isEmpty || regNumber.isEmpty then {
-      logger.warn(s"[HasClientGuard] regime/regNumber is empty for instanceId: $instanceId")
+      logger.warn(s"regime/regNumber is empty for instanceId: $instanceId")
       Future.successful(Some(systemError))
     } else
       gamblingService
@@ -132,17 +132,17 @@ class HasClientGuard @Inject() (
             Future.successful(None)
 
           case false =>
-            logger.warn(s"[HasClientGuard] Agent no longer authorised for instanceId: $instanceId")
+            logger.warn(s"Agent no longer authorised for instanceId: $instanceId")
             auditService
               .sendEvent(AuthFailureAuditEventModel())
               .map(_ => Some(systemError))
               .recover { case NonFatal(ex) =>
-                logger.error("[HasClientGuard] failed to send authoriseServiceGuardFailure audit", ex)
+                logger.error("failed to send authoriseServiceGuardFailure audit", ex)
                 Some(systemError)
               }
         }
         .recover { case NonFatal(ex) =>
-          logger.error(s"[HasClientGuard] hasClient check failed for instanceId: $instanceId", ex)
+          logger.error(s"hasClient check failed for instanceId: $instanceId", ex)
           Some(systemError)
         }
 }

@@ -37,7 +37,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
   private given HeaderCarrier = HeaderCarrier()
 
-  private val client = AgentClient("u1", "mgd", "RN1", Some("Acme"), Some("ref"))
+  private val client = AgentClient("mgd", "RN1", Some("Acme"), Some("ref"))
   private val userId = "internal-id"
 
   private def newService = {
@@ -73,7 +73,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
       val ua                      = UserAnswers(userId).set(AgentClientsPage, List(client)).get
       when(connector.updateClient(any[UpdateAgentClientRequest])(using any)).thenReturn(Future.unit)
 
-      service.updateClient("u1", ua, "newref").futureValue
+      service.updateClient("RN1", ua, "newref").futureValue
       verify(connector).updateClient(eqTo(UpdateAgentClientRequest("mgd", "RN1", "newref")))(using any)
     }
 
@@ -89,7 +89,7 @@ class ManageServiceSpec extends AnyWordSpec with Matchers with ScalaFutures with
       val ua                      = UserAnswers(userId).set(AgentClientsPage, List(client)).get
       when(connector.removeClient(any[RemoveAgentClientRequest])(using any)).thenReturn(Future.unit)
 
-      service.removeClient("u1", ua).futureValue
+      service.removeClient("RN1", ua).futureValue
       verify(connector).removeClient(eqTo(RemoveAgentClientRequest("mgd", "RN1")))(using any)
     }
   }

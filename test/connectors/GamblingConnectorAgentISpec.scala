@@ -62,7 +62,7 @@ class GamblingConnectorAgentISpec
   "startClientList" should {
     "parse the result field" in {
       wireMockServer.stubFor(
-        post(urlEqualTo("/gambling/agent/client-list/retrieval/start"))
+        post(urlEqualTo("/gambling/agent/client-list/mgd/retrieval/start"))
           .willReturn(okJson(Json.obj("result" -> "succeeded").toString()))
       )
       connector.startClientList.map(_.result mustBe ClientListStatus.Succeeded)
@@ -72,7 +72,7 @@ class GamblingConnectorAgentISpec
   "getClientListStatus" should {
     "parse the result field" in {
       wireMockServer.stubFor(
-        post(urlEqualTo("/gambling/agent/client-list/retrieval/status"))
+        post(urlEqualTo("/gambling/agent/client-list/mgd/retrieval/status"))
           .willReturn(okJson(Json.obj("result" -> "in-progress").toString()))
       )
       connector.getClientListStatus.map(_.result mustBe ClientListStatus.InProgress)
@@ -94,8 +94,6 @@ class GamblingConnectorAgentISpec
       val clientsJson = Json.obj(
         "clients" -> Json.arr(
           Json.obj(
-            "uniqueId"    -> "u1",
-            "regime"      -> "MGD",
             "regNumber"   -> "RN1",
             "clientName"  -> "Acme",
             "agentOwnRef" -> "ref"
@@ -103,17 +101,17 @@ class GamblingConnectorAgentISpec
         )
       )
       wireMockServer.stubFor(
-        get(urlEqualTo("/gambling/agent/client-list"))
+        get(urlEqualTo("/gambling/agent/client-list/mgd"))
           .willReturn(okJson(clientsJson.toString()))
       )
       connector.getAllClients.map { clients =>
-        clients mustBe List(AgentClient("u1", "MGD", "RN1", Some("Acme"), Some("ref")))
+        clients mustBe List(AgentClient("mgd", "RN1", Some("Acme"), Some("ref")))
       }
     }
 
     "fail on a non-200 response" in {
       wireMockServer.stubFor(
-        get(urlEqualTo("/gambling/agent/client-list"))
+        get(urlEqualTo("/gambling/agent/client-list/mgd"))
           .willReturn(serverError())
       )
       recoverToSucceededIf[UpstreamErrorResponse](connector.getAllClients)

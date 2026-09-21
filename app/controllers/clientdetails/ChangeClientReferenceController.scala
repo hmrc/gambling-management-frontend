@@ -53,36 +53,36 @@ class ChangeClientReferenceController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(uniqueId: String): Action[AnyContent] =
+  def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(uniqueId))
+      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(regNumber))
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(uniqueId)).async { implicit request =>
+      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
       val preparedForm = request.userAnswers.get(ChangeClientReferencePage).fold(form)(form.fill)
-      Future.successful(Ok(view(preparedForm, uniqueId)))
+      Future.successful(Ok(view(preparedForm, regNumber)))
     }
 
-  def onSubmit(uniqueId: String): Action[AnyContent] =
+  def onSubmit(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(uniqueId))
+      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(regNumber))
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(uniqueId)).async { implicit request =>
+      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, uniqueId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, regNumber))),
           value =>
             (for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeClientReferencePage, value.trim))
-              _              <- manageService.updateClient(uniqueId, updatedAnswers, value.trim)
+              _              <- manageService.updateClient(regNumber, updatedAnswers, value.trim)
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(routes.ClientRefUpdateConfirmationController.onPageLoad()))
               .recover { case ex =>
-                logger.error(s"Failed to update client reference for uniqueId $uniqueId", ex)
+                logger.error(s"Failed to update client reference for regNumber $regNumber", ex)
                 Redirect(controllers.routes.SystemErrorController.onPageLoad())
               }
         )

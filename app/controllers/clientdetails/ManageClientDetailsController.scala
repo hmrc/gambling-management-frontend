@@ -62,7 +62,6 @@ class ManageClientDetailsController @Inject() (
             _              <- sessionRepository.set(updatedAnswers)
           } yield Ok(
             view(
-              uniqueId = client.uniqueId,
               clientName = client.clientName.getOrElse(""),
               regNumber = client.regNumber,
               clientReference = clientReference
@@ -70,7 +69,7 @@ class ManageClientDetailsController @Inject() (
           )
 
         case None =>
-          logger.warn("[ManageClientDetailsController][onPageLoad] no selected client in userAnswers")
+          logger.warn("no selected client in userAnswers")
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }

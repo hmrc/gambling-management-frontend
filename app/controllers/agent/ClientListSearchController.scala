@@ -67,7 +67,7 @@ class ClientListSearchController @Inject() (
             Ok(view(filteredClients, searchQuery))
         }
         .recover { case e =>
-          logger.error(s"[ClientListSearchController][onPageLoad] failed: ${e.getMessage}", e)
+          logger.error(s"failed: ${e.getMessage}", e)
           Redirect(controllers.routes.SystemErrorController.onPageLoad())
         }
     }
