@@ -14,3 +14,13 @@ index.link.viewFiledReturns=TBC
 index.link.viewRegistrationCertificate=TBC
 index.link.changeRegistrationDetails=TBC
 index.link.cancelRegistration=TBC
+
+checkBusinessDetails.title = Check your business details
+checkBusinessDetails.heading = Check your business details
+checkBusinessDetails.businessName = Business name
+checkBusinessDetails.businessAddress = Business address
+checkBusinessDetails.contactDetails.heading = Contact details
+checkBusinessDetails.phoneNumber = Phone number
+checkBusinessDetails.mobileNumber = Mobile number
+checkBusinessDetails.faxNumber = Fax number
+checkBusinessDetails.emailAddress = Email address

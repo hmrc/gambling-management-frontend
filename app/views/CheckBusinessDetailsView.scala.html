@@ -1,0 +1,65 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.BusinessDetails
+@import views.html.components._
+
+@this(
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        h1: H1,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF
+)
+
+@(
+        details: BusinessDetails
+)(implicit request: Request[_], messages: Messages)
+
+@row(keyMsg: String, value: Content) = @{
+    SummaryListRow(
+        key     = Key(Text(messages(keyMsg)), classes = "govuk-!-width-one-third"),
+        value   = Value(value, classes = "govuk-!-width-one-third govuk-!-text-align-left"),
+        actions = Some(Actions(
+            classes = "govuk-!-width-one-third",
+            items   = Seq(ActionItem(href = "#", content = Text(messages("site.change")), visuallyHiddenText = Some(messages(keyMsg))))
+        ))
+    )
+}
+
+@contactDetails = {
+    <p class="govuk-body">@messages("checkBusinessDetails.phoneNumber"):<br>@details.phoneNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.mobileNumber"):<br>@details.mobileNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.faxNumber"):<br>@details.faxNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.emailAddress"):<br>@details.emailAddress.getOrElse("")</p>
+}
+
+@layout(pageTitle = titleNoForm(messages("checkBusinessDetails.title"))) {
+
+    @h1("checkBusinessDetails.heading")
+
+    @govukSummaryList(SummaryList(rows = Seq(
+        row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse(""))),
+        row("checkBusinessDetails.businessAddress", Text(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.mkString(", "))),
+        row("checkBusinessDetails.contactDetails.heading", HtmlContent(contactDetails))
+    ), classes = "govuk-!-margin-bottom-9"))
+
+    @formHelper(action = routes.CheckBusinessDetailsController.onSubmit()) {
+        <div class="govuk-clearfix">
+            @govukButton(ButtonViewModel(messages("site.continue")))
+        </div>
+    }
+}

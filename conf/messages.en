@@ -186,3 +186,13 @@ agentLanding.link.manageClientDetails = Manage client details
 securityCheck.title = Checking your authorisation
 securityCheck.heading = Checking your authorisation
 securityCheck.p1 = We are checking your authorisation for this client. This may take a few moments.
+
+checkBusinessDetails.title = Check your business details
+checkBusinessDetails.heading = Check your business details
+checkBusinessDetails.businessName = Business name
+checkBusinessDetails.businessAddress = Business address
+checkBusinessDetails.contactDetails.heading = Contact details
+checkBusinessDetails.phoneNumber = Phone number
+checkBusinessDetails.mobileNumber = Mobile number
+checkBusinessDetails.faxNumber = Fax number
+checkBusinessDetails.emailAddress = Email address
