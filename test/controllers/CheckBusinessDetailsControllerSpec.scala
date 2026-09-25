@@ -19,15 +19,9 @@ package controllers
 import base.SpecBase
 import models.BusinessDetails
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import pages.BusinessDetailsPage
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
-
-import scala.concurrent.Future
 
 class CheckBusinessDetailsControllerSpec extends SpecBase {
 
@@ -91,26 +85,6 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must save the current business details to the session and redirect for a POST" in {
-      val userAnswers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
-
-      val mockSessionRepository = org.mockito.Mockito.mock(classOf[SessionRepository])
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, routes.CheckBusinessDetailsController.onSubmit().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.CheckBusinessDetailsController.onPageLoad().url
       }
     }
   }

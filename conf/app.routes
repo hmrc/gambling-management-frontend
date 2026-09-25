@@ -44,4 +44,3 @@ GET         /agent/authorisation-check/poll                 controllers.Security
 GET         /agent/authorisation-check/in-progress          controllers.SecurityCheckController.onPageLoad()
 
 GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
-POST        /change-business-details                        controllers.CheckBusinessDetailsController.onSubmit()

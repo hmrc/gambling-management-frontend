@@ -17,21 +17,18 @@
 package controllers
 
 import controllers.actions.*
-import models.{BusinessDetails, UserAnswers}
-import models.requests.OptionalDataRequest
+import models.BusinessDetails
 import pages.BusinessDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CheckBusinessDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckBusinessDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -43,15 +40,6 @@ class CheckBusinessDetailsController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
     Ok(view(businessDetails(request.userAnswers)))
-  }
-
-  def onSubmit(): Action[AnyContent] = (authorise andThen getData andThen requireData).async { implicit request =>
-    val details = businessDetails(request.userAnswers)
-
-    for {
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))
-      _              <- sessionRepository.set(updatedAnswers)
-    } yield Redirect(routes.CheckBusinessDetailsController.onPageLoad())
   }
 
   private def businessDetails(userAnswers: models.UserAnswers): BusinessDetails =

@@ -23,8 +23,7 @@
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         h1: H1,
-        govukButton: GovukButton,
-        formHelper: FormWithCSRF
+        link: Link
 )
 
 @(
@@ -65,9 +64,5 @@
         row("checkBusinessDetails.contactDetails.heading", HtmlContent(contactDetails))
     ), classes = "govuk-!-margin-bottom-9"))
 
-    @formHelper(action = routes.CheckBusinessDetailsController.onSubmit()) {
-        <div class="govuk-clearfix">
-        @govukButton(ButtonViewModel(messages("site.continue")))
-        </div>
-    }
+    @link("checkBusinessDetails.returnToAtAGlance", routes.IndexController.onPageLoad().url)
 }

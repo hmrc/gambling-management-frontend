@@ -18,6 +18,7 @@ index.link.cancelRegistration=TBC
 checkBusinessDetails.title = Change business details
 checkBusinessDetails.heading = Change business details
 checkBusinessDetails.notProvided = Not provided
+checkBusinessDetails.returnToAtAGlance = Return to at a glance
 checkBusinessDetails.businessName = Business name
 checkBusinessDetails.businessAddress = Business address
 checkBusinessDetails.contactDetails.heading = Contact details

@@ -190,6 +190,7 @@ securityCheck.p1 = We are checking your authorisation for this client. This may 
 checkBusinessDetails.title = Change business details
 checkBusinessDetails.heading = Change business details
 checkBusinessDetails.notProvided = Not provided
+checkBusinessDetails.returnToAtAGlance = Return to at a glance
 checkBusinessDetails.businessName = Business name
 checkBusinessDetails.businessAddress = Business address
 checkBusinessDetails.contactDetails.heading = Contact details

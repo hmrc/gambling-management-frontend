@@ -101,7 +101,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       )
     }
 
-    "must render the Continue button as a submit for the onSubmit route" in {
+    "must render a Return to at a glance link to the index page instead of a form" in {
       val app           = applicationBuilder().build()
       val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
       val request       = FakeRequest()
@@ -109,11 +109,11 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
 
       val doc = Jsoup.parse(view(details)(request, msgs).body)
 
-      val form = doc.select("form")
-      form.attr("action") mustEqual controllers.routes.CheckBusinessDetailsController.onSubmit().url
+      val link =
+        doc.select("a.govuk-link").asScala.find(_.text() == msgs("checkBusinessDetails.returnToAtAGlance")).value
+      link.attr("href") mustEqual controllers.routes.IndexController.onPageLoad().url
 
-      val button = form.select("button.govuk-button")
-      button.text() mustEqual msgs("site.continue")
+      doc.select("form").size() mustEqual 0
     }
   }
 }
