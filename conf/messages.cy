@@ -15,8 +15,9 @@ index.link.viewRegistrationCertificate=TBC
 index.link.changeRegistrationDetails=TBC
 index.link.cancelRegistration=TBC
 
-checkBusinessDetails.title = Check your business details
-checkBusinessDetails.heading = Check your business details
+checkBusinessDetails.title = Change business details
+checkBusinessDetails.heading = Change business details
+checkBusinessDetails.notProvided = Not provided
 checkBusinessDetails.businessName = Business name
 checkBusinessDetails.businessAddress = Business address
 checkBusinessDetails.contactDetails.heading = Contact details

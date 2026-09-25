@@ -43,13 +43,13 @@
 
 @contactDetails = {
     <p class="govuk-body">@messages("checkBusinessDetails.phoneNumber"):<br>
-        @details.phoneNumber.getOrElse("")</p>
+        @details.phoneNumber.getOrElse(messages("checkBusinessDetails.notProvided"))</p>
     <p class="govuk-body">@messages("checkBusinessDetails.mobileNumber"):<br>
-        @details.mobileNumber.getOrElse("")</p>
+        @details.mobileNumber.getOrElse(messages("checkBusinessDetails.notProvided"))</p>
     <p class="govuk-body">@messages("checkBusinessDetails.faxNumber"):<br>
-        @details.faxNumber.getOrElse("")</p>
+        @details.faxNumber.getOrElse(messages("checkBusinessDetails.notProvided"))</p>
     <p class="govuk-body">@messages("checkBusinessDetails.emailAddress"):<br>
-        @details.emailAddress.getOrElse("")</p>
+        @details.emailAddress.getOrElse(messages("checkBusinessDetails.notProvided"))</p>
 }
 
 @layout(pageTitle = titleNoForm(messages("checkBusinessDetails.title"))) {

@@ -82,18 +82,22 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
         .text() mustEqual s"""${msgs("site.change")} ${msgs("checkBusinessDetails.contactDetails.heading")}"""
     }
 
-    "must render missing optional fields as empty" in {
+    "must render missing optional contact fields as 'Not Provided'" in {
       val app           = applicationBuilder().build()
       val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
       implicit val msgs = messages(app)
 
-      val doc = Jsoup.parse(view(details.copy(businessName = None, faxNumber = None))(FakeRequest(), msgs).body)
+      val doc = Jsoup.parse(
+        view(details.copy(phoneNumber = None, mobileNumber = None, faxNumber = None, emailAddress = None))(
+          FakeRequest(),
+          msgs
+        ).body
+      )
 
-      rowFor(doc, msgs("checkBusinessDetails.businessName")).select(".govuk-summary-list__value").text() mustEqual ""
       rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading"))
         .select(".govuk-summary-list__value")
         .text() must include(
-        "Fax number: Email address:"
+        "Phone number: Not provided Mobile number: Not provided Fax number: Not provided Email address: Not provided"
       )
     }
 
