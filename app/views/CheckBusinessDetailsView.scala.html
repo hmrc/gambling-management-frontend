@@ -16,6 +16,8 @@
 
 @import models.BusinessDetails
 @import views.html.components._
+@import play.twirl.api
+@import play.twirl.api
 
 @this(
         layout: templates.Layout,
@@ -31,20 +33,23 @@
 
 @row(keyMsg: String, value: Content) = @{
     SummaryListRow(
-        key     = Key(Text(messages(keyMsg)), classes = "govuk-!-width-one-third"),
-        value   = Value(value, classes = "govuk-!-width-one-third govuk-!-text-align-left"),
+        key = Key(Text(messages(keyMsg))),
+        value = Value(value, classes = "govuk-!-text-align-left"),
         actions = Some(Actions(
-            classes = "govuk-!-width-one-third",
-            items   = Seq(ActionItem(href = "#", content = Text(messages("site.change")), visuallyHiddenText = Some(messages(keyMsg))))
+            items = Seq(ActionItem(href = "#", content = Text(messages("site.change")), visuallyHiddenText = Some(messages(keyMsg))))
         ))
     )
 }
 
 @contactDetails = {
-    <p class="govuk-body">@messages("checkBusinessDetails.phoneNumber"):<br>@details.phoneNumber.getOrElse("")</p>
-    <p class="govuk-body">@messages("checkBusinessDetails.mobileNumber"):<br>@details.mobileNumber.getOrElse("")</p>
-    <p class="govuk-body">@messages("checkBusinessDetails.faxNumber"):<br>@details.faxNumber.getOrElse("")</p>
-    <p class="govuk-body">@messages("checkBusinessDetails.emailAddress"):<br>@details.emailAddress.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.phoneNumber"):<br>
+        @details.phoneNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.mobileNumber"):<br>
+        @details.mobileNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.faxNumber"):<br>
+        @details.faxNumber.getOrElse("")</p>
+    <p class="govuk-body">@messages("checkBusinessDetails.emailAddress"):<br>
+        @details.emailAddress.getOrElse("")</p>
 }
 
 @layout(pageTitle = titleNoForm(messages("checkBusinessDetails.title"))) {
@@ -53,13 +58,16 @@
 
     @govukSummaryList(SummaryList(rows = Seq(
         row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse(""))),
-        row("checkBusinessDetails.businessAddress", Text(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.mkString(", "))),
+        row(
+            "checkBusinessDetails.businessAddress",
+            HtmlContent(api.Html(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.map(HtmlFormat.escape(_).body).mkString("<br>")))
+        ),
         row("checkBusinessDetails.contactDetails.heading", HtmlContent(contactDetails))
     ), classes = "govuk-!-margin-bottom-9"))
 
     @formHelper(action = routes.CheckBusinessDetailsController.onSubmit()) {
         <div class="govuk-clearfix">
-            @govukButton(ButtonViewModel(messages("site.continue")))
+        @govukButton(ButtonViewModel(messages("site.continue")))
         </div>
     }
 }

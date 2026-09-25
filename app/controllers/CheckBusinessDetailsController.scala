@@ -17,7 +17,8 @@
 package controllers
 
 import controllers.actions.*
-import models.BusinessDetails
+import models.{BusinessDetails, UserAnswers}
+import models.requests.OptionalDataRequest
 import pages.BusinessDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -62,9 +63,9 @@ class CheckBusinessDetailsController @Inject() (
           addressLine1 = Some("123 Business road"),
           addressLine2 = Some("Business"),
           addressLine3 = Some("London"),
-          phoneNumber  = Some("0191 202 2500"),
+          phoneNumber = Some("0191 202 2500"),
           mobileNumber = Some("07890 123 456"),
-          faxNumber    = Some("0800 202 2500"),
+          faxNumber = Some("0800 202 2500"),
           emailAddress = Some("sarah.phillips@example.com")
         )
       )

@@ -31,9 +31,9 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
     addressLine1 = Some("123 Business road"),
     addressLine2 = Some("Business"),
     addressLine3 = Some("London"),
-    phoneNumber  = Some("0191 202 2500"),
+    phoneNumber = Some("0191 202 2500"),
     mobileNumber = Some("07890 123 456"),
-    faxNumber    = Some("0800 202 2500"),
+    faxNumber = Some("0800 202 2500"),
     emailAddress = Some("sarah.phillips@example.com")
   )
 
@@ -47,9 +47,9 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
   "CheckBusinessDetailsView" - {
 
     "must render the page title and heading" in {
-      val app = applicationBuilder().build()
-      val view = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
-      val request = FakeRequest()
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(view(details)(request, msgs).body)
@@ -59,9 +59,9 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
     }
 
     "must render each row with its value and a Change link" in {
-      val app = applicationBuilder().build()
-      val view = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
-      val request = FakeRequest()
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(view(details)(request, msgs).body)
@@ -70,7 +70,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
         rowFor(doc, keyText).select(".govuk-summary-list__value").text()
 
       valueFor(msgs("checkBusinessDetails.businessName")) mustEqual "Agent 1"
-      valueFor(msgs("checkBusinessDetails.businessAddress")) mustEqual "123 Business road, Business, London"
+      valueFor(msgs("checkBusinessDetails.businessAddress")) mustEqual "123 Business road Business London"
       valueFor(msgs("checkBusinessDetails.contactDetails.heading")) mustEqual
         "Phone number: 0191 202 2500 Mobile number: 07890 123 456 Fax number: 0800 202 2500 Email address: sarah.phillips@example.com"
 
@@ -83,22 +83,24 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
     }
 
     "must render missing optional fields as empty" in {
-      val app = applicationBuilder().build()
-      val view = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(view(details.copy(businessName = None, faxNumber = None))(FakeRequest(), msgs).body)
 
       rowFor(doc, msgs("checkBusinessDetails.businessName")).select(".govuk-summary-list__value").text() mustEqual ""
-      rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading")).select(".govuk-summary-list__value").text() must include(
+      rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading"))
+        .select(".govuk-summary-list__value")
+        .text() must include(
         "Fax number: Email address:"
       )
     }
 
     "must render the Continue button as a submit for the onSubmit route" in {
-      val app = applicationBuilder().build()
-      val view = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
-      val request = FakeRequest()
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(view(details)(request, msgs).body)

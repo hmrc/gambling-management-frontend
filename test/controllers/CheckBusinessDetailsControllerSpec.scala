@@ -36,9 +36,9 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
     addressLine1 = Some("123 Business road"),
     addressLine2 = Some("Business"),
     addressLine3 = Some("London"),
-    phoneNumber  = Some("0191 202 2500"),
+    phoneNumber = Some("0191 202 2500"),
     mobileNumber = Some("07890 123 456"),
-    faxNumber    = Some("0800 202 2500"),
+    faxNumber = Some("0800 202 2500"),
     emailAddress = Some("sarah.phillips@example.com")
   )
 
@@ -62,9 +62,9 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         doc.text() must include("sarah.phillips@example.com")
         doc.select(".govuk-summary-list").size() mustEqual 1
         doc.select(".govuk-summary-list__row").size() mustEqual 3
-        doc.select(".govuk-summary-list__key.govuk-\\!-width-one-third").size() mustEqual 3
-        doc.select(".govuk-summary-list__value.govuk-\\!-width-one-third.govuk-\\!-text-align-left").size() mustEqual 3
-        doc.select(".govuk-summary-list__actions.govuk-\\!-width-one-third").size() mustEqual 3
+        doc.select(".govuk-summary-list__key").size() mustEqual 3
+        doc.select(".govuk-summary-list__value.govuk-\\!-text-align-left").size() mustEqual 3
+        doc.select(".govuk-summary-list__actions").size() mustEqual 3
       }
     }
 
