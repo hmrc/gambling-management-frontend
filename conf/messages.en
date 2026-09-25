@@ -193,3 +193,15 @@ changeEmailAddress.caption = Check business details
 changeEmailAddress.error.required = Enter an email address for this business
 changeEmailAddress.error.invalid = The email address must only include letters a to z, numbers 0 to 9, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
 changeEmailAddress.error.length = The email address must be 70 characters or less
+
+checkBusinessDetails.title = Change business details
+checkBusinessDetails.heading = Change business details
+checkBusinessDetails.notProvided = Not provided
+checkBusinessDetails.returnToAtAGlance = Return to at a glance
+checkBusinessDetails.businessName = Business name
+checkBusinessDetails.businessAddress = Business address
+checkBusinessDetails.contactDetails.heading = Contact details
+checkBusinessDetails.phoneNumber = Phone number
+checkBusinessDetails.mobileNumber = Mobile number
+checkBusinessDetails.faxNumber = Fax number
+checkBusinessDetails.emailAddress = Email address

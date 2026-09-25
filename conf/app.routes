@@ -47,3 +47,5 @@ GET         /agent/authorisation-check/in-progress          controllers.Security
 
 GET         /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
+
+GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()

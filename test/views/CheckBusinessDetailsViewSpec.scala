@@ -1,0 +1,119 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package views
+
+import base.SpecBase
+import models.BusinessDetails
+import org.jsoup.Jsoup
+import org.jsoup.nodes.{Document, Element}
+import play.api.test.FakeRequest
+
+import scala.jdk.CollectionConverters.*
+
+class CheckBusinessDetailsViewSpec extends SpecBase {
+
+  private val details = BusinessDetails(
+    businessName = Some("Agent 1"),
+    addressLine1 = Some("123 Business road"),
+    addressLine2 = Some("Business"),
+    addressLine3 = Some("London"),
+    phoneNumber = Some("0191 202 2500"),
+    mobileNumber = Some("07890 123 456"),
+    faxNumber = Some("0800 202 2500"),
+    emailAddress = Some("sarah.phillips@example.com")
+  )
+
+  private def rowFor(doc: Document, keyText: String): Element =
+    doc
+      .select(".govuk-summary-list__row")
+      .asScala
+      .find(_.select(".govuk-summary-list__key").text() == keyText)
+      .getOrElse(fail(s"could not find a row with key '$keyText'"))
+
+  "CheckBusinessDetailsView" - {
+
+    "must render the page title and heading" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
+      implicit val msgs = messages(app)
+
+      val doc = Jsoup.parse(view(details)(request, msgs).body)
+
+      doc.title() must include(msgs("checkBusinessDetails.title"))
+      doc.select("h1").text() mustEqual msgs("checkBusinessDetails.heading")
+    }
+
+    "must render each row with its value and a Change link" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
+      implicit val msgs = messages(app)
+
+      val doc = Jsoup.parse(view(details)(request, msgs).body)
+
+      def valueFor(keyText: String): String =
+        rowFor(doc, keyText).select(".govuk-summary-list__value").text()
+
+      valueFor(msgs("checkBusinessDetails.businessName")) mustEqual "Agent 1"
+      valueFor(msgs("checkBusinessDetails.businessAddress")) mustEqual "123 Business road Business London"
+      valueFor(msgs("checkBusinessDetails.contactDetails.heading")) mustEqual
+        "Phone number: 0191 202 2500 Mobile number: 07890 123 456 Fax number: 0800 202 2500 Email address: sarah.phillips@example.com"
+
+      rowFor(doc, msgs("checkBusinessDetails.businessName"))
+        .select(".govuk-summary-list__actions a")
+        .text() mustEqual s"""${msgs("site.change")} ${msgs("checkBusinessDetails.businessName")}"""
+      rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading"))
+        .select(".govuk-summary-list__actions a")
+        .text() mustEqual s"""${msgs("site.change")} ${msgs("checkBusinessDetails.contactDetails.heading")}"""
+    }
+
+    "must render missing optional contact fields as 'Not Provided'" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      implicit val msgs = messages(app)
+
+      val doc = Jsoup.parse(
+        view(details.copy(phoneNumber = None, mobileNumber = None, faxNumber = None, emailAddress = None))(
+          FakeRequest(),
+          msgs
+        ).body
+      )
+
+      rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading"))
+        .select(".govuk-summary-list__value")
+        .text() must include(
+        "Phone number: Not provided Mobile number: Not provided Fax number: Not provided Email address: Not provided"
+      )
+    }
+
+    "must render a Return to at a glance link to the index page instead of a form" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val request       = FakeRequest()
+      implicit val msgs = messages(app)
+
+      val doc = Jsoup.parse(view(details)(request, msgs).body)
+
+      val link =
+        doc.select("a.govuk-link").asScala.find(_.text() == msgs("checkBusinessDetails.returnToAtAGlance")).value
+      link.attr("href") mustEqual controllers.routes.IndexController.onPageLoad().url
+
+      doc.select("form").size() mustEqual 0
+    }
+  }
+}
