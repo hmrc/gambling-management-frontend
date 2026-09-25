@@ -187,6 +187,13 @@ securityCheck.title = Checking your authorisation
 securityCheck.heading = Checking your authorisation
 securityCheck.p1 = We are checking your authorisation for this client. This may take a few moments.
 
+changeEmailAddress.title = What is the email address for this business?
+changeEmailAddress.heading = What is the email address for this business?
+changeEmailAddress.caption = Check business details
+changeEmailAddress.error.required = Enter an email address for this business
+changeEmailAddress.error.invalid = The email address must only include letters a to z, numbers 0 to 9, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
+changeEmailAddress.error.length = The email address must be 70 characters or less
+
 checkBusinessDetails.title = Change business details
 checkBusinessDetails.heading = Change business details
 checkBusinessDetails.notProvided = Not provided
