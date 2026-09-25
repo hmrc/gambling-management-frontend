@@ -41,6 +41,7 @@ ThisBuild / coverageHighlighting := true
 lazy val root = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
+  .settings(testSettings)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions += "-Wconf:src=routes/.*:s",
@@ -87,6 +88,6 @@ lazy val it = project
   .settings(coverageEnabled := false)
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
-  fork := true,
-  unmanagedSourceDirectories += baseDirectory.value / "test-utils"
+  Test / fork := true,
+  Test / unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )

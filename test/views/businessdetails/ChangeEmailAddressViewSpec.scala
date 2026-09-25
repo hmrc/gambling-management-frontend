@@ -77,14 +77,14 @@ class ChangeEmailAddressViewSpec extends SpecBase {
 
   trait Setup {
 
-    val app = applicationBuilder().build()
+    val app  = applicationBuilder().build()
     val view = app.injector.instanceOf[ChangeEmailAddressView]
 
     val form = new ChangeEmailAddressFormProvider()()
 
     implicit val request: Request[?] =
       FakeRequest()
-    implicit val messages: Messages =
+    implicit val messages: Messages  =
       app.injector
         .instanceOf[MessagesApi]
         .preferred(request)
