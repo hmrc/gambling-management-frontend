@@ -48,13 +48,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new MissingBearerToken),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -74,13 +72,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new BearerTokenExpired),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -100,13 +96,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new InsufficientEnrolments),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -126,13 +120,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -152,13 +144,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new UnsupportedAuthProvider),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -178,13 +168,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new UnsupportedAffinityGroup),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
@@ -204,13 +192,11 @@ class AuthActionSpec extends SpecBase {
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[AppConfig]
-          val enforcer    = application.injector.instanceOf[ClientListCheckEnforcer]
 
           val authAction = new DefaultAuthorisedAction(
             new FakeFailingAuthConnector(new UnsupportedCredentialRole),
             appConfig,
-            bodyParsers,
-            enforcer
+            bodyParsers
           )
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())

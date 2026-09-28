@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.*
 import models.UserAnswers
 import models.agent.AgentClient
-import navigation.ClientListCheckNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.AgentClientsPage
@@ -53,8 +52,6 @@ class AgentLandingControllerSpec extends SpecBase {
     new AgentLandingController(
       mcc.messagesApi,
       new FakeAgentIdentifierAction(bodyParsers),
-      new PassThroughStatusGuard(new GamblingService(null)),
-      new ClientListCheckNavigator(),
       new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),

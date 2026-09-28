@@ -40,8 +40,7 @@ trait AuthorisedAction
 class DefaultAuthorisedAction @Inject() (
   override val authConnector: AuthConnector,
   config: AppConfig,
-  val parser: BodyParsers.Default,
-  clientListCheckEnforcer: ClientListCheckEnforcer
+  val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends AuthorisedAction
     with AuthorisedFunctions
@@ -56,17 +55,16 @@ class DefaultAuthorisedAction @Inject() (
         case internalIdOpt ~ Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
               agentReference
             ) =>
-          // Agents no longer resolve a client reg number from their own enrolment. They select a
-          // client (client list retrieval + selection); the ClientListCheckEnforcer gates access.
-          val authorisedRequest = AuthorisedRequest(
-            request,
-            affinityGroup,
-            mgdRegNum = "",
-            userId = internalIdOpt.getOrElse(""),
-            isAgent = true,
-            agentReference = Some(agentReference)
+          block(
+            AuthorisedRequest(
+              request,
+              affinityGroup,
+              mgdRegNum = "",
+              userId = internalIdOpt.getOrElse(""),
+              isAgent = true,
+              agentReference = Some(agentReference)
+            )
           )
-          clientListCheckEnforcer(authorisedRequest)(block)
         case _ ~ Some(AffinityGroup.Agent) ~ _ =>
           logger.warn(s"Agent auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Agent enrolment missing or not activated"))

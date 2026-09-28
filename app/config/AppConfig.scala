@@ -38,6 +38,9 @@ class AppConfig @Inject() (config: Configuration):
   val timeout: Int                       = config.get[Int]("timeout-dialog.timeout")
   val countdown: Int                     = config.get[Int]("timeout-dialog.countdown")
 
+  val clientListPollIntervalSeconds: Int = config.get[Int]("client-list-check.poll.interval-seconds")
+  val clientListPollMaxWaitSeconds: Int  = config.get[Int]("client-list-check.poll.max-wait-seconds")
+
   val host: String                                         = config.get[String]("host")
   private val contactHost                                  = config.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier                 = "gambling-management-frontend"

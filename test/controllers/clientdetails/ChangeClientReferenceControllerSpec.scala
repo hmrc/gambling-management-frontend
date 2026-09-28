@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.*
 import forms.clientdetails.ChangeClientReferenceFormProvider
 import models.UserAnswers
-import navigation.ClientListCheckNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.PlayBodyParsers
@@ -56,8 +55,7 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
-      new PassThroughStatusGuard(new GamblingService(null)),
-      new ClientListCheckNavigator(),
+      new PassThroughClientListCheckAction(),
       new FakeDataRetrievalAction(Some(emptyUserAnswers)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
