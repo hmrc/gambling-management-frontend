@@ -1,28 +1,195 @@
-service.name = Machine Games Duty Welsh
+service.name = Manage your gambling tax
 service.text = Dyma'ch gwasanaeth newydd
 
-mgd.registration.number = TBC
+site.back = Back
+site.remove = Remove
+site.change = Change
+site.no = No
+site.yes = Yes
+site.continue = Continue
+site.start = Start now
+site.startAgain = Start again
+site.signIn = Sign in
+site.govuk = GOV.UK
+
+date.day = Day
+date.month = Month
+date.year = Year
+date.error.day = day
+date.error.month = month
+date.error.year = year
+
+timeout.title = You’re about to be signed out
+timeout.message = For security reasons, you will be signed out of this service in
+timeout.keepAlive = Stay signed in
+timeout.signOut = Sign out
+
+error.title.prefix = Error:
+error.prefix = Error
+error.returnSummary.title = There is a problem
+
+mgd.registration.number = MGD registration number
 
 # Index page links
-index.title = TBC
-index.heading = TBC
+index.title = Manage your Machine Games Duty
+index.heading = Manage your Machine Games Duty
 
-index.link.viewAccountStatement=TBC
-index.link.makePayment=TBC
-index.link.fileReturn=TBC
-index.link.viewFiledReturns=TBC
-index.link.viewRegistrationCertificate=TBC
-index.link.changeRegistrationDetails=TBC
-index.link.cancelRegistration=TBC
+index.statement=Statement
+index.returns=Returns
+index.registration=Registration
 
-checkBusinessDetails.title = Change business details
-checkBusinessDetails.heading = Change business details
-checkBusinessDetails.notProvided = Not provided
-checkBusinessDetails.returnToAtAGlance = Return to at a glance
-checkBusinessDetails.businessName = Business name
-checkBusinessDetails.businessAddress = Business address
-checkBusinessDetails.contactDetails.heading = Contact details
-checkBusinessDetails.phoneNumber = Phone number
-checkBusinessDetails.mobileNumber = Mobile number
-checkBusinessDetails.faxNumber = Fax number
-checkBusinessDetails.emailAddress = Email address
+index.link.viewAccountStatement = View account statement
+index.link.makePayment = Make a payment (opens in new tab)
+index.link.fileReturn = File a return
+index.link.viewFiledReturns = View filed returns
+index.link.viewRegistrationCertificate = View registration certificate
+index.link.changeRegistrationDetails = Change registration details
+index.link.cancelRegistration = Cancel registration
+
+systemError.title = Sorry, there is a problem with the service
+systemError.heading = Sorry, there is a problem with the service
+systemError.p1 = Try again later or contact the
+systemError.p1.link = HMRC Online Services Helpdesk (opens in new tab)
+
+pageNotFound.title = Page not found
+pageNotFound.heading = Page not found
+pageNotFound.p1 = If you typed the web address, check it is correct.
+pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
+pageNotFound.p3 = If the web address is correct or you selected a link or button, contact the
+pageNotFound.p3.link = HMRC Online Services Helpdesk (opens in new tab)
+pageNotFound.home.link = Continue to your account
+pageNotFound.p3.after = if you need to speak to someone.
+
+journeyRecovery.continue.title = Sorry, there is a problem with the service
+journeyRecovery.continue.heading = Sorry, there is a problem with the service
+journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
+journeyRecovery.startAgain.title = Sorry, there is a problem with the service
+journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
+journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
+
+signedOut.title = For your security, we signed you out
+signedOut.heading = For your security, we signed you out
+signedOut.guidance = We did not save your answers.
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account
+
+accessDenied.title = Sorry, there is a problem with the service
+accessDenied.heading = Sorry, there is a problem with the service
+accessDenied.p1 = You do not have access to this service.
+accessDenied.p1.link = Continue to your account
+
+viewRegistrationCertificate.title = Registration certificate
+viewRegistrationCertificate.panel.title = Registration certificate
+viewRegistrationCertificate.panel.body = Your MGD registration number is {0}
+viewRegistrationCertificate.h2 = Registration details
+viewRegistrationCertificate.p1 = It may take up to 48 hours for any changes to the registration details to be shown on this certificate.
+
+viewRegistrationCertificate.registrationDate = Registration date
+viewRegistrationCertificate.certificateIssued = Certificate issued
+viewRegistrationCertificate.label.soleProprietor=Sole proprietor’s name
+viewRegistrationCertificate.label.unincorporatedBody=Unincorporated body’s name
+viewRegistrationCertificate.label.corporateBody=Corporate body’s name
+viewRegistrationCertificate.label.partnership=Partnership’s name
+viewRegistrationCertificate.label.limitedLiabilityPartnership=Limited liability partnership’s name
+viewRegistrationCertificate.label.default=-
+viewRegistrationCertificate.businessAddress = Business address
+viewRegistrationCertificate.typeOfBusiness = Type of business
+viewRegistrationCertificate.tradeClass = Trade class
+viewRegistrationCertificate.h2.upcoming = Upcoming return period end dates
+viewRegistrationCertificate.print = You can print this page for your records using the print function on your browser.
+viewRegistrationCertificate.dashboard.link = Return to your manage your Machine Games Duty
+viewRegistrationCertificate.change-registration.link = Change registration details
+
+viewRegistrationCertificate.businessTradeClass.1 = Amusement or gaming machine supplier
+viewRegistrationCertificate.businessTradeClass.2 = Adult gaming centre
+viewRegistrationCertificate.businessTradeClass.3 = Family entertainment centre
+viewRegistrationCertificate.businessTradeClass.4 = Bookmaker or betting activities
+viewRegistrationCertificate.businessTradeClass.5 = Bingo promoter
+viewRegistrationCertificate.businessTradeClass.6 = Casino
+viewRegistrationCertificate.businessTradeClass.7 = Public house
+viewRegistrationCertificate.businessTradeClass.8 = Club
+viewRegistrationCertificate.businessTradeClass.9 = Other
+viewRegistrationCertificate.businessTradeClass.unknown = Unknown
+
+viewRegistrationCertificate.tradingName = Trading name
+viewRegistrationCertificate.partnershipDetails = Partnership registration details
+viewRegistrationCertificate.partner = Partner {0}
+viewRegistrationCertificate.groupDetails = Group registration details
+viewRegistrationCertificate.representativeMember = Representative member
+viewRegistrationCertificate.repMemberAddress = Representative member's address
+viewRegistrationCertificate.groupMembers = Group members
+viewRegistrationCertificate.groupMember = Group member {0}
+
+# Agent client-list flow
+agentLostAccess.title = You cannot access this service
+agentLostAccess.heading = You cannot access this service
+agentLostAccess.p1 = We are unable to retrieve your client list at the moment. Try again later.
+
+retrievingClient.title = Retrieving your client list
+retrievingClient.heading = Retrieving your client list
+retrievingClient.p1 = We are retrieving your client list. This may take a few moments.
+
+failedToRetrieveClient.title = We could not retrieve your client list
+failedToRetrieveClient.heading = We could not retrieve your client list
+failedToRetrieveClient.p1 = There was a problem retrieving your client list. Try again later.
+
+noAuthorisedClients.title = You have no authorised clients
+noAuthorisedClients.heading = You have no authorised clients
+noAuthorisedClients.p1 = You are not currently authorised to act for any clients for this service.
+
+agentLanding.title = Client
+agentLanding.heading = {0}
+agentLanding.regNumber = Registration number: {0}
+agentLanding.link.registrationCertificate = View registration certificate
+agentLanding.link.backToClientList = Back to your client list
+
+clientListSearch.title = Your clients
+clientListSearch.heading = Your clients
+clientListSearch.search.label = Search by client name
+clientListSearch.search.button = Search
+clientListSearch.noResults = No clients match your search.
+clientListSearch.th.clientName = Client name
+clientListSearch.th.regNumber = Registration number
+clientListSearch.th.clientReference = Client reference
+
+error.summary.title = There is a problem
+
+manageClientDetails.title = Manage client details
+manageClientDetails.heading = {0}
+manageClientDetails.clientName = Client name
+manageClientDetails.regNumber = Registration number
+manageClientDetails.clientReference = Client reference
+manageClientDetails.change = Change
+manageClientDetails.remove = Remove this client
+
+changeClientReference.title = Change client reference
+changeClientReference.heading = Enter a client reference
+changeClientReference.error.required = Enter a client reference
+changeClientReference.error.length = Client reference must be 20 characters or fewer
+
+clientRefUpdateConfirmation.title = Client reference updated
+clientRefUpdateConfirmation.heading = Client reference updated
+clientRefUpdateConfirmation.p1 = The client reference has been updated.
+clientRefUpdateConfirmation.link.backToClientList = Back to your client list
+
+removeClientYesNo.title = Remove client
+removeClientYesNo.heading = Are you sure you want to remove {0}?
+removeClientYesNo.error.required = Select yes if you want to remove this client
+
+clientRemoved.title = Client removed
+clientRemoved.heading = Client removed
+clientRemoved.p1 = You are no longer authorised to act for this client.
+clientRemoved.link.backToClientList = Back to your client list
+agentLanding.link.manageClientDetails = Manage client details
+
+securityCheck.title = Checking your authorisation
+securityCheck.heading = Checking your authorisation
+securityCheck.p1 = We are checking your authorisation for this client. This may take a few moments.
+
+changeEmailAddress.title = What is the email address for this business?
+changeEmailAddress.heading = What is the email address for this business?
+changeEmailAddress.caption = Check business details
+changeEmailAddress.error.required = Enter an email address for this business
+changeEmailAddress.error.invalid = The email address must only include letters a to z, numbers 0 to 9, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
+changeEmailAddress.error.length = The email address must be 70 characters or less
