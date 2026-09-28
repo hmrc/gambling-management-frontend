@@ -43,4 +43,9 @@ GET         /agent/authorisation-check                      controllers.Security
 GET         /agent/authorisation-check/poll                 controllers.SecurityCheckController.pollClientListCheck(returnTo: String, instanceId: Option[String] ?= None, retryCount: Int ?= 0)
 GET         /agent/authorisation-check/in-progress          controllers.SecurityCheckController.onPageLoad()
 
+#Business details management
+
+GET         /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
+
 GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
