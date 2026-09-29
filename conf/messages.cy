@@ -201,3 +201,15 @@ changeFaxNumber.error.required = Enter the fax number for this business
 changeFaxNumber.error.invalid = The fax number must only include numbers 0 to 9 and spaces
 changeFaxNumber.error.length = The fax number must be 20 characters or less
 
+
+checkBusinessDetails.title = Check your business details
+checkBusinessDetails.heading = Check your business details
+checkBusinessDetails.notProvided = Not provided
+checkBusinessDetails.returnToAtAGlance = Return to at a glance
+checkBusinessDetails.businessName = Business name
+checkBusinessDetails.businessAddress = Business address
+checkBusinessDetails.contactDetails.heading = Contact details
+checkBusinessDetails.phoneNumber = Phone number
+checkBusinessDetails.mobileNumber = Mobile number
+checkBusinessDetails.faxNumber = Fax number
+checkBusinessDetails.emailAddress = Email address
