@@ -17,7 +17,9 @@
 package controllers.businessdetails
 
 import controllers.actions.*
+import forms.businessdetails.ChangeBusinessContactFormProvider
 import models.Mode
+import pages.businessdetails.ChangeBusinessContactPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,9 +34,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeBusinessContactController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  authorise: AuthorisedAction,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  formProvider: ChangeBusinessContactFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ChangeBusinessContactView
 )(implicit ec: ExecutionContext)
