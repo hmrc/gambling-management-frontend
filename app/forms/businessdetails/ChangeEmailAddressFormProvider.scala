@@ -25,9 +25,6 @@ class ChangeEmailAddressFormProvider @Inject() extends Mappings {
 
   private val maxEmailLength = 70
 
-  private val emailRegex =
-    "^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-
   def apply(): Form[String] =
     Form(
       "value" -> text(
@@ -35,7 +32,7 @@ class ChangeEmailAddressFormProvider @Inject() extends Mappings {
       ).verifying(
         firstError(
           maxLength(maxEmailLength, "changeEmailAddress.error.length"),
-          regexp(emailRegex, "changeEmailAddress.error.invalid")
+          validEmail("changeEmailAddress.error.invalid")
         )
       )
     )

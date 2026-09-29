@@ -43,10 +43,10 @@
         </span>
 
         @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("changeEmailAddress.heading")).asPageHeading()
-            )
+          InputViewModel(
+            field = form("value"),
+            label = LabelViewModel(messages("changeEmailAddress.heading")).asPageHeading()
+          ).asEmail()
         )
 
         @govukButton(
