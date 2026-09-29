@@ -16,7 +16,7 @@
 
 package controllers.clientdetails
 
-import controllers.actions.AuthorisedAction
+import controllers.actions.{AuthorisedAction, ClientListCheckAction}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,11 +28,13 @@ class ClientRemovedController @Inject() (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
   authorise: AuthorisedAction,
+  clientListCheck: ClientListCheckAction,
   view: ClientRemovedView
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authorise { implicit request =>
-    Ok(view())
-  }
+  def onPageLoad: Action[AnyContent] =
+    (authorise andThen clientListCheck) { implicit request =>
+      Ok(view())
+    }
 }

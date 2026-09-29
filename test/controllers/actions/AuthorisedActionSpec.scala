@@ -38,11 +38,6 @@ class AuthorisedActionSpec extends SpecBase {
 
   val bodyParser: BodyParsers.Default = BodyParsers.Default(Helpers.stubPlayBodyParsers)
 
-  // The client-list enforcer is a pass-through for Exempt routes (a raw FakeRequest carries no
-  // HandlerDef, so the policy resolves to Exempt and no backend call is made).
-  private val enforcer: ClientListCheckEnforcer =
-    applicationBuilder().build().injector.instanceOf[ClientListCheckEnforcer]
-
   private type Retrievals = Option[String] ~ Option[AffinityGroup] ~ Enrolments
 
   private def retrievalResult(
@@ -71,7 +66,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -90,7 +85,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       // An agent has no client reg number yet; the enrolment ref becomes the agentReference.
       val action = authorisedAction { (request: models.requests.AuthorisedRequest[AnyContent]) =>
@@ -105,7 +100,7 @@ class AuthorisedActionSpec extends SpecBase {
       val mockAuthConnector = mockConnectorReturning(
         Future.successful(retrievalResult(None, Enrolments(Set())))
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -117,7 +112,7 @@ class AuthorisedActionSpec extends SpecBase {
       val mockAuthConnector = mockConnectorReturning(
         Future.successful(retrievalResult(Some(AffinityGroup.Agent), Enrolments(Set())))
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -129,7 +124,7 @@ class AuthorisedActionSpec extends SpecBase {
       val mockAuthConnector = mockConnectorReturning(
         Future.successful(retrievalResult(Some(AffinityGroup.Organisation), Enrolments(Set())))
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -146,7 +141,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -165,7 +160,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -184,7 +179,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -203,7 +198,7 @@ class AuthorisedActionSpec extends SpecBase {
           )
         )
       )
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
@@ -213,7 +208,7 @@ class AuthorisedActionSpec extends SpecBase {
 
     "redirect to login when user has no active session" in {
       val mockAuthConnector = mockConnectorReturning(Future.failed(new NoActiveSession("No session") {}))
-      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser, enforcer)
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
       val result     = controller.onPageLoad(FakeRequest("GET", "/test"))

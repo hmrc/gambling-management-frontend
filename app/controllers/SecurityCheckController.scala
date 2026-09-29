@@ -16,13 +16,16 @@
 
 package controllers
 
+import config.AppConfig
 import controllers.actions.AuthorisedAction
-import models.agent.{ClientListCheckReturnTarget, ClientListStatus}
+import models.agent.ClientListStatus
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
 import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.binders.{OnlyRelative, RedirectUrl}
+import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.SecurityCheckView
@@ -35,6 +38,7 @@ class SecurityCheckController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
   gamblingService: GamblingService,
+  config: AppConfig,
   val controllerComponents: MessagesControllerComponents,
   view: SecurityCheckView
 )(implicit ec: ExecutionContext)
@@ -42,41 +46,41 @@ class SecurityCheckController @Inject() (
     with I18nSupport
     with Logging {
 
-  private val MaxRetries               = 2
-  private val RefreshIntervalInSeconds = 15
+  private val refreshIntervalInSeconds = config.clientListPollIntervalSeconds
+  private val maxRetries               = math.ceil(config.clientListPollMaxWaitSeconds.toDouble / refreshIntervalInSeconds).toInt
 
   def onPageLoad: Action[AnyContent] = authorise { implicit request =>
     Ok(view())
   }
 
-  def onClientListCheck(returnTo: String, instanceId: Option[String]): Action[AnyContent] =
+  def onClientListCheck(continueUrl: RedirectUrl): Action[AnyContent] =
     authorise { implicit request =>
-      returnCall(returnTo, instanceId) match {
-        case Some(_) => refreshResult(returnTo, instanceId, retryCount = 0)
+      safeUrl(continueUrl) match {
+        case Some(_) => refreshResult(continueUrl, retryCount = 0)
         case None    =>
-          logger.warn(s"Invalid client list return target=$returnTo")
+          logger.warn("Invalid client list return url")
           systemError
       }
     }
 
-  def pollClientListCheck(returnTo: String, instanceId: Option[String], retryCount: Int = 0): Action[AnyContent] =
+  def pollClientListCheck(continueUrl: RedirectUrl, retryCount: Int = 0): Action[AnyContent] =
     authorise.async { implicit request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      returnCall(returnTo, instanceId) match {
-        case None                 =>
+      safeUrl(continueUrl) match {
+        case None            =>
           Future.successful(systemError)
-        case Some(successfulCall) =>
+        case Some(returnUrl) =>
           val nextRetry = retryCount + 1
-          if nextRetry > MaxRetries then Future.successful(systemError)
+          if nextRetry > maxRetries then Future.successful(systemError)
           else
             gamblingService.getClientListStatus
               .map {
-                case ClientListStatus.Succeeded                                  =>
-                  Redirect(successfulCall)
-                case ClientListStatus.InProgress                                 =>
-                  refreshResult(returnTo, instanceId, nextRetry)
-                case ClientListStatus.Failed | ClientListStatus.InitiateDownload =>
+                case ClientListStatus.Succeeded                                      =>
+                  Redirect(returnUrl)
+                case ClientListStatus.InProgress | ClientListStatus.InitiateDownload =>
+                  refreshResult(continueUrl, nextRetry)
+                case ClientListStatus.Failed                                         =>
                   systemError
               }
               .recover { case NonFatal(e) =>
@@ -86,28 +90,13 @@ class SecurityCheckController @Inject() (
       }
     }
 
-  private def refreshResult(returnTo: String, instanceId: Option[String], retryCount: Int)(implicit
-    request: Request[?]
-  ): Result = {
-    val refreshUrl = routes.SecurityCheckController.pollClientListCheck(returnTo, instanceId, retryCount).url
-    Ok(view()).withHeaders("Refresh" -> s"$RefreshIntervalInSeconds; url=$refreshUrl")
+  private def refreshResult(continueUrl: RedirectUrl, retryCount: Int)(implicit request: Request[?]): Result = {
+    val refreshUrl = routes.SecurityCheckController.pollClientListCheck(continueUrl, retryCount).url
+    Ok(view()).withHeaders("Refresh" -> s"$refreshIntervalInSeconds; url=$refreshUrl")
   }
 
-  private def returnCall(returnTo: String, instanceId: Option[String]): Option[Call] =
-    returnTo match {
-      case ClientListCheckReturnTarget.AgentLanding.key          =>
-        instanceId.map(controllers.agent.routes.AgentLandingController.onPageLoad)
-      case ClientListCheckReturnTarget.ClientList.key            =>
-        Some(controllers.agent.routes.ClientListSearchController.onPageLoad())
-      case ClientListCheckReturnTarget.ManageClientDetails.key   =>
-        Some(controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad())
-      case ClientListCheckReturnTarget.ChangeClientReference.key =>
-        instanceId.map(controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad)
-      case ClientListCheckReturnTarget.RemoveClient.key          =>
-        instanceId.map(controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad)
-      case _                                                     =>
-        None
-    }
+  private def safeUrl(continueUrl: RedirectUrl): Option[String] =
+    continueUrl.getEither(OnlyRelative).toOption.map(_.url)
 
   private def systemError: Result =
     Redirect(controllers.routes.SystemErrorController.onPageLoad())

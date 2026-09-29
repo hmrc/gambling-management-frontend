@@ -17,18 +17,23 @@
 package controllers.agent
 
 import base.SpecBase
-import controllers.actions.FakeAgentIdentifierAction
+import controllers.actions.{FakeAgentIdentifierAction, PassThroughClientListCheckAction, PassThroughHasClientGuard}
 import controllers.clientdetails.{ClientRefUpdateConfirmationController, ClientRemovedController}
 import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import services.GamblingService
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class StaticAgentControllersSpec extends SpecBase {
 
-  private val app         = applicationBuilder().build()
-  private val mcc         = stubMessagesControllerComponents()
-  private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private def auth        = new FakeAgentIdentifierAction(bodyParsers)
+  private val app             = applicationBuilder().build()
+  private val mcc             = stubMessagesControllerComponents()
+  private val bodyParsers     = app.injector.instanceOf[PlayBodyParsers]
+  private def auth            = new FakeAgentIdentifierAction(bodyParsers)
+  private val clientListCheck = new PassThroughClientListCheckAction()
+  private val hasClientGuard  = new PassThroughHasClientGuard(new GamblingService(null), null, null)
 
   "AgentLostAccessController.onPageLoad returns OK" in {
     val controller =
@@ -61,6 +66,7 @@ class StaticAgentControllersSpec extends SpecBase {
       mcc.messagesApi,
       mcc,
       auth,
+      clientListCheck,
       app.injector.instanceOf[views.html.clientdetails.ClientRemovedView]
     )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
@@ -71,6 +77,8 @@ class StaticAgentControllersSpec extends SpecBase {
       mcc.messagesApi,
       mcc,
       auth,
+      clientListCheck,
+      hasClientGuard,
       app.injector.instanceOf[views.html.clientdetails.ClientRefUpdateConfirmationView]
     )
     status(controller.onPageLoad(FakeRequest())) mustBe OK

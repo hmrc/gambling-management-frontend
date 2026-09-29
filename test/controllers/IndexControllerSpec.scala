@@ -29,6 +29,7 @@ import play.api.i18n.Messages
 import play.api.mvc.*
 import play.api.test.*
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import services.GamblingService
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
@@ -71,6 +72,10 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
     }
   }
 
+  private val mockSessionRepository = mock[SessionRepository]
+  when(mockSessionRepository.get(any[String])).thenReturn(Future.successful(None))
+  when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
+
   private val mcc           = stubMessagesControllerComponents()
   private val actionBuilder = DefaultActionBuilder(stubBodyParser())
   private val fakeRequest   = FakeRequest(GET, "/")
@@ -91,6 +96,7 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
       val controller =
         new IndexController(
           mockAuthorisedAction,
+          mockSessionRepository,
           mcc,
           stubView,
           stubService
@@ -113,6 +119,7 @@ class IndexControllerSpec extends AsyncWordSpec with Matchers with MockitoSugar 
       val controller =
         new IndexController(
           mockAuthorisedAction,
+          mockSessionRepository,
           mcc,
           stubView,
           stubService

@@ -80,6 +80,12 @@ trait SpecBase
                                               |   timeout   = 10
                                               |   countdown = 5
                                               | }
+                                              | client-list-check {
+                                              |  poll {
+                                              |   interval-seconds = 5
+                                              |   max-wait-seconds = 45
+                                              |  }
+                                              | }
                                               | contact-frontend {
                                               |  host      = "http://localhost:9250"
                                               |  serviceId = "gambling-management-frontend"

@@ -17,10 +17,9 @@
 package controllers.agent
 
 import base.SpecBase
-import controllers.actions.{FakeAgentIdentifierAction, FakeDataRetrievalAction, PassThroughStatusGuard}
+import controllers.actions.{FakeAgentIdentifierAction, FakeDataRetrievalAction, PassThroughClientListCheckAction}
 import models.UserAnswers
 import models.agent.AgentClient
-import navigation.ClientListCheckNavigator
 import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -33,12 +32,11 @@ import scala.concurrent.Future
 
 class ClientListSearchControllerSpec extends SpecBase {
 
-  private val app         = applicationBuilder().build()
-  private val mcc         = stubMessagesControllerComponents()
-  private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[ClientListSearchView]
-  private val navigator   = new ClientListCheckNavigator()
-  private val statusGuard = new PassThroughStatusGuard(new GamblingService(null))
+  private val app             = applicationBuilder().build()
+  private val mcc             = stubMessagesControllerComponents()
+  private val bodyParsers     = app.injector.instanceOf[PlayBodyParsers]
+  private val view            = app.injector.instanceOf[ClientListSearchView]
+  private val clientListCheck = new PassThroughClientListCheckAction()
 
   private val client = AgentClient("mgd", "RN1", Some("Acme Casinos"), Some("ref1"))
 
@@ -53,8 +51,7 @@ class ClientListSearchControllerSpec extends SpecBase {
     new ClientListSearchController(
       mcc.messagesApi,
       new FakeAgentIdentifierAction(bodyParsers),
-      statusGuard,
-      navigator,
+      clientListCheck,
       new FakeDataRetrievalAction(Some(emptyUserAnswers)),
       new StubManageService(clients),
       mcc,
