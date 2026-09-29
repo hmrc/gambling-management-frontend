@@ -17,23 +17,23 @@
 package controllers
 
 import controllers.actions.AuthorisedAction
-import models.ReturnSummaryError
+import models.{ReturnSummaryError, UserAnswers}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.IndexView
 
-import config.AppConfig
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IndexController @Inject() (
   authorise: AuthorisedAction,
+  sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: IndexView,
   gamblingService: GamblingService
@@ -45,13 +45,23 @@ class IndexController @Inject() (
 
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    if request.isAgent then
-      // Agents must retrieve and select a client before landing on a return summary.
-      scala.concurrent.Future.successful(
-        Redirect(controllers.agent.routes.RetrievingClientController.onPageLoad())
-      )
-    else indexForOrganisation(request.mgdRegNum)
+    val sessionKey = if request.isAgent then request.userId else request.mgdRegNum
+
+    initialiseUserAnswers(sessionKey).flatMap { _ =>
+      if request.isAgent then
+        // Agents must retrieve and select a client before landing on a return summary.
+        Future.successful(Redirect(controllers.agent.routes.RetrievingClientController.onPageLoad()))
+      else indexForOrganisation(request.mgdRegNum)
+    }
   }
+
+  private def initialiseUserAnswers(sessionKey: String): Future[UserAnswers] =
+    sessionRepository.get(sessionKey).flatMap {
+      case Some(userAnswers) => Future.successful(userAnswers)
+      case None              =>
+        val userAnswers = UserAnswers(sessionKey)
+        sessionRepository.set(userAnswers).map(_ => userAnswers)
+    }
 
   private def indexForOrganisation(mgdRegNumber: String)(using HeaderCarrier, play.api.mvc.Request[?]) =
     gamblingService

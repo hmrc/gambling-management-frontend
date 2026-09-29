@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import controllers.actions.ClientListCheckRedirects.systemError
+import controllers.actions.ClientListCheckRedirects.{agentLostAccess, systemError}
 import models.audit.AuthFailureAuditEventModel
 import models.requests.{AuthorisedRequest, DataRequest}
 import pages.{AgentClientsPage, SelectedClientPage}
@@ -90,6 +90,14 @@ class HasClientGuard @Inject() (
         checkCurrentClient(request)
     }
 
+  def currentClientAuthorised: ActionFilter[AuthorisedRequest] =
+    new ActionFilter[AuthorisedRequest] {
+      override protected def executionContext: ExecutionContext = ec
+
+      override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] =
+        if !request.isAgent then Future.successful(None) else check(request)
+    }
+
   private[actions] def checkForInstanceId[A](request: DataRequest[A], instanceId: String): Future[Option[Result]] =
     if !request.isAgent then Future.successful(None)
     else {
@@ -108,13 +116,15 @@ class HasClientGuard @Inject() (
     }
 
   private[actions] def checkCurrentClient[A](request: DataRequest[A]): Future[Option[Result]] =
-    request.userAnswers.get(SelectedClientPage) match {
-      case Some(instanceId) =>
-        checkForInstanceId(request, instanceId)
-      case None             =>
-        logger.warn("selected client missing in UserAnswers")
-        Future.successful(Some(systemError))
-    }
+    if !request.isAgent then Future.successful(None)
+    else
+      request.userAnswers.get(SelectedClientPage) match {
+        case Some(instanceId) =>
+          checkForInstanceId(request, instanceId)
+        case None             =>
+          logger.warn("selected client missing in UserAnswers")
+          Future.successful(Some(systemError))
+      }
 
   private def checkClient(
     regime: String,
@@ -135,10 +145,10 @@ class HasClientGuard @Inject() (
             logger.warn(s"Agent no longer authorised for instanceId: $instanceId")
             auditService
               .sendEvent(AuthFailureAuditEventModel())
-              .map(_ => Some(systemError))
+              .map(_ => Some(agentLostAccess))
               .recover { case NonFatal(ex) =>
                 logger.error("failed to send authoriseServiceGuardFailure audit", ex)
-                Some(systemError)
+                Some(agentLostAccess)
               }
         }
         .recover { case NonFatal(ex) =>

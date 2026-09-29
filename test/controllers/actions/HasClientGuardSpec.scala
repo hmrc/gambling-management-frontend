@@ -47,7 +47,8 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
   private val request =
     AuthorisedRequest(FakeRequest(), AffinityGroup.Agent, mgdRegNum = "", userId = userId, isAgent = true)
 
-  private val systemErrorUrl = controllers.routes.SystemErrorController.onPageLoad().url
+  private val systemErrorUrl     = controllers.routes.SystemErrorController.onPageLoad().url
+  private val agentLostAccessUrl = controllers.agent.routes.AgentLostAccessController.onPageLoad().url
 
   private def userAnswersWithSelectedClient: UserAnswers =
     UserAnswers(userId)
@@ -84,13 +85,13 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       guard.check(request).futureValue mustBe None
     }
 
-    "audits and redirects to system error when the agent no longer has the client" in {
+    "audits and redirects to agent lost access when the agent no longer has the client" in {
       val (guard, repo, service, audit) = newGuard()
       when(repo.get(userId)).thenReturn(Future.successful(Some(userAnswersWithSelectedClient)))
       when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(false))
       when(audit.sendEvent(any)(using any, any)).thenReturn(Future.successful(AuditResult.Success))
 
-      redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe systemErrorUrl
+      redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe agentLostAccessUrl
       verify(audit).sendEvent(any)(using any, any)
     }
   }
@@ -113,7 +114,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       guard.checkForInstanceId(request, "RN1").futureValue mustBe None
     }
 
-    "audits and redirects to system error when the agent no longer has the client" in {
+    "audits and redirects to agent lost access when the agent no longer has the client" in {
       val (guard, _, service, audit) = newGuard()
       when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(false))
       when(audit.sendEvent(any)(using any, any)).thenReturn(Future.successful(AuditResult.Success))
@@ -121,7 +122,7 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
 
       redirectLocation(
         Future.successful(guard.checkForInstanceId(request, "RN1").futureValue.value)
-      ).value mustBe systemErrorUrl
+      ).value mustBe agentLostAccessUrl
       verify(audit).sendEvent(any)(using any, any)
     }
 

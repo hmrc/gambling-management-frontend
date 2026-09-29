@@ -16,9 +16,8 @@
 
 package controllers.agent
 
-import controllers.actions.{AuthorisedAction, ClientListStatusGuard, DataRetrievalAction}
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRetrievalAction}
 import models.UserAnswers
-import navigation.ClientListCheckNavigator
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,8 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ClientListSearchController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
-  clientListStatusGuard: ClientListStatusGuard,
-  clientListCheckNavigator: ClientListCheckNavigator,
+  clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
@@ -48,7 +46,7 @@ class ClientListSearchController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.clientList)
+      andThen clientListCheck
       andThen getData).async { implicit request =>
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)

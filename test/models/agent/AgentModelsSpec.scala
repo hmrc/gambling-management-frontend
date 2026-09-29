@@ -74,19 +74,4 @@ class AgentModelsSpec extends AnyFreeSpec with Matchers {
     }
   }
 
-  "ClientListCheckReturnTarget exposes a key per target" in {
-    ClientListCheckReturnTarget.AgentLanding.key          must not be empty
-    ClientListCheckReturnTarget.ClientList.key            must not be empty
-    ClientListCheckReturnTarget.ManageClientDetails.key   must not be empty
-    ClientListCheckReturnTarget.ChangeClientReference.key must not be empty
-    ClientListCheckReturnTarget.RemoveClient.key          must not be empty
-  }
-
-  "ClientListCheckPolicy values are distinct" in {
-    Set[ClientListCheckPolicy](
-      ClientListCheckPolicy.GroupA,
-      ClientListCheckPolicy.GroupB,
-      ClientListCheckPolicy.Exempt
-    ).size mustBe 3
-  }
 }

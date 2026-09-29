@@ -16,9 +16,8 @@
 
 package controllers.clientdetails
 
-import controllers.actions.{AuthorisedAction, ClientListStatusGuard, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import forms.clientdetails.ChangeClientReferenceFormProvider
-import navigation.ClientListCheckNavigator
 import pages.clientdetails.ChangeClientReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,8 +36,7 @@ class ChangeClientReferenceController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
-  clientListStatusGuard: ClientListStatusGuard,
-  clientListCheckNavigator: ClientListCheckNavigator,
+  clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
@@ -55,7 +53,7 @@ class ChangeClientReferenceController @Inject() (
 
   def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(regNumber))
+      andThen clientListCheck
       andThen getData
       andThen requireData
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
@@ -65,7 +63,7 @@ class ChangeClientReferenceController @Inject() (
 
   def onSubmit(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.changeClientReference(regNumber))
+      andThen clientListCheck
       andThen getData
       andThen requireData
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
