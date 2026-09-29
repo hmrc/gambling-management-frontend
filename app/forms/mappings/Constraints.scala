@@ -82,6 +82,21 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
+  protected def validEmail(errorKey: String): Constraint[String] =
+    Constraint { email =>
+
+      val valid =
+        email.matches(
+          "^(?!.*\\.\\.)(?!\\.)(?!_+@)[A-Za-z0-9]+([._+-][A-Za-z0-9]+)*@([A-Za-z0-9]+(-[A-Za-z0-9]+)*\\.)+[A-Za-z]{2,}$"
+        )
+
+      if (valid) {
+        Valid
+      } else {
+        Invalid(errorKey)
+      }
+    }
+
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isAfter(maximum) =>
