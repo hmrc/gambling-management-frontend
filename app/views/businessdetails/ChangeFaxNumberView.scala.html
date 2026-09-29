@@ -32,26 +32,24 @@ govukButton: GovukButton
 
 @layout(pageTitle = title(form, messages("changeFaxNumber.title"))) {
 
-@formHelper(action = controllers.businessdetails.routes.ChangeFaxNumberController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.businessdetails.routes.ChangeFaxNumberController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+       @if(form.errors.nonEmpty) {
+         @govukErrorSummary(ErrorSummaryViewModel(form))
+       }
 
-<span class="govuk-caption-l">@messages(
-            "changeFaxNumber.caption"
-        )</span>
+       <span class="govuk-caption-l">@messages("changeFaxNumber.caption")</span>
 
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("changeFaxNumber.heading")).asPageHeading()
-)
-.withWidth(Fixed20)
-)
+       @govukInput(
+          InputViewModel(
+            field = form("value"),
+            label = LabelViewModel(messages("changeFaxNumber.heading")).asPageHeading()
+          )
+          .withWidth(Fixed20)
+       )
 
-@govukButton(
-ButtonViewModel(messages("site.continue"))
-)
-}
+       @govukButton(
+         ButtonViewModel(messages("site.continue"))
+       )
+    }
 }
