@@ -194,6 +194,14 @@ changeEmailAddress.error.required = Enter an email address for this business
 changeEmailAddress.error.invalid = The email address must only include letters a to z, numbers 0 to 9, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
 changeEmailAddress.error.length = The email address must be 70 characters or less
 
+changeFaxNumber.title = What is the fax number for this business?
+changeFaxNumber.heading = What is the fax number for this business?
+changeFaxNumber.caption = Check business details
+changeFaxNumber.error.required = Enter the fax number for this business
+changeFaxNumber.error.invalid = The fax number must only include numbers 0 to 9 and spaces
+changeFaxNumber.error.length = The fax number must be 20 characters or less
+
+
 checkBusinessDetails.title = Check your business details
 checkBusinessDetails.heading = Check your business details
 checkBusinessDetails.notProvided = Not provided
