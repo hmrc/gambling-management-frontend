@@ -16,7 +16,6 @@
 
 package navigation
 
-
 import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.Call
@@ -25,20 +24,20 @@ import pages._
 import models._
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject() () {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => routes.IndexController.onPageLoad()
+  private val normalRoutes: Page => UserAnswers => Call = { case _ =>
+    _ => routes.IndexController.onPageLoad()
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckBusinessDetailsController.onPageLoad()
+  private val checkRouteMap: Page => UserAnswers => Call = { case _ =>
+    _ => routes.CheckBusinessDetailsController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)
-    case CheckMode =>
+    case CheckMode  =>
       checkRouteMap(page)(userAnswers)
   }
 }

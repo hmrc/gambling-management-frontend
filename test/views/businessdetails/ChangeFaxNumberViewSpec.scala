@@ -32,7 +32,7 @@ class ChangeFaxNumberViewSpec extends SpecBase {
     "must render the page with the correct content" in new Setup {
 
       val html = view(form, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val doc  = Jsoup.parse(html.body)
 
       doc.title     must include(messages("changeFaxNumber.title"))
       doc.body.text must include(messages("changeFaxNumber.heading"))
@@ -43,7 +43,7 @@ class ChangeFaxNumberViewSpec extends SpecBase {
     "must render a continue button" in new Setup {
 
       val html = view(form, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val doc  = Jsoup.parse(html.body)
 
       doc.select(".govuk-button").text() mustEqual
         messages("site.continue")
@@ -52,7 +52,7 @@ class ChangeFaxNumberViewSpec extends SpecBase {
     "must render the fax input field" in new Setup {
 
       val html = view(form, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val doc  = Jsoup.parse(html.body)
 
       doc.select("#value").size() mustEqual 1
     }
@@ -60,8 +60,8 @@ class ChangeFaxNumberViewSpec extends SpecBase {
     "must render errors when the form contains errors" in new Setup {
 
       val boundForm = form.bind(Map("value" -> ""))
-      val html = view(boundForm, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val html      = view(boundForm, NormalMode)
+      val doc       = Jsoup.parse(html.body)
 
       doc.select(".govuk-error-summary").size() mustEqual 1
       doc.select(".govuk-error-message").text() must not be empty

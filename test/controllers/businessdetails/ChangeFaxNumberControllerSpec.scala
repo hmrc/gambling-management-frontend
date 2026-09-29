@@ -39,7 +39,7 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ChangeFaxNumberFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val changeFaxNumberRoute = routes.ChangeFaxNumberController.onPageLoad().url
 
