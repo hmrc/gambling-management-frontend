@@ -17,20 +17,19 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import forms.businessdetails.{ChangeEmailAddressFormProvider, ChangeFaxNumberFormProvider}
+import forms.businessdetails.ChangeFaxNumberFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.businessdetails.ChangeEmailAddressPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.businessdetails.{ChangeEmailAddressView, ChangeFaxNumberView}
+import views.html.businessdetails.ChangeFaxNumberView
 import org.jsoup.Jsoup
-import pages.ChangeFaxNumberPage
+import pages.businessdetails.ChangeFaxNumberPage
 
 import scala.concurrent.Future
 

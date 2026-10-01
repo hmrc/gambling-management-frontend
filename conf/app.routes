@@ -45,10 +45,13 @@ GET         /agent/authorisation-check/in-progress          controllers.Security
 
 #Business details management
 
-GET         /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
+GET         /change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
+POST        /change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/change-business-details/business-contact-details/change-fax-number    controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details/change-fax-number     controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
+GET         /change-business-details/business-contact-details/change-fax-number    controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
+POST        /change-business-details/business-contact-details/change-fax-number     controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
+
+GET         /change-business-details/business-contact-details/remove-fax-number    controllers.businessdetails.RemoveFaxNumberController.onPageLoad(mode:Mode = NormalMode)
+POST        /change-business-details/business-contact-details/remove-fax-number     controllers.businessdetails.RemoveFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
 GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
