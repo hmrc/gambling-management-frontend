@@ -79,6 +79,20 @@ class GamblingConnectorAgentISpec
     }
   }
 
+  "getAgentDetails" should {
+    "parse the agent details" in {
+      wireMockServer.stubFor(
+        get(urlEqualTo("/gambling/agent-details"))
+          .willReturn(okJson(Json.obj("businessName" -> "Agent 1", "mobilePhoneNumber" -> "07890 123 456").toString()))
+      )
+      connector.getAgentDetails.map { details =>
+        details.businessName mustBe Some("Agent 1")
+        details.mobilePhoneNumber mustBe Some("07890 123 456")
+        details.email mustBe None
+      }
+    }
+  }
+
   "hasClient" should {
     "parse the hasClient boolean" in {
       wireMockServer.stubFor(

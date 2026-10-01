@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package models
+package models.agent
 
-import models.agent.AgentDetails
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Reads}
 
-final case class BusinessDetails(
+final case class AgentDetails(
   businessName: Option[String],
   addressLine1: Option[String],
   addressLine2: Option[String],
   addressLine3: Option[String],
+  addressLine4: Option[String],
+  postcode: Option[String],
+  country: Option[String],
+  abroadSignal: Option[String],
   phoneNumber: Option[String],
-  mobileNumber: Option[String],
+  mobilePhoneNumber: Option[String],
   faxNumber: Option[String],
-  emailAddress: Option[String]
+  email: Option[String]
 )
 
-object BusinessDetails {
-  implicit val format: OFormat[BusinessDetails] = Json.format[BusinessDetails]
-
-  def fromAgentDetails(details: AgentDetails): BusinessDetails = BusinessDetails(
-    businessName = details.businessName,
-    addressLine1 = details.addressLine1,
-    addressLine2 = details.addressLine2,
-    addressLine3 = details.addressLine3,
-    phoneNumber = details.phoneNumber,
-    mobileNumber = details.mobilePhoneNumber,
-    faxNumber = details.faxNumber,
-    emailAddress = details.email
-  )
+object AgentDetails {
+  implicit val reads: Reads[AgentDetails] = Json.reads[AgentDetails]
 }
