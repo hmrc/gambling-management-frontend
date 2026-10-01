@@ -46,11 +46,21 @@ class ChangeBusinessContactController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
 
-    val preparedForm = request.userAnswers.get(ChangeBusinessContactPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
-
     Ok(view(preparedForm, mode))
   }
+
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (authorise andThen getData andThen requireData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeEmailAddressPage, value))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(controllers.routes.IndexController.onPageLoad())
+        )
+    }
+  
 }
