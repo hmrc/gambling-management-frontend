@@ -54,7 +54,6 @@ class ManageService @Inject() (
       case Some(client) =>
         connector.updateClient(UpdateAgentClientRequest(client.regime, client.regNumber, clientRef))
       case None         =>
-        logger.error(s"no client found with regNumber $regNumber in AgentClientsPage")
         Future.failed(new RuntimeException(s"No client found with regNumber $regNumber in AgentClientsPage"))
     }
 
@@ -63,7 +62,6 @@ class ManageService @Inject() (
       case Some(client) =>
         connector.removeClient(RemoveAgentClientRequest(client.regime, client.regNumber))
       case None         =>
-        logger.error(s"missing client in AgentClientsPage")
         Future.failed(new RuntimeException("Missing client in AgentClientsPage"))
     }
 }
