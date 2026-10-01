@@ -82,7 +82,7 @@ class AgentLandingController @Inject() (
         regNumber = client.regNumber
       )
     )).recover { case NonFatal(ex) =>
-      logger.error(s"Failed for regNumber=$regNumber", ex)
+      logger.error(s"failed to load agent landing page for regNumber=$regNumber", ex)
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
 

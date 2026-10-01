@@ -65,7 +65,7 @@ class ClientListSearchController @Inject() (
             Ok(view(filteredClients, searchQuery))
         }
         .recover { case e =>
-          logger.error(s"failed: ${e.getMessage}", e)
+          logger.error("failed to resolve and store agent clients", e)
           Redirect(controllers.routes.SystemErrorController.onPageLoad())
         }
     }
