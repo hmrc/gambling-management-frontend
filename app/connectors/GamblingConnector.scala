@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.{GetClientListStatusResponse, MgdCertificate, ReturnSummary, ReturnSummaryError}
-import models.agent.{AgentClient, AgentClientData, HasClientResponse, UpdateAgentClientRequest}
+import models.agent.{AgentClient, AgentClientData, AgentDetails, HasClientResponse, UpdateAgentClientRequest}
 import models.requests.RemoveAgentClientRequest
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.{JsValue, Json}
@@ -51,6 +51,9 @@ class GamblingConnector @Inject() (
 
   private given HttpReads[HasClientResponse] =
     HttpReads.Implicits.readFromJson[HasClientResponse]
+
+  private given HttpReads[AgentDetails] =
+    HttpReads.Implicits.readFromJson[AgentDetails]
 
   private given HttpReads[HttpResponse] = HttpReads.Implicits.readRaw
 
@@ -108,6 +111,11 @@ class GamblingConnector @Inject() (
     httpClient
       .get(url"$agentBaseUrl/has-client/$regime/$regNumber")
       .execute[HasClientResponse]
+
+  def getAgentDetails(using HeaderCarrier): Future[AgentDetails] =
+    httpClient
+      .get(url"$baseUrl/gambling/agent-details")
+      .execute[AgentDetails]
 
   def getAllClients(using HeaderCarrier): Future[List[AgentClient]] =
     httpClient

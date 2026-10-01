@@ -19,13 +19,17 @@ package controllers
 import controllers.actions.*
 import models.BusinessDetails
 import pages.BusinessDetailsPage
+import repositories.SessionRepository
+import services.GamblingService
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CheckBusinessDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckBusinessDetailsController @Inject() (
   override val messagesApi: MessagesApi,
@@ -33,28 +37,23 @@ class CheckBusinessDetailsController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  gamblingService: GamblingService,
   view: CheckBusinessDetailsView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
-    Ok(view(businessDetails(request.userAnswers)))
+  def onPageLoad(): Action[AnyContent] = (authorise andThen getData andThen requireData).async { implicit request =>
+    given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    request.userAnswers.get(BusinessDetailsPage) match {
+      case Some(details) => Future.successful(Ok(view(details)))
+      case None          =>
+        for {
+          details <- gamblingService.getAgentDetails.map(BusinessDetails.fromAgentDetails)
+          updated <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))
+          _       <- sessionRepository.set(updated)
+        } yield Ok(view(details))
+    }
   }
-
-  private def businessDetails(userAnswers: models.UserAnswers): BusinessDetails =
-    userAnswers
-      .get(BusinessDetailsPage)
-      .getOrElse(
-        BusinessDetails(
-          businessName = Some("Agent1"),
-          addressLine1 = Some("123 Business road"),
-          addressLine2 = Some("Business"),
-          addressLine3 = Some("London"),
-          phoneNumber = Some("0191 202 2500"),
-          mobileNumber = Some("07890 123 456"),
-          faxNumber = Some("0800 202 2500"),
-          emailAddress = Some("sarah.phillips@example.com")
-        )
-      )
 }

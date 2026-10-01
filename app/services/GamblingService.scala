@@ -18,7 +18,7 @@ package services
 
 import connectors.GamblingConnector
 import models.{MgdCertificate, ReturnSummary, ReturnSummaryError}
-import models.agent.ClientListStatus
+import models.agent.{AgentDetails, ClientListStatus}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -42,6 +42,9 @@ class GamblingService @Inject() (
 
   def getClientListStatus(using HeaderCarrier): Future[ClientListStatus] =
     connector.getClientListStatus.map(_.result)
+
+  def getAgentDetails(using HeaderCarrier): Future[AgentDetails] =
+    connector.getAgentDetails
 
   def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[Boolean] =
     connector.hasClient(regime, regNumber).map(_.hasClient)
