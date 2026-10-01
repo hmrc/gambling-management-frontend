@@ -30,40 +30,38 @@ import views.html.businessdetails.RemoveFaxNumberView
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveFaxNumberController @Inject() (
-                                            override val messagesApi: MessagesApi,
-                                            sessionRepository: SessionRepository,
-                                            authorise: AuthorisedAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            formProvider: RemoveFaxNumberFormProvider,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: RemoveFaxNumberView
-                                          )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  authorise: AuthorisedAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: RemoveFaxNumberFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: RemoveFaxNumberView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
-
-      request.userAnswers.get(ChangeFaxNumberPage) match {
-        case Some(faxNumber) =>
-          Ok(
-            view(
-              form,
-              faxNumber,
-              mode
-            )
+    request.userAnswers.get(ChangeFaxNumberPage) match {
+      case Some(faxNumber) =>
+        Ok(
+          view(
+            form,
+            faxNumber,
+            mode
           )
+        )
 
-        case None =>
-          Redirect(controllers.routes.IndexController.onPageLoad())
-      }
+      case None =>
+        Redirect(controllers.routes.IndexController.onPageLoad())
     }
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (authorise andThen getData andThen requireData).async { implicit request =>
-
       request.userAnswers.get(ChangeFaxNumberPage) match {
 
         case Some(faxNumber) =>
@@ -84,9 +82,9 @@ class RemoveFaxNumberController @Inject() (
                 if (removeFaxNumber) {
                   for {
                     updatedAnswers <- Future.fromTry(
-                      request.userAnswers.remove(ChangeFaxNumberPage)
-                    )
-                    _ <- sessionRepository.set(updatedAnswers)
+                                        request.userAnswers.remove(ChangeFaxNumberPage)
+                                      )
+                    _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(controllers.routes.IndexController.onPageLoad())
                 } else {
                   Future.successful(

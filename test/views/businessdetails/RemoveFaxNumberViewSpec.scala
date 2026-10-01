@@ -34,7 +34,7 @@ class RemoveFaxNumberViewSpec extends SpecBase {
 
     "must render the page with the correct content" in new Setup {
       val html: HtmlFormat.Appendable = view(form, faxNumber, NormalMode)
-      val doc: Document = Jsoup.parse(html.body)
+      val doc: Document               = Jsoup.parse(html.body)
 
       doc.title must include(messages("removeFaxNumber.title"))
       doc.select(".govuk-caption-l").text mustBe
@@ -51,8 +51,8 @@ class RemoveFaxNumberViewSpec extends SpecBase {
     "must render an error summary when the form has errors" in new Setup {
 
       val boundForm = form.bind(Map("value" -> ""))
-      val html = view(boundForm, faxNumber, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val html      = view(boundForm, faxNumber, NormalMode)
+      val doc       = Jsoup.parse(html.body)
 
       doc.select(".govuk-error-summary").isEmpty mustBe false
       doc.select(".govuk-error-summary__list a").text must include(
@@ -63,8 +63,8 @@ class RemoveFaxNumberViewSpec extends SpecBase {
     "must select Yes when the form value is true" in new Setup {
 
       val boundForm = form.fill(true)
-      val html = view(boundForm, faxNumber, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val html      = view(boundForm, faxNumber, NormalMode)
+      val doc       = Jsoup.parse(html.body)
 
       doc.select("input[value=true]").first().hasAttr("checked") mustBe true
     }
@@ -72,8 +72,8 @@ class RemoveFaxNumberViewSpec extends SpecBase {
     "must select No when the form value is false" in new Setup {
 
       val boundForm = form.fill(false)
-      val html = view(boundForm, faxNumber, NormalMode)
-      val doc = Jsoup.parse(html.body)
+      val html      = view(boundForm, faxNumber, NormalMode)
+      val doc       = Jsoup.parse(html.body)
 
       doc.select("input[value=false]").first().hasAttr("checked") mustBe true
     }
@@ -82,8 +82,8 @@ class RemoveFaxNumberViewSpec extends SpecBase {
   trait Setup {
     val app = applicationBuilder().build()
 
-    val view = app.injector.instanceOf[RemoveFaxNumberView]
-    val form = new RemoveFaxNumberFormProvider()()
+    val view      = app.injector.instanceOf[RemoveFaxNumberView]
+    val form      = new RemoveFaxNumberFormProvider()()
     val faxNumber = "0999 7777 3333"
 
     implicit val request: play.api.mvc.Request[?] = FakeRequest()

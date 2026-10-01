@@ -28,21 +28,21 @@ class RemoveFaxNumberPageSpec extends SpecBase {
 
     "must remove ChangeFaxNumberPage when the answer is true" in {
       val userAnswers = emptyUserAnswers.set(ChangeFaxNumberPage, faxNumber).success.value
-      val result = RemoveFaxNumberPage.cleanup(Some(true), userAnswers).success.value
+      val result      = RemoveFaxNumberPage.cleanup(Some(true), userAnswers).success.value
 
       result.get(ChangeFaxNumberPage) mustBe None
     }
 
     "must keep ChangeFaxNumberPage when the answer is false" in {
       val userAnswers = emptyUserAnswers.set(ChangeFaxNumberPage, faxNumber).success.value
-      val result = RemoveFaxNumberPage.cleanup(Some(false), userAnswers).success.value
+      val result      = RemoveFaxNumberPage.cleanup(Some(false), userAnswers).success.value
 
       result.get(ChangeFaxNumberPage) mustBe Some(faxNumber)
     }
 
     "must keep ChangeFaxNumberPage when the answer is not set" in {
       val userAnswers = emptyUserAnswers.set(ChangeFaxNumberPage, faxNumber).success.value
-      val result = RemoveFaxNumberPage.cleanup(None, userAnswers).success.value
+      val result      = RemoveFaxNumberPage.cleanup(None, userAnswers).success.value
 
       result.get(ChangeFaxNumberPage) mustBe Some(faxNumber)
     }
