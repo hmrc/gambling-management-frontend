@@ -163,7 +163,7 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -183,7 +183,7 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

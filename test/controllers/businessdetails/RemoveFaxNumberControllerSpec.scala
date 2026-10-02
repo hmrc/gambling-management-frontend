@@ -17,15 +17,17 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
+import navigation.Navigator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.businessdetails.ChangeFaxNumberPage
+import pages.businessdetails.{ChangeFaxNumberPage, RemoveFaxNumberPage}
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 
 import scala.concurrent.Future
@@ -39,6 +41,8 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
       .set(ChangeFaxNumberPage, faxNumber)
       .success
       .value
+
+  private val onwardRoute = Call("GET", "/foo")
 
   lazy val removeFaxNumberRoute =
     routes.RemoveFaxNumberController.onPageLoad().url
@@ -62,25 +66,38 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         val doc = Jsoup.parse(contentAsString(result))
 
         doc.select("h1").text() must include(faxNumber)
-
         doc.select("input[type=radio]").size() mustBe 2
-
-        doc.select(".govuk-button").text() mustEqual
-          "Continue"
+        doc.select(".govuk-button").text() mustEqual "Continue"
       }
     }
 
-    "must remove the fax number and redirect when Yes is submitted" in {
+    "must remove the fax number, save the answer and redirect when Yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockNavigator         = mock[Navigator]
+
+      val expectedAnswers =
+        userAnswers
+          .set(RemoveFaxNumberPage, true)
+          .success
+          .value
 
       when(mockSessionRepository.set(any()))
         .thenReturn(Future.successful(true))
 
+      when(
+        mockNavigator.nextPage(
+          RemoveFaxNumberPage,
+          NormalMode,
+          expectedAnswers
+        )
+      ).thenReturn(onwardRoute)
+
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[Navigator].toInstance(mockNavigator)
           )
           .build()
 
@@ -93,28 +110,48 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
 
-        redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
-
-        val expectedAnswers =
-          userAnswers
-            .remove(ChangeFaxNumberPage)
-            .success
-            .value
+        expectedAnswers.get(ChangeFaxNumberPage) mustBe None
+        expectedAnswers.get(RemoveFaxNumberPage) mustBe Some(true)
 
         verify(mockSessionRepository).set(expectedAnswers)
+
+        verify(mockNavigator).nextPage(
+          RemoveFaxNumberPage,
+          NormalMode,
+          expectedAnswers
+        )
       }
     }
 
-    "must not remove the fax number when No is submitted" in {
+    "must keep the fax number, save the answer and redirect when No is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockNavigator         = mock[Navigator]
+
+      val expectedAnswers =
+        userAnswers
+          .set(RemoveFaxNumberPage, false)
+          .success
+          .value
+
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
+
+      when(
+        mockNavigator.nextPage(
+          RemoveFaxNumberPage,
+          NormalMode,
+          expectedAnswers
+        )
+      ).thenReturn(onwardRoute)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[Navigator].toInstance(mockNavigator)
           )
           .build()
 
@@ -127,11 +164,18 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
 
-        redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+        expectedAnswers.get(ChangeFaxNumberPage) mustBe Some(faxNumber)
+        expectedAnswers.get(RemoveFaxNumberPage) mustBe Some(false)
 
-        verify(mockSessionRepository, never()).set(any())
+        verify(mockSessionRepository).set(expectedAnswers)
+
+        verify(mockNavigator).nextPage(
+          RemoveFaxNumberPage,
+          NormalMode,
+          expectedAnswers
+        )
       }
     }
 
@@ -152,15 +196,13 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val doc = Jsoup.parse(contentAsString(result))
 
-        doc.select("h1").text() must include(faxNumber)
-
+        doc.select("h1").text()                   must include(faxNumber)
         doc.select(".govuk-error-summary").size() mustBe 1
-
         doc.select(".govuk-error-message").text() must not be empty
       }
     }
 
-    "must redirect to Index for a GET if the fax number is not found" in {
+    "must redirect to Journey Recovery for a GET when the fax number is not found" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -175,11 +217,11 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
-    "must redirect to Index for a POST if the fax number is not found" in {
+    "must redirect to Journey Recovery for a POST when the fax number is not found" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -195,15 +237,16 @@ class RemoveFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
-    "must redirect an organisation to the access denied page" in {
+    "must redirect an organisation to the access denied page (agent-only page)" in {
+
       val application = organisationDeniedApplicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val result = route(application, FakeRequest(GET, routes.RemoveFaxNumberController.onPageLoad().url)).value
+        val result = route(application, FakeRequest(GET, removeFaxNumberRoute)).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.AccessDeniedController.onPageLoad().url
