@@ -48,10 +48,7 @@ class IndexController @Inject() (
     val sessionKey = if request.isAgent then request.userId else request.mgdRegNum
 
     initialiseUserAnswers(sessionKey).flatMap { _ =>
-      if request.isAgent then
-        // Agents must retrieve and select a client before landing on a return summary.
-        Future.successful(Redirect(controllers.agent.routes.RetrievingClientController.onPageLoad()))
-      else indexForOrganisation(request.mgdRegNum)
+      loadReturnSummary(request.mgdRegNum)
     }
   }
 
@@ -63,7 +60,7 @@ class IndexController @Inject() (
         sessionRepository.set(userAnswers).map(_ => userAnswers)
     }
 
-  private def indexForOrganisation(mgdRegNumber: String)(using HeaderCarrier, play.api.mvc.Request[?]) =
+  private def loadReturnSummary(mgdRegNumber: String)(using HeaderCarrier, play.api.mvc.Request[?]) =
     gamblingService
       .getReturnSummary(mgdRegNumber)
       .map {
