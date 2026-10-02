@@ -17,7 +17,7 @@
 package controllers.businessdetails
 
 import com.google.inject.Inject
-import controllers.actions.{AuthorisedAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions.{AgentOnlyAction, AuthorisedAction, DataRequiredAction, DataRetrievalAction}
 import forms.businessdetails.{ChangeFaxNumberFormProvider, RemoveFaxNumberFormProvider}
 import models.Mode
 import pages.businessdetails.ChangeFaxNumberPage
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemoveFaxNumberController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: RemoveFaxNumberFormProvider,
@@ -44,7 +44,7 @@ class RemoveFaxNumberController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     request.userAnswers.get(ChangeFaxNumberPage) match {
       case Some(faxNumber) =>
         Ok(
@@ -61,7 +61,7 @@ class RemoveFaxNumberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       request.userAnswers.get(ChangeFaxNumberPage) match {
 
         case Some(faxNumber) =>

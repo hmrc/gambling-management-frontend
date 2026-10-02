@@ -35,6 +35,7 @@ class ChangeFaxNumberController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Navigator,
   authorise: AuthorisedAction,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ChangeFaxNumberFormProvider,
@@ -46,7 +47,7 @@ class ChangeFaxNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(ChangeFaxNumberPage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -56,7 +57,7 @@ class ChangeFaxNumberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
