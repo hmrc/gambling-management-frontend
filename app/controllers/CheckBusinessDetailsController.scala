@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckBusinessDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  authorise: AuthorisedAction,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
@@ -44,7 +44,7 @@ class CheckBusinessDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (authorise andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (agentOnly andThen getData andThen requireData).async { implicit request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.userAnswers.get(BusinessDetailsPage) match {
       case Some(details) => Future.successful(Ok(view(details)))

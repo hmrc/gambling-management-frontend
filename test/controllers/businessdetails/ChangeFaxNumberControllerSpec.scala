@@ -187,5 +187,17 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
           controllers.routes.IndexController.onPageLoad().url
       }
     }
+
+    "must redirect an organisation to the access denied page (agent-only page)" in {
+
+      val application = organisationDeniedApplicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, changeFaxNumberRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.AccessDeniedController.onPageLoad().url
+      }
+    }
   }
 }
