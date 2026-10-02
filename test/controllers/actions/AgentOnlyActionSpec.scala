@@ -67,7 +67,8 @@ class AgentOnlyActionSpec extends SpecBase {
   "AgentOnlyAction" - {
 
     "allow an agent with an active agent enrolment through" in {
-      val connector = mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), agentEnrolment)))
+      val connector =
+        mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), agentEnrolment)))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
       val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
@@ -76,7 +77,8 @@ class AgentOnlyActionSpec extends SpecBase {
     }
 
     "deny an organisation (with org enrolment) and redirect to access denied" in {
-      val connector = mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), orgEnrolment)))
+      val connector =
+        mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), orgEnrolment)))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
       val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
@@ -85,7 +87,8 @@ class AgentOnlyActionSpec extends SpecBase {
     }
 
     "deny an organisation with no enrolment and redirect to access denied" in {
-      val connector = mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), Enrolments(Set()))))
+      val connector =
+        mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
       val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
@@ -94,7 +97,8 @@ class AgentOnlyActionSpec extends SpecBase {
     }
 
     "deny an individual and redirect to access denied" in {
-      val connector = mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Individual), Enrolments(Set()))))
+      val connector =
+        mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Individual), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
       val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
@@ -103,7 +107,8 @@ class AgentOnlyActionSpec extends SpecBase {
     }
 
     "deny an agent with no active enrolment and redirect to access denied" in {
-      val connector = mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), Enrolments(Set()))))
+      val connector =
+        mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
       val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
