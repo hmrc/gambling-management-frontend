@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.{ReturnSummary, ReturnSummaryError}
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.concurrent.Futures.PatienceConfig
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -35,6 +35,7 @@ class GamblingConnectorISpec
     extends AsyncWordSpec
     with Matchers
     with BeforeAndAfterAll
+    with BeforeAndAfterEach
     with ScalaFutures
     with IntegrationPatience {
 
@@ -50,6 +51,9 @@ class GamblingConnectorISpec
 
   override def afterAll(): Unit =
     wireMockServer.stop()
+
+  override def beforeEach(): Unit =
+    wireMockServer.resetAll()
 
   private lazy val app =
     new GuiceApplicationBuilder()
