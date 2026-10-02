@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeEmailAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ChangeEmailAddressFormProvider,
@@ -45,7 +45,7 @@ class ChangeEmailAddressController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
     val preparedForm = request.userAnswers.get(ChangeEmailAddressPage) match {
       case None        => form
@@ -56,7 +56,7 @@ class ChangeEmailAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
