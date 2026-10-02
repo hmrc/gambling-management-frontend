@@ -51,4 +51,4 @@ POST        /agent/change-business-details/business-contact-details/change-email
 GET         /agent/change-business-details/business-contact-details/change-fax-number    controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/change-business-details/business-contact-details/change-fax-number     controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
-GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
+GET         /agent/change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
