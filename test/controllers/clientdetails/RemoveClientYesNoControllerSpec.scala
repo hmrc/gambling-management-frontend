@@ -21,7 +21,6 @@ import controllers.actions.*
 import forms.clientdetails.RemoveClientYesNoFormProvider
 import models.UserAnswers
 import models.agent.AgentClient
-import navigation.ClientListCheckNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{AgentClientsPage, SelectedClientPage}
@@ -58,8 +57,7 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
-      new PassThroughStatusGuard(new GamblingService(null)),
-      new ClientListCheckNavigator(),
+      new PassThroughClientListCheckAction(),
       new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),

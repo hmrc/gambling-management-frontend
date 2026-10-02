@@ -205,3 +205,10 @@ checkBusinessDetails.phoneNumber = Phone number
 checkBusinessDetails.mobileNumber = Mobile number
 checkBusinessDetails.faxNumber = Fax number
 checkBusinessDetails.emailAddress = Email address
+
+changeFaxNumber.title = What is the fax number for this business?
+changeFaxNumber.heading = What is the fax number for this business?
+changeFaxNumber.caption = Check business details
+changeFaxNumber.error.required = Enter the fax number for this business
+changeFaxNumber.error.invalid = The fax number must only include numbers 0 to 9 and spaces
+changeFaxNumber.error.length = The fax number must be 20 characters or less

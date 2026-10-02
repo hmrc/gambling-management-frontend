@@ -30,27 +30,26 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("changeEmailAddress.title"))) {
+@layout(pageTitle = title(form, messages("changeFaxNumber.title"))) {
 
-    @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit()) {
+    @formHelper(action = controllers.businessdetails.routes.ChangeFaxNumberController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+       @if(form.errors.nonEmpty) {
+         @govukErrorSummary(ErrorSummaryViewModel(form))
+       }
 
-        <span class="govuk-caption-l">
-        @messages("changeEmailAddress.caption")
-        </span>
+       <span class="govuk-caption-l">@messages("changeFaxNumber.caption")</span>
 
-        @govukInput(
+       @govukInput(
           InputViewModel(
             field = form("value"),
-            label = LabelViewModel(messages("changeEmailAddress.heading")).asPageHeading()
-          ).asEmail()
-        )
+            label = LabelViewModel(messages("changeFaxNumber.heading")).asPageHeading()
+          )
+          .withWidth(Fixed20)
+       )
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+       @govukButton(
+         ButtonViewModel(messages("site.continue"))
+       )
     }
 }

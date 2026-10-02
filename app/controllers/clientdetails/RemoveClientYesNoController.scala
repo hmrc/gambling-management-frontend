@@ -16,9 +16,8 @@
 
 package controllers.clientdetails
 
-import controllers.actions.{AuthorisedAction, ClientListStatusGuard, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import forms.clientdetails.RemoveClientYesNoFormProvider
-import navigation.ClientListCheckNavigator
 import pages.clientdetails.RemoveClientYesNoPage
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
@@ -39,8 +38,7 @@ class RemoveClientYesNoController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
-  clientListStatusGuard: ClientListStatusGuard,
-  clientListCheckNavigator: ClientListCheckNavigator,
+  clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
@@ -57,7 +55,7 @@ class RemoveClientYesNoController @Inject() (
 
   def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.removeClient(regNumber))
+      andThen clientListCheck
       andThen getData
       andThen requireData
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>

@@ -16,11 +16,10 @@
 
 package controllers.agent
 
-import controllers.actions.{AuthorisedAction, ClientListStatusGuard, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.{AuthorisedAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import models.agent.AgentClient
 import models.audit.ClientDetailsRetrievedAuditEventModel
 import models.requests.DataRequest
-import navigation.ClientListCheckNavigator
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,8 +38,6 @@ import scala.util.control.NonFatal
 class AgentLandingController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
-  clientListStatusGuard: ClientListStatusGuard,
-  clientListCheckNavigator: ClientListCheckNavigator,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
@@ -55,7 +52,6 @@ class AgentLandingController @Inject() (
 
   def onPageLoad(regNumber: String): Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.agentLanding(regNumber))
       andThen getData
       andThen requireData
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
@@ -86,7 +82,7 @@ class AgentLandingController @Inject() (
         regNumber = client.regNumber
       )
     )).recover { case NonFatal(ex) =>
-      logger.error(s"Failed for regNumber=$regNumber", ex)
+      logger.error(s"failed to load agent landing page for regNumber=$regNumber", ex)
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
 

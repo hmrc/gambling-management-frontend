@@ -16,6 +16,7 @@
 
 package models
 
+import models.agent.AgentDetails
 import play.api.libs.json.{Json, OFormat}
 
 final case class BusinessDetails(
@@ -31,4 +32,15 @@ final case class BusinessDetails(
 
 object BusinessDetails {
   implicit val format: OFormat[BusinessDetails] = Json.format[BusinessDetails]
+
+  def fromAgentDetails(details: AgentDetails): BusinessDetails = BusinessDetails(
+    businessName = details.businessName,
+    addressLine1 = details.addressLine1,
+    addressLine2 = details.addressLine2,
+    addressLine3 = details.addressLine3,
+    phoneNumber = details.phoneNumber,
+    mobileNumber = details.mobilePhoneNumber,
+    faxNumber = details.faxNumber,
+    emailAddress = details.email
+  )
 }

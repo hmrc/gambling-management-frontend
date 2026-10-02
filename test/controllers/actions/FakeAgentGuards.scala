@@ -17,23 +17,16 @@
 package controllers.actions
 
 import models.requests.{AuthorisedRequest, DataRequest}
-import play.api.mvc.{ActionFilter, Call, Result}
+import play.api.mvc.{ActionFilter, Result}
 import services.{AuditService, GamblingService}
 import repositories.SessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/** A ClientListStatusGuard whose guards always pass (return None). */
-class PassThroughStatusGuard(service: GamblingService)(implicit ec: ExecutionContext)
-    extends ClientListStatusGuard(service) {
-
-  private def pass: ActionFilter[AuthorisedRequest] = new ActionFilter[AuthorisedRequest] {
-    override protected def executionContext: ExecutionContext                               = ec
-    override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
-  }
-
-  override def groupB(securityCheckCall: Call): ActionFilter[AuthorisedRequest]      = pass
-  override def checkGroupA[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
+/** A ClientListCheckAction that always passes (returns None). */
+class PassThroughClientListCheckAction(implicit ec: ExecutionContext) extends ClientListCheckAction {
+  override protected def executionContext: ExecutionContext                               = ec
+  override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
 /** A HasClientGuard whose guards always pass (return None). */
@@ -49,6 +42,12 @@ class PassThroughHasClientGuard(
     override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = Future.successful(None)
   }
 
+  private def passAuthorised: ActionFilter[AuthorisedRequest] = new ActionFilter[AuthorisedRequest] {
+    override protected def executionContext: ExecutionContext                               = ec
+    override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
+  }
+
   override def forInstanceId(instanceId: String): ActionFilter[DataRequest] = pass
   override def currentClient: ActionFilter[DataRequest]                     = pass
+  override def currentClientAuthorised: ActionFilter[AuthorisedRequest]     = passAuthorised
 }

@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package forms.businessdetails
+package models.agent
 
-import javax.inject.Inject
+import play.api.libs.json.{Json, Reads}
 
-import forms.mappings.Mappings
-import play.api.data.Form
+final case class AgentDetails(
+  businessName: Option[String],
+  addressLine1: Option[String],
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postcode: Option[String],
+  country: Option[String],
+  abroadSignal: Option[String],
+  phoneNumber: Option[String],
+  mobilePhoneNumber: Option[String],
+  faxNumber: Option[String],
+  email: Option[String]
+)
 
-class ChangeEmailAddressFormProvider @Inject() extends Mappings {
-
-  private val maxEmailLength = 70
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text(
-        "changeEmailAddress.error.required"
-      ).verifying(
-        firstError(
-          maxLength(maxEmailLength, "changeEmailAddress.error.length"),
-          validEmail("changeEmailAddress.error.invalid")
-        )
-      )
-    )
+object AgentDetails {
+  implicit val reads: Reads[AgentDetails] = Json.reads[AgentDetails]
 }

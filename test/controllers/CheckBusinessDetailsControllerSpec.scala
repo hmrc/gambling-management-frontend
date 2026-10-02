@@ -17,7 +17,15 @@
 package controllers
 
 import base.SpecBase
-import models.BusinessDetails
+import models.{BusinessDetails, UserAnswers}
+import org.mockito.ArgumentCaptor
+import models.agent.AgentDetails
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import play.api.inject.bind
+import repositories.SessionRepository
+import services.GamblingService
+import scala.concurrent.Future
 import org.jsoup.Jsoup
 import pages.BusinessDetailsPage
 import play.api.test.FakeRequest
@@ -62,20 +70,56 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK with default values when nothing is held in the user's answers" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must fetch details from the backend and store them when none are in the user's answers" in {
+      val mockService     = org.mockito.Mockito.mock(classOf[GamblingService])
+      val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])
+      when(mockService.getAgentDetails(using any())).thenReturn(
+        Future.successful(
+          AgentDetails(
+            businessName = Some("Agent 1"),
+            addressLine1 = Some("123 Business road"),
+            addressLine2 = Some("Business"),
+            addressLine3 = Some("London"),
+            addressLine4 = Some("Greater London"),
+            postcode = Some("AB1 2CD"),
+            country = Some("GB"),
+            abroadSignal = Some("N"),
+            phoneNumber = Some("0191 202 2500"),
+            mobilePhoneNumber = Some("07890 123 456"),
+            faxNumber = Some("0800 202 2500"),
+            email = Some("sarah.phillips@example.com")
+          )
+        )
+      )
+      when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService), bind[SessionRepository].toInstance(mockSessionRepo))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
-
-        val result = route(application, request).value
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
 
         status(result) mustEqual OK
-        contentAsString(result) must include("Agent1")
+        val text = Jsoup.parse(contentAsString(result)).text()
+        List(
+          "Agent 1",
+          "123 Business road",
+          "Business",
+          "London",
+          "0191 202 2500",
+          "07890 123 456",
+          "0800 202 2500",
+          "sarah.phillips@example.com"
+        ).foreach(value => text must include(value))
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepo).set(captor.capture())
+        captor.getValue.get(BusinessDetailsPage).value mustEqual businessDetails.copy(businessName = Some("Agent 1"))
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "must redirect to the Index page for a GET if no existing data is found" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
@@ -84,7 +128,7 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad().url
       }
     }
   }

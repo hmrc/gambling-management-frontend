@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package models.agent
+package forms.mappings
 
-sealed trait ClientListCheckPolicy
+object Constants {
+  final val MaxLength20: Int = 20
 
-object ClientListCheckPolicy {
-  case object GroupA extends ClientListCheckPolicy
-  case object GroupB extends ClientListCheckPolicy
-  case object Exempt extends ClientListCheckPolicy
 }

@@ -127,4 +127,19 @@ trait Constraints {
         Invalid(errorKey, CurrencyFormatter.currencyFormat(maximum))
       }
     }
+
+  protected def validEmail(errorKey: String): Constraint[String] =
+    Constraint { email =>
+
+      val valid =
+        email.matches(
+          "^(?!.*\\.\\.)(?!\\.)(?!_+@)[A-Za-z0-9]+([._+-][A-Za-z0-9]+)*@([A-Za-z0-9]+(-[A-Za-z0-9]+)*\\.)+[A-Za-z]{2,}$"
+        )
+
+      if (valid) {
+        Valid
+      } else {
+        Invalid(errorKey)
+      }
+    }
 }

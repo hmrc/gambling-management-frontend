@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package models.agent
+package forms.mappings
 
-sealed trait ClientListCheckReturnTarget(val key: String)
-
-object ClientListCheckReturnTarget {
-  case object AgentLanding extends ClientListCheckReturnTarget("agent-landing")
-  case object ClientList extends ClientListCheckReturnTarget("client-list")
-  case object ManageClientDetails extends ClientListCheckReturnTarget("manage-client-details")
-  case object ChangeClientReference extends ClientListCheckReturnTarget("change-client-reference")
-  case object RemoveClient extends ClientListCheckReturnTarget("remove-client")
+object Validation {
+  final val faxRegex = """^[0-9]+$"""
 }

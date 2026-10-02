@@ -16,24 +16,24 @@
 
 package forms.businessdetails
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import forms.mappings.Validation.faxRegex
+import forms.mappings.Constants
 
-class ChangeEmailAddressFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  private val maxEmailLength = 70
+class ChangeFaxNumberFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text(
-        "changeEmailAddress.error.required"
-      ).verifying(
-        firstError(
-          maxLength(maxEmailLength, "changeEmailAddress.error.length"),
-          validEmail("changeEmailAddress.error.invalid")
+      "value" -> text("changeFaxNumber.error.required")
+        .transform(_.trim.replace(" ", ""), identity)
+        .verifying(
+          firstError(
+            regexp(faxRegex, "changeFaxNumber.error.invalid"),
+            maxLength(Constants.MaxLength20, "changeFaxNumber.error.length")
+          )
         )
-      )
     )
 }

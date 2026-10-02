@@ -17,7 +17,7 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import forms.businessdetails.ChangeEmailAddressFormProvider
+import forms.businessdetails.{ChangeEmailAddressFormProvider, ChangeFaxNumberFormProvider}
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,28 +28,29 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.businessdetails.ChangeEmailAddressView
+import views.html.businessdetails.{ChangeEmailAddressView, ChangeFaxNumberView}
 import org.jsoup.Jsoup
+import pages.ChangeFaxNumberPage
 
 import scala.concurrent.Future
 
-class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
+class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ChangeEmailAddressFormProvider()
+  val formProvider = new ChangeFaxNumberFormProvider()
   val form         = formProvider()
 
-  lazy val changeEmailAddressRoute = routes.ChangeEmailAddressController.onPageLoad().url
+  lazy val changeFaxNumberRoute = routes.ChangeFaxNumberController.onPageLoad().url
 
-  "ChangeEmailAddress Controller" - {
+  "ChangeFaxNumber Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, changeEmailAddressRoute)
+        val request = FakeRequest(GET, changeFaxNumberRoute)
 
         val result = route(application, request).value
 
@@ -58,7 +59,7 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
         val doc = Jsoup.parse(contentAsString(result))
 
         doc.select("h1").text() mustEqual
-          "What is the email address for this business?"
+          "What is the fax number for this business?"
 
         doc.select("#value").`val`() mustEqual ""
 
@@ -71,14 +72,14 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(ChangeEmailAddressPage, "answer")
+          .set(ChangeFaxNumberPage, "01234567890")
           .success
           .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, changeEmailAddressRoute)
+        val request = FakeRequest(GET, changeFaxNumberRoute)
 
         val result = route(application, request).value
 
@@ -87,10 +88,10 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
         val doc = Jsoup.parse(contentAsString(result))
 
         doc.select("h1").text() mustEqual
-          "What is the email address for this business?"
+          "What is the fax number for this business?"
 
         doc.select("#value").`val`() mustEqual
-          "answer"
+          "01234567890"
 
         doc.select(".govuk-button").text() mustEqual
           "Continue"
@@ -114,8 +115,10 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request =
-          FakeRequest(POST, changeEmailAddressRoute)
-            .withFormUrlEncodedBody(("value", "email@example.com"))
+          FakeRequest(POST, changeFaxNumberRoute)
+            .withFormUrlEncodedBody(
+              ("value", "01234567890")
+            )
 
         val result = route(application, request).value
 
@@ -129,8 +132,10 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, changeEmailAddressRoute)
-            .withFormUrlEncodedBody(("value", ""))
+          FakeRequest(POST, changeFaxNumberRoute)
+            .withFormUrlEncodedBody(
+              ("value", "")
+            )
 
         val result = route(application, request).value
 
@@ -139,7 +144,7 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
         val doc = Jsoup.parse(contentAsString(result))
 
         doc.select("h1").text() mustEqual
-          "What is the email address for this business?"
+          "What is the fax number for this business?"
 
         doc.select(".govuk-error-summary").size() mustBe 1
 
@@ -152,12 +157,14 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, changeEmailAddressRoute)
+        val request = FakeRequest(GET, changeFaxNumberRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.IndexController.onPageLoad().url
       }
     }
 
@@ -167,13 +174,17 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, changeEmailAddressRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+          FakeRequest(POST, changeFaxNumberRoute)
+            .withFormUrlEncodedBody(
+              ("value", "01234567890")
+            )
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.IndexController.onPageLoad().url
       }
     }
   }

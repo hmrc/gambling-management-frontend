@@ -16,8 +16,7 @@
 
 package controllers.clientdetails
 
-import controllers.actions.{AuthorisedAction, ClientListStatusGuard, DataRequiredAction, DataRetrievalAction, HasClientGuard}
-import navigation.ClientListCheckNavigator
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import pages.clientdetails.ChangeClientReferencePage
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
@@ -33,8 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageClientDetailsController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
-  clientListStatusGuard: ClientListStatusGuard,
-  clientListCheckNavigator: ClientListCheckNavigator,
+  clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
@@ -48,7 +46,7 @@ class ManageClientDetailsController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     (authorise
-      andThen clientListStatusGuard.groupB(clientListCheckNavigator.manageClientDetails)
+      andThen clientListCheck
       andThen getData
       andThen requireData
       andThen hasClientGuard.currentClient).async { implicit request =>

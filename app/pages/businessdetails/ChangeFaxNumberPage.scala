@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-package forms.businessdetails
+package pages
 
-import javax.inject.Inject
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case object ChangeFaxNumberPage extends QuestionPage[String] {
 
-class ChangeEmailAddressFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  private val maxEmailLength = 70
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text(
-        "changeEmailAddress.error.required"
-      ).verifying(
-        firstError(
-          maxLength(maxEmailLength, "changeEmailAddress.error.length"),
-          validEmail("changeEmailAddress.error.invalid")
-        )
-      )
-    )
+  override def toString: String = "changeFaxNumber"
 }
