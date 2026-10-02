@@ -15,39 +15,37 @@
  *@
 
 @import models.Mode
-@import viewmodels.InputWidth._
-@import viewmodels.LabelSize
+@import viewmodels.LegendSize
 @import viewmodels.govuk.errorsummary._
-@import viewmodels.govuk.input._
-@import viewmodels.govuk.label._
+@import viewmodels.govuk.radios._
+@import viewmodels.govuk.fieldset._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    caption: components.Caption
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], faxNumber: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("changeEmailAddress.title"))) {
+@layout(pageTitle = title(form, messages("removeFaxNumber.title"))) {
+    @formHelper(action = controllers.businessdetails.routes.RemoveFaxNumberController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-    @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit()) {
-
-        @if(form.errors.nonEmpty) {
+        @if(form.hasErrors) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">
-        @messages("changeEmailAddress.caption")
-        </span>
+        @caption(messages("removeFaxNumber.caption"))
 
-        @govukInput(
-          InputViewModel(
-            field = form("value"),
-            label = LabelViewModel(messages("changeEmailAddress.heading")).asPageHeading(LabelSize.Large)
-          ).asEmail()
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("removeFaxNumber.heading", faxNumber)).asPageHeading(LegendSize.Large)
+            )
         )
 
         @govukButton(

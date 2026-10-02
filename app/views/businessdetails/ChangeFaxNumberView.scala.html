@@ -16,6 +16,7 @@
 
 @import models.Mode
 @import viewmodels.InputWidth._
+@import viewmodels.LabelSize
 @import viewmodels.govuk.errorsummary._
 @import viewmodels.govuk.input._
 @import viewmodels.govuk.label._
@@ -43,7 +44,7 @@
        @govukInput(
           InputViewModel(
             field = form("value"),
-            label = LabelViewModel(messages("changeFaxNumber.heading")).asPageHeading()
+            label = LabelViewModel(messages("changeFaxNumber.heading")).asPageHeading(LabelSize.Large)
           )
           .withWidth(Fixed20)
        )

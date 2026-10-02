@@ -16,12 +16,22 @@
 
 package pages.businessdetails
 
-import pages.QuestionPage
+import models.UserAnswers
+import pages.{Page, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object ChangeFaxNumberPage extends QuestionPage[String] {
+import scala.util.Try
+
+case object RemoveFaxNumberPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "changeFaxNumber"
+  override def toString: String = "removeFaxNumber"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    if value.contains(true) then {
+      userAnswers.remove(ChangeFaxNumberPage)
+    } else {
+      super.cleanup(value, userAnswers)
+    }
 }
