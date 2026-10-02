@@ -15,42 +15,50 @@
  *@
 
 @import models.Mode
-@import viewmodels.InputWidth._
-@import viewmodels.govuk.errorsummary._
-@import viewmodels.govuk.input._
-@import viewmodels.govuk.label._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukSummaryList: GovukSummaryList,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(email: String, telephone: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("changeEmailAddress.title"))) {
+@layout(pageTitle = messages("changeBusinessContact.title")) {
 
-    @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit()) {
+    <h1 class="govuk-heading-l">
+        @messages("changeBusinessContact.heading")
+    </h1>
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+<dl class="govuk-summary-list">
 
-        <span class="govuk-caption-l">
-        @messages("changeEmailAddress.caption")
-        </span>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Email
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @email
+        </dd>
+    </div>
 
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("changeEmailAddress.heading")).asPageHeading()
-            )
-        )
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Telephone
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @telephone
+        </dd>
+    </div>
+
+</dl>
+
+    @formHelper(
+        action = controllers.businessdetails.routes.ChangeBusinessContactController.onSubmit()
+    ) {
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveAndContinue"))
         )
     }
 }

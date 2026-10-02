@@ -49,3 +49,6 @@ GET         /agent/change-business-details/business-contact-details/change-email
 POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
 
 GET         /change-business-details                        controllers.CheckBusinessDetailsController.onPageLoad()
+
+GET         /agent/change-business-contact-details   controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
+POST        /agent/change-business-contact-details   controllers.businessdetails.ChangeBusinessContactController.onSubmit()
