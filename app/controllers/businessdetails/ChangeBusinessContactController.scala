@@ -21,7 +21,10 @@ import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.all.stringToKey
+import viewmodels.govuk.summarylist.{SummaryListRowViewModel, SummaryListViewModel, ValueViewModel}
 import views.html.businessdetails.ChangeBusinessContactView
 
 import javax.inject.Inject
@@ -41,13 +44,21 @@ class ChangeBusinessContactController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authorise andThen getData andThen requireData) { implicit request =>
-      Ok(
-        view(
-          email = "test@example.com",
-          telephone = "020 1234 5678",
-          mode = mode
+
+      val summaryList =
+        SummaryListViewModel(
+          rows = Seq(
+            SummaryListRowViewModel(
+              key = "Email",
+              value = ValueViewModel(Text("test@example.com"))
+            ),
+            SummaryListRowViewModel(
+              key = "Telephone",
+              value = ValueViewModel(Text("020 1234 5678"))
+            )
+          )
         )
-      )
+      Ok(view(summaryList, mode))
     }
 
   def onSubmit(): Action[AnyContent] =
