@@ -24,18 +24,41 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     h1: H1,
+    formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
 
 @(summaryList: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("changeBusinessContact.title"))) {
+@layout(
+    pageTitle = messages("changeBusinessContact.title"),
+    includeCustomCss = true
+) {
 
-    @h1("changeBusinessContact.heading")
+    <span class="govuk-caption-l">
+        @messages("changeBusinessContact.caption")
+    </span>
+
+    <h1 class="govuk-heading-l">
+        @messages("changeBusinessContact.heading")
+    </h1>
 
     @govukSummaryList(summaryList)
 
-    @govukButton(
-        ButtonViewModel(messages("site.continue"))
-    )
+    <p class="govuk-body">
+        @messages("changeBusinessContact.guidance")
+    </p>
+
+    @formHelper(
+        action =
+            controllers.businessdetails.routes.ChangeBusinessContactController
+                .onSubmit()
+    ) {
+
+        @govukButton(
+            ButtonViewModel(
+                messages("site.submit")
+            )
+        )
+    }
 }
