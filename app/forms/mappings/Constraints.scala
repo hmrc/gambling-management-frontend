@@ -130,16 +130,9 @@ trait Constraints {
 
   protected def validEmail(errorKey: String): Constraint[String] =
     Constraint { email =>
-
-      val valid =
-        email.matches(
-          "^(?!.*\\.\\.)(?!\\.)(?!_+@)[A-Za-z0-9]+([._+-][A-Za-z0-9]+)*@([A-Za-z0-9]+(-[A-Za-z0-9]+)*\\.)+[A-Za-z]{2,}$"
-        )
-
-      if (valid) {
+      if (email.matches("^[A-Za-z0-9._-]{1,64}@[A-Za-z0-9._-]{1,64}$"))
         Valid
-      } else {
+      else
         Invalid(errorKey)
-      }
     }
 }
