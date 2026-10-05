@@ -44,7 +44,8 @@ class CheckBusinessDetailsController @Inject() (
   view: CheckBusinessDetailsView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport with Logging {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen getData andThen requireData).async { implicit request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

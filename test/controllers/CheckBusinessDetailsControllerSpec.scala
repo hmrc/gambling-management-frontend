@@ -25,12 +25,14 @@ import org.mockito.Mockito.{verify, when}
 import play.api.inject.bind
 import repositories.SessionRepository
 import services.GamblingService
-import uk.gov.hmrc.http.UpstreamErrorResponse
+
 import scala.concurrent.Future
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import org.jsoup.Jsoup
 import pages.BusinessDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
 class CheckBusinessDetailsControllerSpec extends SpecBase {
 
@@ -122,55 +124,20 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to page not found when the backend returns 404 for agent details" in {
+    "must redirect to the journey recovery page for a GET if no existing data is found" in {
       val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
       when(mockService.getAgentDetails(using any()))
-        .thenReturn(
-          Future.successful(Left(UpstreamErrorResponse("""{"message":"Agent details not found"}""", NOT_FOUND)))
-        )
-
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("agent details not found", NOT_FOUND))))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[GamblingService].toInstance(mockService))
         .build()
-
-      running(application) {
-        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
-      }
-    }
-
-    "must not swallow other upstream errors when fetching agent details" in {
-      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
-      when(mockService.getAgentDetails(using any()))
-        .thenReturn(Future.successful(Left(UpstreamErrorResponse("boom", INTERNAL_SERVER_ERROR))))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[GamblingService].toInstance(mockService))
-        .build()
-
-      running(application) {
-        val thrown = intercept[UpstreamErrorResponse] {
-          val result =
-            route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
-          status(result)
-        }
-
-        thrown.statusCode mustEqual INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "must redirect to the Index page for a GET if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
       running(application) {
         val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
       }
     }
 

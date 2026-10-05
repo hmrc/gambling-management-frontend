@@ -19,7 +19,8 @@ package controllers.businessdetails
 import controllers.actions.*
 import forms.businessdetails.ChangeFaxNumberFormProvider
 import models.{Mode, UserAnswers}
-import pages.ChangeFaxNumberPage
+import navigation.Navigator
+import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeFaxNumberController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -63,7 +65,7 @@ class ChangeFaxNumberController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeFaxNumberPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.IndexController.onPageLoad())
+            } yield Redirect(navigator.nextPage(ChangeFaxNumberPage, mode, updatedAnswers))
         )
     }
 }
