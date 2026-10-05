@@ -76,19 +76,21 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])
       when(mockService.getAgentDetails(using any())).thenReturn(
         Future.successful(
-          AgentDetails(
-            businessName = Some("Agent 1"),
-            addressLine1 = Some("123 Business road"),
-            addressLine2 = Some("Business"),
-            addressLine3 = Some("London"),
-            addressLine4 = Some("Greater London"),
-            postcode = Some("AB1 2CD"),
-            country = Some("GB"),
-            abroadSignal = Some("N"),
-            phoneNumber = Some("0191 202 2500"),
-            mobilePhoneNumber = Some("07890 123 456"),
-            faxNumber = Some("0800 202 2500"),
-            email = Some("sarah.phillips@example.com")
+          Right(
+            AgentDetails(
+              businessName = Some("Agent 1"),
+              addressLine1 = Some("123 Business road"),
+              addressLine2 = Some("Business"),
+              addressLine3 = Some("London"),
+              addressLine4 = Some("Greater London"),
+              postcode = Some("AB1 2CD"),
+              country = Some("GB"),
+              abroadSignal = Some("N"),
+              phoneNumber = Some("0191 202 2500"),
+              mobilePhoneNumber = Some("07890 123 456"),
+              faxNumber = Some("0800 202 2500"),
+              email = Some("sarah.phillips@example.com")
+            )
           )
         )
       )
@@ -123,7 +125,9 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
     "must redirect to page not found when the backend returns 404 for agent details" in {
       val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
       when(mockService.getAgentDetails(using any()))
-        .thenReturn(Future.failed(UpstreamErrorResponse("""{"message":"Agent details not found"}""", NOT_FOUND)))
+        .thenReturn(
+          Future.successful(Left(UpstreamErrorResponse("""{"message":"Agent details not found"}""", NOT_FOUND)))
+        )
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[GamblingService].toInstance(mockService))
@@ -140,7 +144,7 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
     "must not swallow other upstream errors when fetching agent details" in {
       val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
       when(mockService.getAgentDetails(using any()))
-        .thenReturn(Future.failed(UpstreamErrorResponse("boom", INTERNAL_SERVER_ERROR)))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("boom", INTERNAL_SERVER_ERROR))))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[GamblingService].toInstance(mockService))

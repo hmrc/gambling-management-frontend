@@ -52,8 +52,8 @@ class GamblingConnector @Inject() (
   private given HttpReads[HasClientResponse] =
     HttpReads.Implicits.readFromJson[HasClientResponse]
 
-  private given HttpReads[AgentDetails] =
-    HttpReads.Implicits.readFromJson[AgentDetails]
+  private given HttpReads[Either[UpstreamErrorResponse, AgentDetails]] =
+    HttpReads.Implicits.readEitherOf[AgentDetails]
 
   private given HttpReads[HttpResponse] = HttpReads.Implicits.readRaw
 
@@ -112,10 +112,10 @@ class GamblingConnector @Inject() (
       .get(url"$agentBaseUrl/has-client/$regime/$regNumber")
       .execute[HasClientResponse]
 
-  def getAgentDetails(using HeaderCarrier): Future[AgentDetails] =
+  def getAgentDetails(using HeaderCarrier): Future[Either[UpstreamErrorResponse, AgentDetails]] =
     httpClient
       .get(url"$baseUrl/gambling/agent-details")
-      .execute[AgentDetails]
+      .execute[Either[UpstreamErrorResponse, AgentDetails]]
 
   def getAllClients(using HeaderCarrier): Future[List[AgentClient]] =
     httpClient
