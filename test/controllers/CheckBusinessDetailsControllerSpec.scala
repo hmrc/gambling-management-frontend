@@ -25,6 +25,7 @@ import org.mockito.Mockito.{verify, when}
 import play.api.inject.bind
 import repositories.SessionRepository
 import services.GamblingService
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 import pages.BusinessDetailsPage
@@ -116,6 +117,43 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepo).set(captor.capture())
         captor.getValue.get(BusinessDetailsPage).value mustEqual businessDetails.copy(businessName = Some("Agent 1"))
+      }
+    }
+
+    "must redirect to page not found when the backend returns 404 for agent details" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("""{"message":"Agent details not found"}""", NOT_FOUND)))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
+      }
+    }
+
+    "must not swallow other upstream errors when fetching agent details" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("boom", INTERNAL_SERVER_ERROR)))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+
+      running(application) {
+        val thrown = intercept[UpstreamErrorResponse] {
+          val result =
+            route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+          status(result)
+        }
+
+        thrown.statusCode mustEqual INTERNAL_SERVER_ERROR
       }
     }
 

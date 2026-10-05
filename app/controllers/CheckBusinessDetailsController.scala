@@ -23,7 +23,8 @@ import repositories.SessionRepository
 import services.GamblingService
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.http.Status.NOT_FOUND
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CheckBusinessDetailsView
@@ -46,7 +47,7 @@ class CheckBusinessDetailsController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen getData andThen requireData).async { implicit request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.userAnswers.get(BusinessDetailsPage) match {
+    val result          = request.userAnswers.get(BusinessDetailsPage) match {
       case Some(details) => Future.successful(Ok(view(details)))
       case None          =>
         for {
@@ -54,6 +55,9 @@ class CheckBusinessDetailsController @Inject() (
           updated <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))
           _       <- sessionRepository.set(updated)
         } yield Ok(view(details))
+    }
+    result.recover { case UpstreamErrorResponse(_, NOT_FOUND, _, _) =>
+      Redirect(routes.PageNotFoundController.onPageLoad())
     }
   }
 }
