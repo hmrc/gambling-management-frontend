@@ -34,6 +34,12 @@ class CurrencyFormatterSpec extends AnyFreeSpec with Matchers {
     "must use the absolute value for negatives" in {
       CurrencyFormatter.currencyFormat(BigDecimal("-100")) mustEqual "£100"
     }
+
+    "must round ties to the nearest even digit (HALF_EVEN)" in {
+      CurrencyFormatter.currencyFormat(BigDecimal("1.005")) mustEqual "£1"
+      CurrencyFormatter.currencyFormat(BigDecimal("1.015")) mustEqual "£1.02"
+      CurrencyFormatter.currencyFormat(BigDecimal("1.025")) mustEqual "£1.02"
+    }
   }
   "formattedAmountHtml" - {
 
