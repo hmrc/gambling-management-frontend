@@ -201,6 +201,11 @@ changeFaxNumber.error.required = Enter the fax number for this business
 changeFaxNumber.error.invalid = The fax number must only include numbers 0 to 9 and spaces
 changeFaxNumber.error.length = The fax number must be 20 characters or less
 
+removeFaxNumber.title = Are you sure you want to remove the fax number?
+removeFaxNumber.heading = Are you sure you want to remove the fax number {0}?
+removeFaxNumber.caption = Check business details
+removeFaxNumber.error.required = Select yes if you want to remove the fax number
+
 
 checkBusinessDetails.title = Check your business details
 checkBusinessDetails.heading = Check your business details

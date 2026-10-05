@@ -21,6 +21,7 @@ import forms.businessdetails.ChangeEmailAddressFormProvider
 
 import javax.inject.Inject
 import models.Mode
+import navigation.Navigator
 import pages.businessdetails.ChangeEmailAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeEmailAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
+  navigator: Navigator,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ChangeEmailAddressFormProvider,
@@ -45,7 +47,7 @@ class ChangeEmailAddressController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
     val preparedForm = request.userAnswers.get(ChangeEmailAddressPage) match {
       case None        => form
@@ -56,7 +58,7 @@ class ChangeEmailAddressController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -65,7 +67,7 @@ class ChangeEmailAddressController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeEmailAddressPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.IndexController.onPageLoad())
+            } yield Redirect(navigator.nextPage(ChangeEmailAddressPage, mode, updatedAnswers))
         )
     }
 }

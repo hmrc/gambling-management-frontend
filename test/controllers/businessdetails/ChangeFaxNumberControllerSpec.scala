@@ -17,20 +17,19 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import forms.businessdetails.{ChangeEmailAddressFormProvider, ChangeFaxNumberFormProvider}
+import forms.businessdetails.ChangeFaxNumberFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.businessdetails.ChangeEmailAddressPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.businessdetails.{ChangeEmailAddressView, ChangeFaxNumberView}
+import views.html.businessdetails.ChangeFaxNumberView
 import org.jsoup.Jsoup
-import pages.ChangeFaxNumberPage
+import pages.businessdetails.ChangeFaxNumberPage
 
 import scala.concurrent.Future
 
@@ -164,7 +163,7 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -184,7 +183,19 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect an organisation to the access denied page (agent-only page)" in {
+
+      val application = organisationDeniedApplicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, changeFaxNumberRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.AccessDeniedController.onPageLoad().url
       }
     }
   }

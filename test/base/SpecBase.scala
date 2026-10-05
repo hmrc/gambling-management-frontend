@@ -33,6 +33,10 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.retrieve.~
+
+import scala.concurrent.Future
 
 trait SpecBase
     extends AnyFreeSpec
@@ -57,7 +61,24 @@ trait SpecBase
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[AuthorisedAction].to[FakeIdentifierAction],
+        bind[AgentOnlyAction].to[FakeAgentOnlyAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+      )
+
+  private def organisationRetrieval: Option[String] ~ Option[AffinityGroup] ~ Enrolments =
+    new ~(
+      new ~(Option("internal-id"), Option(AffinityGroup.Organisation)),
+      Enrolments(Set(Enrolment("HMRC-MGD-ORG", Seq(EnrolmentIdentifier("HMRCMGDRN", "1234567890")), "Activated")))
+    )
+
+  protected def organisationDeniedApplicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .overrides(
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[AuthorisedAction].to[FakeIdentifierAction],
+        bind[AgentOnlyAction].to[DefaultAgentOnlyAction],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[AuthConnector].toInstance(new StubAuthConnector(Future.successful(organisationRetrieval)))
       )
 
   protected val testAppConfig = new AppConfig(

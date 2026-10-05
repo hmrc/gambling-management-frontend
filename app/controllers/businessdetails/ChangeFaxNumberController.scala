@@ -19,7 +19,8 @@ package controllers.businessdetails
 import controllers.actions.*
 import forms.businessdetails.ChangeFaxNumberFormProvider
 import models.{Mode, UserAnswers}
-import pages.ChangeFaxNumberPage
+import navigation.Navigator
+import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeFaxNumberController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
+  navigator: Navigator,
+  agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ChangeFaxNumberFormProvider,
@@ -44,7 +46,7 @@ class ChangeFaxNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(ChangeFaxNumberPage) match {
       case None        => form
       case Some(value) => form.fill(value)
@@ -54,7 +56,7 @@ class ChangeFaxNumberController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -63,7 +65,7 @@ class ChangeFaxNumberController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeFaxNumberPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.routes.IndexController.onPageLoad())
+            } yield Redirect(navigator.nextPage(ChangeFaxNumberPage, mode, updatedAnswers))
         )
     }
 }

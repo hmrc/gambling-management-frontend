@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages.businessdetails
+package controllers.actions
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.http.HeaderCarrier
 
-case object ChangeFaxNumberPage extends QuestionPage[String] {
+import scala.concurrent.{ExecutionContext, Future}
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "changeFaxNumber"
+class StubAuthConnector(result: Future[Any]) extends AuthConnector {
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(using
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[A] = result.map(_.asInstanceOf[A])
 }
