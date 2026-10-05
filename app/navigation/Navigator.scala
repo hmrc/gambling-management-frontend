@@ -20,14 +20,26 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.Call
 import controllers.routes
-import pages._
+import pages.businessdetails._
+import pages.*
 import models._
 
 @Singleton
 class Navigator @Inject() () {
 
-  private val normalRoutes: Page => UserAnswers => Call = { case _ =>
-    _ => routes.IndexController.onPageLoad()
+  private val normalRoutes: Page => UserAnswers => Call = {
+
+    case ChangeFaxNumberPage =>
+      _ => routes.JourneyRecoveryController.onPageLoad()
+
+    case RemoveFaxNumberPage =>
+      _ => routes.JourneyRecoveryController.onPageLoad()
+
+    case ChangeEmailAddressPage =>
+      _ => routes.JourneyRecoveryController.onPageLoad()
+
+    case _ =>
+      _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = { case _ =>
