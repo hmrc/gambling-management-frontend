@@ -171,7 +171,7 @@ trait Formatters {
                   if (value < minValue || value > maxValue)
                     Left(Seq(FormError(key, rangeKey, args)))
                   else
-                    Right(value)
+                    Right(value.setScale(2, BigDecimal.RoundingMode.HALF_EVEN))
                 }
           }
 
