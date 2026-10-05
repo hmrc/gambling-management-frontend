@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{BusinessDetails, UserAnswers}
+import models.{BusinessDetails, GamblingError, UserAnswers}
 import org.mockito.ArgumentCaptor
 import models.agent.AgentDetails
 import org.mockito.ArgumentMatchers.any
@@ -27,12 +27,10 @@ import repositories.SessionRepository
 import services.GamblingService
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.UpstreamErrorResponse
 import org.jsoup.Jsoup
 import pages.BusinessDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import uk.gov.hmrc.http.UpstreamErrorResponse
 
 class CheckBusinessDetailsControllerSpec extends SpecBase {
 
@@ -124,10 +122,10 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the journey recovery page for a GET if no existing data is found" in {
+    "must redirect to the page not found page when agent details are not found" in {
       val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
       when(mockService.getAgentDetails(using any()))
-        .thenReturn(Future.successful(Left(UpstreamErrorResponse("agent details not found", NOT_FOUND))))
+        .thenReturn(Future.successful(Left(GamblingError.NotFound)))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[GamblingService].toInstance(mockService))
         .build()
@@ -138,6 +136,21 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the system error page when fetching agent details fails upstream" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.successful(Left(GamblingError.UpstreamError)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.SystemErrorController.onPageLoad().url
       }
     }
 

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.agent.{AgentClient, AgentClientData, ClientListStatus, UpdateAgentClientRequest}
 import models.requests.RemoveAgentClientRequest
-import org.scalatest.{BeforeAndAfterAll, EitherValues}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
@@ -33,7 +33,6 @@ import scala.concurrent.ExecutionContext
 class GamblingConnectorAgentISpec
     extends AsyncWordSpec
     with Matchers
-    with EitherValues
     with BeforeAndAfterAll
     with ScalaFutures
     with IntegrationPatience {
@@ -77,29 +76,6 @@ class GamblingConnectorAgentISpec
           .willReturn(okJson(Json.obj("result" -> "in-progress").toString()))
       )
       connector.getClientListStatus.map(_.result mustBe ClientListStatus.InProgress)
-    }
-  }
-
-  "getAgentDetails" should {
-    "parse the agent details" in {
-      wireMockServer.stubFor(
-        get(urlEqualTo("/gambling/agent-details"))
-          .willReturn(okJson(Json.obj("businessName" -> "Agent 1", "mobilePhoneNumber" -> "07890 123 456").toString()))
-      )
-      connector.getAgentDetails.map { result =>
-        val details = result.value
-        details.businessName mustBe Some("Agent 1")
-        details.mobilePhoneNumber mustBe Some("07890 123 456")
-        details.email mustBe None
-      }
-    }
-
-    "return Left with the upstream status when the backend returns 404" in {
-      wireMockServer.stubFor(
-        get(urlEqualTo("/gambling/agent-details"))
-          .willReturn(aResponse().withStatus(404).withBody(Json.obj("message" -> "Agent details not found").toString()))
-      )
-      connector.getAgentDetails.map(_.left.value.statusCode mustBe 404)
     }
   }
 

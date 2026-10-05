@@ -17,15 +17,14 @@
 package controllers
 
 import controllers.actions.*
-import models.BusinessDetails
+import models.{BusinessDetails, GamblingError}
 import pages.BusinessDetailsPage
 import play.api.Logging
 import repositories.SessionRepository
 import services.GamblingService
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CheckBusinessDetailsView
@@ -53,11 +52,12 @@ class CheckBusinessDetailsController @Inject() (
       case Some(details) => Future.successful(Ok(view(details)))
       case None          =>
         gamblingService.getAgentDetails.flatMap {
-          case Left(UpstreamErrorResponse(_, NOT_FOUND, _, _)) =>
-            logger.info(s"agent details were not found for ${request.mgdRegNum}")
+          case Left(GamblingError.NotFound) =>
+            logger.info(s"Agent details were not found for ${request.mgdRegNum}")
             Future.successful(Redirect(routes.PageNotFoundController.onPageLoad()))
-          case Left(error)                                     => Future.failed(error)
-          case Right(agentDetails)                             =>
+          case Left(_)                      =>
+            Future.successful(Redirect(routes.SystemErrorController.onPageLoad()))
+          case Right(agentDetails)          =>
             val details = BusinessDetails.fromAgentDetails(agentDetails)
             for {
               updated <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))

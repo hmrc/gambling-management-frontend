@@ -19,10 +19,10 @@ package connectors
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.{GetClientListStatusResponse, MgdCertificate, ReturnSummary, ReturnSummaryError}
+import models.{GamblingError, GetClientListStatusResponse, MgdCertificate, ReturnSummary, ReturnSummaryError}
 import models.agent.{AgentClient, AgentClientData, AgentDetails, HasClientResponse, UpdateAgentClientRequest}
 import models.requests.RemoveAgentClientRequest
-import play.api.http.Status.{NO_CONTENT, OK}
+import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
@@ -112,10 +112,14 @@ class GamblingConnector @Inject() (
       .get(url"$agentBaseUrl/has-client/$regime/$regNumber")
       .execute[HasClientResponse]
 
-  def getAgentDetails(using HeaderCarrier): Future[Either[UpstreamErrorResponse, AgentDetails]] =
+  def getAgentDetails(using HeaderCarrier): Future[Either[GamblingError, AgentDetails]] =
     httpClient
       .get(url"$baseUrl/gambling/agent-details")
       .execute[Either[UpstreamErrorResponse, AgentDetails]]
+      .map(_.left.map {
+        case UpstreamErrorResponse(_, NOT_FOUND, _, _) => GamblingError.NotFound
+        case _                                         => GamblingError.UpstreamError
+      })
 
   def getAllClients(using HeaderCarrier): Future[List[AgentClient]] =
     httpClient
