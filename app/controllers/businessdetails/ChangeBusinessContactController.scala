@@ -47,8 +47,13 @@ class ChangeBusinessContactController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authorise andThen getData andThen requireData) { implicit request =>
 
-      val phoneNumber  = "0191 202 2500"
-      val mobileNumber = "07890 123 456"
+      val phoneNumber                = "0191 202 2500" // TODO Change to answers
+      val mobileNumber               = "07890 123 456" // TODO Change to answers
+      val faxNumber: Option[String]  = None // TODO Change to answers
+      val faxNumber2: Option[String] = Some("01881123456")
+
+      val emailAddress: Option[String]  = None // TODO Change to answers
+      val emailAddress2: Option[String] = None // TODO Change to answers
 
       val summaryList = SummaryListViewModel(
         rows = Seq(
@@ -70,7 +75,7 @@ class ChangeBusinessContactController @Inject() (
             actions = Seq(
               ActionItemViewModel(
                 Text("Change"),
-                controllers.routes.IndexController // ChangeContactNumbersController
+                controllers.routes.IndexController // TODO: ChangeContactNumbersController
                   .onPageLoad()
                   .url
               )
@@ -78,39 +83,65 @@ class ChangeBusinessContactController @Inject() (
           ),
           SummaryListRowViewModel(
             key = KeyViewModel(Text("Fax number")),
-            value = ValueViewModel(Text("01881123456")),
-            actions = Seq(
-              ActionItemViewModel(
-                Text("Change"),
-                controllers.businessdetails.routes.ChangeFaxNumberController
-                  .onPageLoad()
-                  .url
-              ),
-              ActionItemViewModel(
-                Text("Remove"),
-                controllers.businessdetails.routes.RemoveFaxNumberController
-                  .onPageLoad()
-                  .url
+            value = ValueViewModel(
+              Text(faxNumber.getOrElse("Not provided"))
+            ),
+            actions = if (faxNumber.isDefined) {
+              Seq(
+                ActionItemViewModel(
+                  Text("Change"),
+                  controllers.businessdetails.routes.ChangeFaxNumberController
+                    .onPageLoad()
+                    .url
+                ),
+                ActionItemViewModel(
+                  Text("Remove"),
+                  controllers.businessdetails.routes.RemoveFaxNumberController
+                    .onPageLoad()
+                    .url
+                )
               )
-            )
+            } else {
+              Seq(
+                ActionItemViewModel(
+                  Text("Change"),
+                  controllers.businessdetails.routes.ChangeFaxNumberController
+                    .onPageLoad()
+                    .url
+                )
+              )
+            }
           ),
           SummaryListRowViewModel(
             key = KeyViewModel(Text("Email address")),
-            value = ValueViewModel(Text("someone@someone.com")),
-            actions = Seq(
-              ActionItemViewModel(
-                Text("Change"),
-                controllers.businessdetails.routes.ChangeEmailAddressController
-                  .onPageLoad()
-                  .url
-              ),
-              ActionItemViewModel(
-                Text("Remove"),
-                controllers.businessdetails.routes.ChangeEmailAddressController // RemoveEmailAddressController
-                  .onPageLoad()
-                  .url
+            value = ValueViewModel(
+              Text(emailAddress.getOrElse("Not provided"))
+            ),
+            actions = if (emailAddress.isDefined) {
+              Seq(
+                ActionItemViewModel(
+                  Text("Change"),
+                  controllers.businessdetails.routes.ChangeEmailAddressController
+                    .onPageLoad()
+                    .url
+                ),
+                ActionItemViewModel(
+                  Text("Remove"),
+                  controllers.businessdetails.routes.ChangeFaxNumberController // TODO: RemoveEmailAddressController
+                    .onPageLoad()
+                    .url
+                )
               )
-            )
+            } else {
+              Seq(
+                ActionItemViewModel(
+                  Text("Change"),
+                  controllers.businessdetails.routes.ChangeEmailAddressController
+                    .onPageLoad()
+                    .url
+                )
+              )
+            }
           )
         )
       )
