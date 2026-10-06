@@ -18,7 +18,8 @@ package connectors
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import models.{ReturnSummary, ReturnSummaryError}
+import models.{GamblingError, ReturnSummary, ReturnSummaryError}
+import models.agent.AgentDetails
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatest.concurrent.Futures.PatienceConfig
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -114,6 +115,56 @@ class GamblingConnectorISpec
         connector.getReturnSummary(mgdRegNumber).futureValue
 
       result mustBe Left(ReturnSummaryError.UnexpectedError)
+    }
+  }
+
+  "GamblingConnector.getAgentDetails" should {
+
+    "return Right(details) when backend returns 200" in {
+
+      wireMockServer.stubFor(
+        get(urlEqualTo("/gambling/agent-details"))
+          .willReturn(okJson(Json.obj("businessName" -> "Agent 1", "email" -> "agent@example.com").toString()))
+      )
+
+      val result = connector.getAgentDetails.futureValue
+
+      result mustBe Right(
+        AgentDetails(
+          businessName = Some("Agent 1"),
+          addressLine1 = None,
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          postcode = None,
+          country = None,
+          abroadSignal = None,
+          phoneNumber = None,
+          mobilePhoneNumber = None,
+          faxNumber = None,
+          email = Some("agent@example.com")
+        )
+      )
+    }
+
+    "return Left(NotFound) when backend returns 404" in {
+
+      wireMockServer.stubFor(
+        get(urlEqualTo("/gambling/agent-details"))
+          .willReturn(aResponse().withStatus(404).withBody(Json.obj("message" -> "Agent details not found").toString()))
+      )
+
+      connector.getAgentDetails.futureValue mustBe Left(GamblingError.NotFound)
+    }
+
+    "return Left(UpstreamError) when backend returns 500" in {
+
+      wireMockServer.stubFor(
+        get(urlEqualTo("/gambling/agent-details"))
+          .willReturn(serverError())
+      )
+
+      connector.getAgentDetails.futureValue mustBe Left(GamblingError.UpstreamError)
     }
   }
 }

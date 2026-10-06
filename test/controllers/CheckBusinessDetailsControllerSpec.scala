@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{BusinessDetails, UserAnswers}
+import models.{BusinessDetails, GamblingError, UserAnswers}
 import org.mockito.ArgumentCaptor
 import models.agent.AgentDetails
 import org.mockito.ArgumentMatchers.any
@@ -25,6 +25,7 @@ import org.mockito.Mockito.{verify, when}
 import play.api.inject.bind
 import repositories.SessionRepository
 import services.GamblingService
+
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 import pages.BusinessDetailsPage
@@ -75,19 +76,21 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])
       when(mockService.getAgentDetails(using any())).thenReturn(
         Future.successful(
-          AgentDetails(
-            businessName = Some("Agent 1"),
-            addressLine1 = Some("123 Business road"),
-            addressLine2 = Some("Business"),
-            addressLine3 = Some("London"),
-            addressLine4 = Some("Greater London"),
-            postcode = Some("AB1 2CD"),
-            country = Some("GB"),
-            abroadSignal = Some("N"),
-            phoneNumber = Some("0191 202 2500"),
-            mobilePhoneNumber = Some("07890 123 456"),
-            faxNumber = Some("0800 202 2500"),
-            email = Some("sarah.phillips@example.com")
+          Right(
+            AgentDetails(
+              businessName = Some("Agent 1"),
+              addressLine1 = Some("123 Business road"),
+              addressLine2 = Some("Business"),
+              addressLine3 = Some("London"),
+              addressLine4 = Some("Greater London"),
+              postcode = Some("AB1 2CD"),
+              country = Some("GB"),
+              abroadSignal = Some("N"),
+              phoneNumber = Some("0191 202 2500"),
+              mobilePhoneNumber = Some("07890 123 456"),
+              faxNumber = Some("0800 202 2500"),
+              email = Some("sarah.phillips@example.com")
+            )
           )
         )
       )
@@ -119,16 +122,35 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the journey recovery page for a GET if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
+    "must redirect to the page not found page when agent details are not found" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.successful(Left(GamblingError.NotFound)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
       running(application) {
         val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the system error page when fetching agent details fails upstream" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.successful(Left(GamblingError.UpstreamError)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.SystemErrorController.onPageLoad().url
       }
     }
 
