@@ -17,9 +17,9 @@
 package services
 
 import connectors.GamblingConnector
-import models.{MgdCertificate, ReturnSummary, ReturnSummaryError}
+import models.{GamblingError, MgdCertificate, ReturnSummary, ReturnSummaryError}
 import models.agent.{AgentDetails, ClientListStatus}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class GamblingService @Inject() (
   def getClientListStatus(using HeaderCarrier): Future[ClientListStatus] =
     connector.getClientListStatus.map(_.result)
 
-  def getAgentDetails(using HeaderCarrier): Future[AgentDetails] =
+  def getAgentDetails(using HeaderCarrier): Future[Either[GamblingError, AgentDetails]] =
     connector.getAgentDetails
 
   def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[Boolean] =
