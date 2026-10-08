@@ -18,6 +18,7 @@ package controllers.businessdetails
 
 import controllers.actions.*
 import models.{CheckMode, Mode}
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -47,13 +48,10 @@ class ChangeBusinessContactController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authorise andThen getData andThen requireData) { implicit request =>
 
-      val phoneNumber                = "0191 202 2500" // TODO Change to answers
-      val mobileNumber               = "07890 123 456" // TODO Change to answers
-      val faxNumber: Option[String]  = None // TODO Change to answers
-      val faxNumber2: Option[String] = Some("01881123456")
-
-      val emailAddress: Option[String]  = None // TODO Change to answers
-      val emailAddress2: Option[String] = None // TODO Change to answers
+      val phoneNumber                  = "0191 202 2500" // TODO Change to ChangeContactNumber
+      val mobileNumber                 = "07890 123 456" // TODO Change to ChangeContactNumber
+      val faxNumber: Option[String]    = request.userAnswers.get(ChangeFaxNumberPage)
+      val emailAddress: Option[String] = request.userAnswers.get(ChangeEmailAddressPage)
 
       val summaryList = SummaryListViewModel(
         rows = Seq(
@@ -75,7 +73,7 @@ class ChangeBusinessContactController @Inject() (
             actions = Seq(
               ActionItemViewModel(
                 Text("Change"),
-                controllers.routes.IndexController // TODO: ChangeContactNumbersController
+                controllers.routes.IndexController // TODO: ChangeContactNumberController
                   .onPageLoad()
                   .url
               )
