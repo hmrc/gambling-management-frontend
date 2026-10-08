@@ -218,3 +218,9 @@ checkBusinessDetails.phoneNumber = Phone number
 checkBusinessDetails.mobileNumber = Mobile number
 checkBusinessDetails.faxNumber = Fax number
 checkBusinessDetails.emailAddress = Email address
+
+changeBusinessContact.title = Change your contact details
+changeBusinessContact.caption = Check business details
+changeBusinessContact.heading = Change your contact details
+changeBusinessContact.guidance = You have changed some of your details but they will not be saved until you submit this page.
+
