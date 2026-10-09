@@ -19,6 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.agent.{AgentClient, AgentClientData, ClientListStatus, UpdateAgentClientRequest}
+import models.businessdetails.{BusinessContactDetailResponse, BusinessContactDetailSubmission}
 import models.requests.RemoveAgentClientRequest
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -149,6 +150,58 @@ class GamblingConnectorAgentISpec
         post(urlEqualTo("/gambling/user-cache/agent-client/user-1")).willReturn(okJson("{}"))
       )
       connector.saveAgentClient("user-1", AgentClientData("u1", "mgd", "RN1", Some("Acme"))).map(_ => succeed)
+    }
+  }
+
+  "updateBusinessDetails" should {
+
+    "return the acknowledgement reference and timestamp" in {
+
+      val request =
+        BusinessContactDetailSubmission(
+          submitterEmail = None,
+          phoneNumber = Some("02079460123"),
+          mobileNumber = Some("07700900123"),
+          faxNumber = Some("02079460124"),
+          email = Some("new@test.com")
+        )
+
+      val response =
+        BusinessContactDetailResponse(
+          acknowledgmentReference = "ABCDEFG",
+          submissionTimestamp = "2026-10-08T15:00:00Z"
+        )
+
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/update-business-details"))
+          .willReturn(
+            okJson(Json.toJson(response).toString())
+          )
+      )
+
+      connector
+        .updateBusinessDetails(request)
+        .map(_ mustBe response)
+    }
+
+    "fail on a non-200 response" in {
+
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/update-business-details"))
+          .willReturn(serverError())
+      )
+
+      recoverToSucceededIf[UpstreamErrorResponse] {
+        connector.updateBusinessDetails(
+          BusinessContactDetailSubmission(
+            submitterEmail = None,
+            phoneNumber = Some("02079460123"),
+            mobileNumber = Some("07700900123"),
+            faxNumber = Some("02079460124"),
+            email = Some("new@test.com")
+          )
+        )
+      }
     }
   }
 }
