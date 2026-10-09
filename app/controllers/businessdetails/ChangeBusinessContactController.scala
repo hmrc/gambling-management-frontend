@@ -16,10 +16,17 @@
 
 package controllers.businessdetails
 
+import connectors.GamblingConnector
 import controllers.actions.*
+<<<<<<< HEAD
 import forms.businessdetails.ChangeBusinessContactFormProvider
 import models.Mode
 import pages.businessdetails.ChangeBusinessContactPage
+=======
+import models.businessdetails.BusinessContactDetailSubmission
+import models.{CheckMode, Mode}
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
+>>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -38,7 +45,11 @@ class ChangeBusinessContactController @Inject() (
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+<<<<<<< HEAD
   formProvider: ChangeBusinessContactFormProvider,
+=======
+  gamblingConnector: GamblingConnector,
+>>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
   val controllerComponents: MessagesControllerComponents,
   view: ChangeBusinessContactView
 )(implicit ec: ExecutionContext)
@@ -58,6 +69,7 @@ class ChangeBusinessContactController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] =
+<<<<<<< HEAD
     (agentOnly andThen getData andThen requireData).async { implicit request =>
       // TODO: Submit to CHRIS
 
@@ -65,5 +77,26 @@ class ChangeBusinessContactController @Inject() (
         updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
         _              <- sessionRepository.set(updatedAnswers)
       } yield Redirect(controllers.routes.IndexController.onPageLoad())
+=======
+    (authorise andThen getData andThen requireData).async { implicit request =>
+
+      val submission =
+        BusinessContactDetailSubmission(
+          submitterEmail = None, // TODO if source found
+          phoneNumber = Some("0191 202 2500"), // TODO replace with > request.userAnswers.get(ChangeContactNumberPage)
+          mobileNumber = Some("07890 123 456"), // TODO replace with > request.userAnswers.get(ChangeContactNumberPage)
+          faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
+          email = request.userAnswers.get(ChangeEmailAddressPage)
+        )
+
+      for {
+        response <- gamblingConnector.updateBusinessDetails(submission)
+      } yield {
+        Redirect(
+          controllers.routes.IndexController.onPageLoad()
+        )
+      }
+>>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
     }
+
 }

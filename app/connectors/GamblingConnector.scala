@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.{GamblingError, GetClientListStatusResponse, MgdCertificate, ReturnSummary, ReturnSummaryError}
 import models.agent.{AgentClient, AgentClientData, AgentDetails, HasClientResponse, UpdateAgentClientRequest}
 import models.requests.RemoveAgentClientRequest
+import models.businessdetails.{BusinessContactDetailResponse, BusinessContactDetailSubmission}
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -56,6 +57,9 @@ class GamblingConnector @Inject() (
     HttpReads.Implicits.readEitherOf[AgentDetails]
 
   private given HttpReads[HttpResponse] = HttpReads.Implicits.readRaw
+
+  private given HttpReads[BusinessContactDetailResponse] =
+    HttpReads.Implicits.readFromJson[BusinessContactDetailResponse]
 
   def getReturnSummary(
     mgdRegNumber: String
@@ -176,3 +180,11 @@ class GamblingConnector @Inject() (
           case status     => Future.failed(UpstreamErrorResponse(response.body, status, status))
         }
       }
+
+  def updateBusinessDetails(
+    request: BusinessContactDetailSubmission
+  )(using HeaderCarrier): Future[BusinessContactDetailResponse] =
+    httpClient
+      .post(url"$agentBaseUrl/update-business-details")
+      .withBody(Json.toJson(request))
+      .execute[BusinessContactDetailResponse]
