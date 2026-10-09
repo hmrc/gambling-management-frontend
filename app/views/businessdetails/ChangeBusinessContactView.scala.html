@@ -19,31 +19,31 @@
 @import play.api.i18n.Messages
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 @import views.html.components._
+@import viewmodels.govuk.summarylist.FluentSummaryList
 
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
+    caption: components.Caption,
     h1: H1,
     formHelper: FormWithCSRF,
     govukButton: GovukButton
 )
 
-@(summaryList: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(contactNumbers: SummaryList, faxNumber: SummaryList, emailAddress: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = messages("changeBusinessContact.title"),
-    includeCustomCss = true
+    fullWidth = true
 ) {
 
-    <span class="govuk-caption-l">
-        @messages("changeBusinessContact.caption")
-    </span>
+    @caption(messages("changeBusinessContact.caption"))
 
-    <h1 class="govuk-heading-l">
-        @messages("changeBusinessContact.heading")
-    </h1>
+    @h1(messages("changeBusinessContact.heading"))
 
-    @govukSummaryList(summaryList)
+    @govukSummaryList(contactNumbers.withCssClass("govuk-!-margin-bottom-0"))
+    @govukSummaryList(faxNumber.withCssClass("govuk-!-margin-bottom-0"))
+    @govukSummaryList(emailAddress.withCssClass("govuk-!-margin-bottom-6"))
 
     <p class="govuk-body">
         @messages("changeBusinessContact.guidance")

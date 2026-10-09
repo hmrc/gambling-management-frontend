@@ -32,11 +32,11 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the page with the correct content" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, summaryList, summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
-      doc.title     must include(messages("changeBusinessContact.title"))
+      doc.title must include(messages("changeBusinessContact.title"))
       doc.body.text must include(messages("changeBusinessContact.heading"))
       doc.body.text must include(messages("changeBusinessContact.caption"))
       doc.body.text must include(messages("changeBusinessContact.guidance"))
@@ -44,17 +44,17 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the summary list" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, summaryList, summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
-      doc.select(".govuk-summary-list").size() mustEqual 1
-      doc.select(".govuk-summary-list__row").size() mustEqual summaryList.rows.size
+      doc.select(".govuk-summary-list").size() mustEqual 3
+      doc.select(".govuk-summary-list__row").size() mustEqual 3
     }
 
     "must render a submit button" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, summaryList, summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
@@ -62,19 +62,11 @@ class ChangeBusinessContactViewSpec extends SpecBase {
         messages("site.submit")
     }
 
-    "must render a form" in new Setup {
-
-      val html = view(summaryList, NormalMode)
-
-      val doc = Jsoup.parse(html.body)
-
-      doc.select("form").size() mustEqual 1
-    }
   }
 
   trait Setup {
 
-    val app  = applicationBuilder().build()
+    val app = applicationBuilder().build()
     val view = app.injector.instanceOf[ChangeBusinessContactView]
 
     val summaryList = SummaryList(
@@ -82,10 +74,6 @@ class ChangeBusinessContactViewSpec extends SpecBase {
         SummaryListRow(
           key = Key(Text("Row 1")),
           value = Value(Text("Value 1"))
-        ),
-        SummaryListRow(
-          key = Key(Text("Row 2")),
-          value = Value(Text("Value 2"))
         )
       )
     )

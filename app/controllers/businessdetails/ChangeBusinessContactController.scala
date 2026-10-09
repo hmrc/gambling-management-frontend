@@ -18,134 +18,44 @@ package controllers.businessdetails
 
 import controllers.actions.*
 import models.{CheckMode, Mode}
+import pages.BusinessDetailsPage
 import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.businessContact.{ContactNumbersSummary, EmailAddressSummary, FaxNumberSummary}
 import viewmodels.govuk.all.stringToKey
-import viewmodels.govuk.summarylist.{SummaryListRowViewModel, SummaryListViewModel, ValueViewModel}
-import views.html.businessdetails.ChangeBusinessContactView
 import viewmodels.govuk.summarylist.*
+import views.html.businessdetails.ChangeBusinessContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChangeBusinessContactController @Inject() (
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: ChangeBusinessContactView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+class ChangeBusinessContactController @Inject()(
+                                                 override val messagesApi: MessagesApi,
+                                                 authorise: AuthorisedAction,
+                                                 agentOnly: AgentOnlyAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 view: ChangeBusinessContactView
+                                               )(implicit ec: ExecutionContext)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    (authorise andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
-      val phoneNumber                  = "0191 202 2500" // TODO Change to ChangeContactNumber
-      val mobileNumber                 = "07890 123 456" // TODO Change to ChangeContactNumber
-      val faxNumber: Option[String]    = request.userAnswers.get(ChangeFaxNumberPage)
-      val emailAddress: Option[String] = request.userAnswers.get(ChangeEmailAddressPage)
+    val answers = request.userAnswers
+    val contactNumbers = SummaryListViewModel(rows = ContactNumbersSummary.rows(answers))
+    val faxNumber = SummaryListViewModel(rows = FaxNumberSummary.rows(answers))
+    val emailAddress = SummaryListViewModel(rows = EmailAddressSummary.rows(answers))
 
-      val summaryList = SummaryListViewModel(
-        rows = Seq(
-          SummaryListRowViewModel(
-            key = KeyViewModel(Text("Contact numbers")),
-            value = ValueViewModel(
-              HtmlContent(
-                Html(
-                  s"""
-                     |Phone number:<br>
-                     |$phoneNumber
-                     |<br><br>
-                     |Mobile number:<br>
-                     |$mobileNumber
-                      """.stripMargin
-                )
-              )
-            ).withCssClass("govuk-!-width-one-half"),
-            actions = Seq(
-              ActionItemViewModel(
-                Text("Change"),
-                controllers.routes.IndexController // TODO: ChangeContactNumberController
-                  .onPageLoad()
-                  .url
-              )
-            )
-          ),
-          SummaryListRowViewModel(
-            key = KeyViewModel(Text("Fax number")),
-            value = ValueViewModel(
-              Text(faxNumber.getOrElse("Not provided"))
-            ),
-            actions = if (faxNumber.isDefined) {
-              Seq(
-                ActionItemViewModel(
-                  Text("Change"),
-                  controllers.businessdetails.routes.ChangeFaxNumberController
-                    .onPageLoad()
-                    .url
-                ),
-                ActionItemViewModel(
-                  Text("Remove"),
-                  controllers.businessdetails.routes.RemoveFaxNumberController
-                    .onPageLoad()
-                    .url
-                )
-              )
-            } else {
-              Seq(
-                ActionItemViewModel(
-                  Text("Change"),
-                  controllers.businessdetails.routes.ChangeFaxNumberController
-                    .onPageLoad()
-                    .url
-                )
-              )
-            }
-          ),
-          SummaryListRowViewModel(
-            key = KeyViewModel(Text("Email address")),
-            value = ValueViewModel(
-              Text(emailAddress.getOrElse("Not provided"))
-            ),
-            actions = if (emailAddress.isDefined) {
-              Seq(
-                ActionItemViewModel(
-                  Text("Change"),
-                  controllers.businessdetails.routes.ChangeEmailAddressController
-                    .onPageLoad()
-                    .url
-                ),
-                ActionItemViewModel(
-                  Text("Remove"),
-                  controllers.businessdetails.routes.ChangeFaxNumberController // TODO: RemoveEmailAddressController
-                    .onPageLoad()
-                    .url
-                )
-              )
-            } else {
-              Seq(
-                ActionItemViewModel(
-                  Text("Change"),
-                  controllers.businessdetails.routes.ChangeEmailAddressController
-                    .onPageLoad()
-                    .url
-                )
-              )
-            }
-          )
-        )
-      )
-
-      Ok(view(summaryList, mode))
-    }
+    Ok(view(contactNumbers, faxNumber, emailAddress, mode))
+  }
 
   def onSubmit(): Action[AnyContent] =
     (authorise andThen getData andThen requireData).async { implicit request =>
