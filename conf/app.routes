@@ -55,3 +55,6 @@ GET         /agent/change-business-details/business-contact-details/remove-fax-n
 POST        /agent/change-business-details/business-contact-details/remove-fax-number         controllers.businessdetails.RemoveFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
 GET         /agent/change-business-details                                                    controllers.CheckBusinessDetailsController.onPageLoad()
+
+GET         /agent/change-business-details/business-contact-details                             controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
+POST        /agent/change-business-details/business-contact-details                             controllers.businessdetails.ChangeBusinessContactController.onSubmit()
