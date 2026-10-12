@@ -18,9 +18,7 @@ package controllers.businessdetails
 
 import connectors.GamblingConnector
 import controllers.actions.*
-import forms.businessdetails.ChangeBusinessContactFormProvider
 import models.Mode
-import pages.businessdetails.ChangeBusinessContactPage
 import models.businessdetails.BusinessContactDetailSubmission
 import models.{CheckMode, Mode}
 import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
@@ -63,31 +61,24 @@ class ChangeBusinessContactController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
-      // TODO: Submit to CHRIS
-
-      for {
-        updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
-        _              <- sessionRepository.set(updatedAnswers)
-      } yield Redirect(controllers.routes.IndexController.onPageLoad())
-=======
-    (authorise andThen getData andThen requireData).async { implicit request =>
 
       val submission =
         BusinessContactDetailSubmission(
-          submitterEmail = None, // TODO if source found
-          phoneNumber = Some("0191 202 2500"), // TODO replace with > request.userAnswers.get(ChangeContactNumberPage)
-          mobileNumber = Some("07890 123 456"), // TODO replace with > request.userAnswers.get(ChangeContactNumberPage)
+          submitterEmail = None,
+          phoneNumber = Some("0191 202 2500"),
+          mobileNumber = Some("07890 123 456"),
           faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
           email = request.userAnswers.get(ChangeEmailAddressPage)
         )
 
       for {
-        response <- gamblingConnector.updateBusinessDetails(submission)
-      } yield {
-        Redirect(
-          controllers.routes.IndexController.onPageLoad()
-        )
-      }
+        _              <- gamblingConnector.updateBusinessDetails(submission)
+        updatedAnswers <- Future.fromTry(
+                            BusinessContactHelpers.clearChanges(request.userAnswers)
+                          )
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield Redirect(
+        controllers.routes.IndexController.onPageLoad()
+      )
     }
-
 }
