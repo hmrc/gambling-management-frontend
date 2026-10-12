@@ -35,7 +35,7 @@ class FaxNumberSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = FaxNumberSummary.rows(emptyUserAnswers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
 
       row.value.content mustBe Text(msgs("changeBusinessContact.notProvided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
@@ -48,7 +48,7 @@ class FaxNumberSummarySpec extends SpecBase {
       val answers = emptyUserAnswers.set(ChangeFaxNumberPage, "01234567890123456789").success.value
 
       val rows = FaxNumberSummary.rows(answers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
 
       row.value.content mustBe Text("01234567890123456789")
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))

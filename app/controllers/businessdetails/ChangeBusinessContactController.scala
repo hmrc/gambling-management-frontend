@@ -17,54 +17,49 @@
 package controllers.businessdetails
 
 import controllers.actions.*
-import models.{CheckMode, Mode}
-import pages.BusinessDetailsPage
-import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
-import play.api.Logging
+import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.businessContact.{ContactNumbersSummary, EmailAddressSummary, FaxNumberSummary}
-import viewmodels.govuk.all.stringToKey
+import viewmodels.businessContact.{BusinessContactHelpers, ContactNumbersSummary, EmailAddressSummary, FaxNumberSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.businessdetails.ChangeBusinessContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChangeBusinessContactController @Inject()(
-                                                 override val messagesApi: MessagesApi,
-                                                 authorise: AuthorisedAction,
-                                                 agentOnly: AgentOnlyAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: ChangeBusinessContactView
-                                               )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
-    with I18nSupport
-    with Logging {
+class ChangeBusinessContactController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  agentOnly: AgentOnlyAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: ChangeBusinessContactView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
-    val answers = request.userAnswers
-    val contactNumbers = SummaryListViewModel(rows = ContactNumbersSummary.rows(answers))
-    val faxNumber = SummaryListViewModel(rows = FaxNumberSummary.rows(answers))
-    val emailAddress = SummaryListViewModel(rows = EmailAddressSummary.rows(answers))
+    val answers     = request.userAnswers
+    val summaryList = SummaryListViewModel(
+      rows = ContactNumbersSummary.rows(answers) ++
+        FaxNumberSummary.rows(answers) ++
+        EmailAddressSummary.rows(answers)
+    )
 
-    Ok(view(contactNumbers, faxNumber, emailAddress, mode))
+    Ok(view(summaryList, BusinessContactHelpers.hasChanges(answers), mode))
   }
 
   def onSubmit(): Action[AnyContent] =
-    (authorise andThen getData andThen requireData).async { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       // TODO: Submit to CHRIS
 
-      Future.successful(
-        Redirect(
-          controllers.routes.IndexController.onPageLoad()
-        )
-      )
+      for {
+        updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield Redirect(controllers.routes.IndexController.onPageLoad())
     }
 }

@@ -25,9 +25,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 class EmailAddressSummarySpec extends SpecBase {
 
-  private def changeEmailAddressSummaryUrl = controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
+  private def changeEmailAddressSummaryUrl =
+    controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
 
-  private def removeEmailAddressSummaryUrl = controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
+  private def removeEmailAddressSummaryUrl =
+    controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
 
   "EmailAddressSummary" - {
 
@@ -35,7 +37,7 @@ class EmailAddressSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = EmailAddressSummary.rows(emptyUserAnswers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
 
       row.value.content mustBe Text(msgs("changeBusinessContact.notProvided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
@@ -45,10 +47,11 @@ class EmailAddressSummarySpec extends SpecBase {
     "must show the normal value with a change & remove action when value is entered" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val answers = emptyUserAnswers.set(ChangeEmailAddressPage, "01234567890123456789@01234567890123456789.co.uk").success.value
+      val answers =
+        emptyUserAnswers.set(ChangeEmailAddressPage, "01234567890123456789@01234567890123456789.co.uk").success.value
 
       val rows = EmailAddressSummary.rows(answers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
 
       row.value.content mustBe Text("01234567890123456789@01234567890123456789.co.uk")
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))

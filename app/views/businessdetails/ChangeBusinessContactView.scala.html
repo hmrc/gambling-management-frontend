@@ -30,24 +30,23 @@
     govukButton: GovukButton
 )
 
-@(contactNumbers: SummaryList, faxNumber: SummaryList, emailAddress: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(summaryList: SummaryList, hasChanges: Boolean, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = messages("changeBusinessContact.title"),
-    fullWidth = true
+    pageTitle = messages("changeBusinessContact.title")
 ) {
 
     @caption(messages("changeBusinessContact.caption"))
 
     @h1(messages("changeBusinessContact.heading"))
 
-    @govukSummaryList(contactNumbers.withCssClass("govuk-!-margin-bottom-0"))
-    @govukSummaryList(faxNumber.withCssClass("govuk-!-margin-bottom-0"))
-    @govukSummaryList(emailAddress.withCssClass("govuk-!-margin-bottom-6"))
+    @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-6"))
 
-    <p class="govuk-body">
-        @messages("changeBusinessContact.guidance")
-    </p>
+    @if(hasChanges) {
+        <p class="govuk-body">
+            @messages("changeBusinessContact.guidance")
+        </p>
+    }
 
     @formHelper(
         action =

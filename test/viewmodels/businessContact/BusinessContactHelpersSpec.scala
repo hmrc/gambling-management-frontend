@@ -16,15 +16,18 @@
 
 package viewmodels.businessContact
 
+import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveFaxNumberPage}
 import play.api.i18n.{Messages, MessagesImpl}
 import play.api.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions}
-import views.CurrencyFormatter
 
 class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
+
+  private val emptyAnswers = UserAnswers("id")
 
   private val messagesApi = stubMessagesApi(
     Map(
@@ -43,240 +46,49 @@ class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
   implicit private val messages: Messages =
     MessagesImpl(play.api.i18n.Lang.defaultLang, messagesApi)
 
-  ".yesNoRow" - {
-    "must build a row with a Yes value and a change action" in {
-      val result = BusinessContactHelpers.yesNoRow(
-        keyMsg    = "some.key",
-        answer    = true,
-        changeUrl = "/change-url",
-        hiddenMsg = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe Text("Yes")
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
+  ".hasChanges" - {
+    "must be false when no contact details have been changed" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers) mustBe false
     }
 
-    "must build a row with a No value when the answer is false" in {
-      val result = BusinessContactHelpers.yesNoRow(
-        keyMsg    = "some.key",
-        answer    = false,
-        changeUrl = "/change-url",
-        hiddenMsg = "some.hidden"
-      )
+    "must be true when the fax number has been changed" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(ChangeFaxNumberPage, "123").get) mustBe true
+    }
 
-      result.value.content mustBe Text("No")
+    "must be true when the email address has been changed" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(ChangeEmailAddressPage, "someone@someone.com").get) mustBe true
+    }
+
+    "must be true when the fax number has been removed" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(RemoveFaxNumberPage, true).get) mustBe true
+    }
+
+    "must be false when the user chose not to remove the fax number" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(RemoveFaxNumberPage, false).get) mustBe false
     }
   }
 
-  ".currencyRow" - {
-    "must build a row with a formatted amount and a change action when changeUrl and hiddenMsg are provided" in {
-      val result = BusinessContactHelpers.currencyRow(
-        keyMsg    = "some.key",
-        amount    = BigDecimal(123.45),
-        changeUrl = Some("/change-url"),
-        hiddenMsg = Some("some.hidden")
-      )
+  ".clearChanges" - {
+    "must remove the submitted contact-detail pages" in {
+      val answers = emptyAnswers
+        .set(ChangeFaxNumberPage, "01881123456")
+        .flatMap(_.set(ChangeEmailAddressPage, "someone@someone.com"))
+        .get
 
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent(CurrencyFormatter.formattedAmountHtml(BigDecimal(123.45)))
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
+      val cleared = BusinessContactHelpers.clearChanges(answers).get
+
+      cleared.get(ChangeFaxNumberPage) mustBe None
+      cleared.get(ChangeEmailAddressPage) mustBe None
+      cleared.get(RemoveFaxNumberPage) mustBe None
     }
 
-    "must build a read-only row with no actions when changeUrl and hiddenMsg are omitted" in {
-      val result = BusinessContactHelpers.currencyRow(keyMsg = "some.key", amount = BigDecimal(123.45))
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent(CurrencyFormatter.formattedAmountHtml(BigDecimal(123.45)))
-      result.actions mustBe None
-    }
-
-    List(
-      ("white spaces", " "),
-      ("empty", "")
-    ).foreach((scenario, string) =>
-      s"must build a read-only row with no actions when changeUrl and hiddenMsg are $scenario" in {
-        val result = BusinessContactHelpers.currencyRow(
-          keyMsg    = "some.key",
-          amount    = BigDecimal(123.45),
-          changeUrl = Some(string),
-          hiddenMsg = Some(string)
-        )
-
-        result.key.content mustBe Text("Some key")
-        result.value.content mustBe HtmlContent(CurrencyFormatter.formattedAmountHtml(BigDecimal(123.45)))
-        result.actions mustBe None
-      }
-    )
-  }
-
-  ".textRow" - {
-    "must build a row with the given text and a change action when changeUrl and hiddenMsg are provided" in {
-      val result = BusinessContactHelpers.textRow(
-        keyMsg    = "some.key",
-        answer    = "10",
-        changeUrl = Some("/change-url"),
-        hiddenMsg = Some("some.hidden")
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe Text("10")
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
-    }
-
-    "must build a read-only row with no actions when changeUrl and hiddenMsg are omitted" in {
-      val result = BusinessContactHelpers.textRow(keyMsg = "some.key", answer = "10")
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe Text("10")
-      result.actions mustBe None
-    }
-
-    List(
-      ("white spaces", " "),
-      ("empty", "")
-    ).foreach((scenario, string) =>
-      s"must build a read-only row with no actions when changeUrl and hiddenMsg are $scenario" in {
-        val result = BusinessContactHelpers.textRow(
-          keyMsg    = "some.key",
-          answer    = "10",
-          changeUrl = Some(string),
-          hiddenMsg = Some(string)
-        )
-
-        result.key.content mustBe Text("Some key")
-        result.value.content mustBe Text("10")
-        result.actions mustBe None
-      }
-    )
-  }
-
-  ".currencyOrActionLinkRow" - {
-    "must build a row with an action link in the value column and no change action when showValueLink is true" in {
-      val result = BusinessContactHelpers.currencyOrActionLinkRow(
-        keyMsg        = "some.key",
-        amount        = BigDecimal(123.45),
-        showValueLink = true,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent("""<a class="govuk-link" href="/change-url">Some link text</a>""")
-      result.actions mustBe None
-    }
-
-    "must build a row with the formatted amount and a change action when showValueLink is false" in {
-      val result = BusinessContactHelpers.currencyOrActionLinkRow(
-        keyMsg        = "some.key",
-        amount        = BigDecimal(123.45),
-        showValueLink = false,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent(CurrencyFormatter.formattedAmountHtml(BigDecimal(123.45)))
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
-    }
-  }
-
-  ".yesNoOrActionLinkRow" - {
-    "must build a row with an action link in the value column and no change action when showValueLink is true" in {
-      val result = BusinessContactHelpers.yesNoOrActionLinkRow(
-        keyMsg        = "some.key",
-        answer        = None,
-        showValueLink = true,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent("""<a class="govuk-link" href="/change-url">Some link text</a>""")
-      result.actions mustBe None
-    }
-
-    "must build a row with a Yes/No value and a change action when showValueLink is false" in {
-      val result = BusinessContactHelpers.yesNoOrActionLinkRow(
-        keyMsg        = "some.key",
-        answer        = Some(true),
-        showValueLink = false,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe Text("Yes")
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
-    }
-
-    "must build a row with an empty value and a change action when showValueLink is false and answer is None" in {
-      val result = BusinessContactHelpers.yesNoOrActionLinkRow(
-        keyMsg        = "some.key",
-        answer        = None,
-        showValueLink = false,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.value.content mustBe Text("")
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
-    }
-  }
-
-  ".textOrActionLinkRow" - {
-    "must build a row with an action link in the value column and no change action when showValueLink is true" in {
-      val result = BusinessContactHelpers.textOrActionLinkRow(
-        keyMsg        = "some.key",
-        answer        = None,
-        showValueLink = true,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe HtmlContent("""<a class="govuk-link" href="/change-url">Some link text</a>""")
-      result.actions mustBe None
-    }
-
-    "must build a row with the given text and a change action when showValueLink is false" in {
-      val result = BusinessContactHelpers.textOrActionLinkRow(
-        keyMsg        = "some.key",
-        answer        = Some("10"),
-        showValueLink = false,
-        linkTextMsg   = "some.link",
-        url           = "/change-url",
-        hiddenMsg     = "some.hidden"
-      )
-
-      result.key.content mustBe Text("Some key")
-      result.value.content mustBe Text("10")
-      result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
-      )
+    "must succeed when there are no changes to clear" in {
+      BusinessContactHelpers.clearChanges(emptyAnswers).isSuccess mustBe true
     }
   }
 
   ".textOrActionWithRemoveLinkRow" - {
-    "must build a row with an action link in the value column and no remove action when showValueLink is true" in {
+    "must build a row with the not-provided text and only a change action when onlyShowChangeLink is true" in {
       val result = BusinessContactHelpers.textOrActionWithRemoveLinkRow(
         keyMsg = "some.key",
         answer = None,
@@ -290,11 +102,13 @@ class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
       result.key.content mustBe Text("Some key")
       result.value.content mustBe Text("Some link text")
       result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))))
+        Actions(items =
+          Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text")))
+        )
       )
     }
 
-    "must build a row with the given text and a change & remove action when showValueLink is false" in {
+    "must build a row with the given text and change & remove actions when onlyShowChangeLink is false" in {
       val result = BusinessContactHelpers.textOrActionWithRemoveLinkRow(
         keyMsg = "some.key",
         answer = Some("10"),
@@ -308,10 +122,47 @@ class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
       result.key.content mustBe Text("Some key")
       result.value.content mustBe Text("10")
       result.actions mustBe Some(
-        Actions(items = Seq(ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text")),
-          ActionItem(href = "/remove-url", content = Text("Remove"), visuallyHiddenText = Some("Some hidden text")))
+        Actions(items =
+          Seq(
+            ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text")),
+            ActionItem(href = "/remove-url", content = Text("Remove"), visuallyHiddenText = Some("Some hidden text"))
+          )
         )
       )
+    }
+  }
+
+  ".textOrActionLinkRowDouble" - {
+    "must build a row with the given HTML value and a change action" in {
+      val result = BusinessContactHelpers.textOrActionLinkRowDouble(
+        keyMsg = "some.key",
+        answer = Some("line one<br>line two"),
+        urlChange = "/change-url",
+        hiddenMsg = "some.hidden"
+      )
+
+      result.key.content mustBe Text("Some key")
+      result.value.content mustBe HtmlContent("line one<br>line two")
+      result.value.classes must include("govuk-!-width-one-half")
+      result.actions mustBe Some(
+        Actions(
+          classes = "govuk-!-width-one-third",
+          items = Seq(
+            ActionItem(href = "/change-url", content = Text("Change"), visuallyHiddenText = Some("Some hidden text"))
+          )
+        )
+      )
+    }
+
+    "must build a row with an empty value when the answer is None" in {
+      val result = BusinessContactHelpers.textOrActionLinkRowDouble(
+        keyMsg = "some.key",
+        answer = None,
+        urlChange = "/change-url",
+        hiddenMsg = "some.hidden"
+      )
+
+      result.value.content mustBe HtmlContent("")
     }
   }
 }

@@ -17,27 +17,35 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import forms.businessdetails.ChangeFaxNumberFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{BusinessDetails, UserAnswers}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.businessdetails.ChangeFaxNumberPage
+import pages.BusinessDetailsPage
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.businessdetails.ChangeFaxNumberView
 
 import scala.concurrent.Future
 
 class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
   lazy val changeBusinessContactRoute = routes.ChangeBusinessContactController.onPageLoad().url
+
+  private val businessDetails = BusinessDetails(
+    businessName = Some("Agent 1"),
+    addressLine1 = Some("123 Business road"),
+    addressLine2 = Some("Business"),
+    addressLine3 = Some("London"),
+    phoneNumber = Some("0191 202 2500"),
+    mobileNumber = Some("07890 123 456"),
+    faxNumber = Some("0800 202 2500"),
+    emailAddress = Some("sarah.phillips@example.com")
+  )
 
   "ChangeBusinessContactController" - {
 
@@ -62,12 +70,25 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect when valid data is submitted" in {
+    "must clear the submitted contact details, keep other answers and redirect when submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(ChangeFaxNumberPage, "01881123456")
+          .success
+          .value
+          .set(ChangeEmailAddressPage, "someone@someone.com")
+          .success
+          .value
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -81,6 +102,15 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(captor.capture())
+
+        val saved = captor.getValue
+        saved.get(ChangeFaxNumberPage) mustBe None
+        saved.get(ChangeEmailAddressPage) mustBe None
+        saved.get(BusinessDetailsPage) mustBe Some(businessDetails)
       }
     }
 

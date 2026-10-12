@@ -32,29 +32,46 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the page with the correct content" in new Setup {
 
-      val html = view(summaryList, summaryList, summaryList, NormalMode)
+      val html = view(summaryList, true, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
-      doc.title must include(messages("changeBusinessContact.title"))
+      doc.title     must include(messages("changeBusinessContact.title"))
       doc.body.text must include(messages("changeBusinessContact.heading"))
       doc.body.text must include(messages("changeBusinessContact.caption"))
-      doc.body.text must include(messages("changeBusinessContact.guidance"))
     }
 
     "must render the summary list" in new Setup {
 
-      val html = view(summaryList, summaryList, summaryList, NormalMode)
+      val html = view(summaryList, true, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
-      doc.select(".govuk-summary-list").size() mustEqual 3
+      doc.select(".govuk-summary-list").size() mustEqual 1
       doc.select(".govuk-summary-list__row").size() mustEqual 3
+    }
+
+    "must render the guidance when the user has made changes" in new Setup {
+
+      val html = view(summaryList, true, NormalMode)
+
+      val doc = Jsoup.parse(html.body)
+
+      doc.body.text must include(messages("changeBusinessContact.guidance"))
+    }
+
+    "must not render the guidance when the user has not made changes" in new Setup {
+
+      val html = view(summaryList, false, NormalMode)
+
+      val doc = Jsoup.parse(html.body)
+
+      doc.body.text must not include messages("changeBusinessContact.guidance")
     }
 
     "must render a submit button" in new Setup {
 
-      val html = view(summaryList, summaryList, summaryList, NormalMode)
+      val html = view(summaryList, true, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
@@ -66,15 +83,14 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
   trait Setup {
 
-    val app = applicationBuilder().build()
+    val app  = applicationBuilder().build()
     val view = app.injector.instanceOf[ChangeBusinessContactView]
 
     val summaryList = SummaryList(
       rows = Seq(
-        SummaryListRow(
-          key = Key(Text("Row 1")),
-          value = Value(Text("Value 1"))
-        )
+        SummaryListRow(key = Key(Text("Row 1")), value = Value(Text("Value 1"))),
+        SummaryListRow(key = Key(Text("Row 2")), value = Value(Text("Value 2"))),
+        SummaryListRow(key = Key(Text("Row 3")), value = Value(Text("Value 3")))
       )
     )
 

@@ -25,7 +25,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 class ContactNumbersSummarySpec extends SpecBase {
 
-  private def changeContactNumbersSummaryUrl = controllers.businessdetails.routes.ChangeFaxNumberController.onPageLoad().url
+  private def changeContactNumbersSummaryUrl =
+    controllers.businessdetails.routes.ChangeFaxNumberController.onPageLoad().url
 
   "ContactNumbersSummary" - {
 
@@ -33,7 +34,7 @@ class ContactNumbersSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ContactNumbersSummary.rows(emptyUserAnswers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
 
       row.value.content mustBe HtmlContent(msgs("Phone number:<br>Not provided<br><br>Mobile number:<br>Not provided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
@@ -43,13 +44,20 @@ class ContactNumbersSummarySpec extends SpecBase {
     "must show the normal value with a change & remove action when phone value is entered" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val answers = emptyUserAnswers.set(BusinessDetailsPage, BusinessDetails(
-        None, None, None, None, phoneNumber = Some("01234567890123456789"), None, None, None)).success.value
+      val answers = emptyUserAnswers
+        .set(
+          BusinessDetailsPage,
+          BusinessDetails(None, None, None, None, phoneNumber = Some("01234567890123456789"), None, None, None)
+        )
+        .success
+        .value
 
       val rows = ContactNumbersSummary.rows(answers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
 
-      row.value.content mustBe HtmlContent("Phone number:<br>01234567890123456789<br><br>Mobile number:<br>Not provided")
+      row.value.content mustBe HtmlContent(
+        "Phone number:<br>01234567890123456789<br><br>Mobile number:<br>Not provided"
+      )
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl
     }
@@ -57,13 +65,20 @@ class ContactNumbersSummarySpec extends SpecBase {
     "must show the normal value with a change & remove action when mobile value is entered" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val answers = emptyUserAnswers.set(BusinessDetailsPage, BusinessDetails(
-        None, None, None, None, None, mobileNumber = Some("01234567890123456789"), None, None)).success.value
+      val answers = emptyUserAnswers
+        .set(
+          BusinessDetailsPage,
+          BusinessDetails(None, None, None, None, None, mobileNumber = Some("01234567890123456789"), None, None)
+        )
+        .success
+        .value
 
       val rows = ContactNumbersSummary.rows(answers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
 
-      row.value.content mustBe HtmlContent("Phone number:<br>Not provided<br><br>Mobile number:<br>01234567890123456789")
+      row.value.content mustBe HtmlContent(
+        "Phone number:<br>Not provided<br><br>Mobile number:<br>01234567890123456789"
+      )
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl
     }
@@ -71,13 +86,29 @@ class ContactNumbersSummarySpec extends SpecBase {
     "must show the normal value with a change & remove action when phone & mobile value is entered" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val answers = emptyUserAnswers.set(BusinessDetailsPage, BusinessDetails(
-        None, None, None, None, phoneNumber = Some("01234567890123456789"), mobileNumber = Some("98765432109876543210"), None, None)).success.value
+      val answers = emptyUserAnswers
+        .set(
+          BusinessDetailsPage,
+          BusinessDetails(
+            None,
+            None,
+            None,
+            None,
+            phoneNumber = Some("01234567890123456789"),
+            mobileNumber = Some("98765432109876543210"),
+            None,
+            None
+          )
+        )
+        .success
+        .value
 
       val rows = ContactNumbersSummary.rows(answers)
-      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
 
-      row.value.content mustBe HtmlContent("Phone number:<br>01234567890123456789<br><br>Mobile number:<br>98765432109876543210")
+      row.value.content mustBe HtmlContent(
+        "Phone number:<br>01234567890123456789<br><br>Mobile number:<br>98765432109876543210"
+      )
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl
     }

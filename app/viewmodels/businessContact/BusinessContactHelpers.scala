@@ -16,108 +16,39 @@
 
 package viewmodels.businessContact
 
+import models.UserAnswers
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveFaxNumberPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
 import viewmodels.govuk.summarylist.*
-import views.CurrencyFormatter
+
+import scala.util.Try
 
 object BusinessContactHelpers {
 
-  def yesNoRow(keyMsg: String, answer: Boolean, changeUrl: String, hiddenMsg: String)(implicit
-                                                                                      messages: Messages
-  ): SummaryListRow = {
-    val msg = if (answer) "site.yes" else "site.no"
-    SummaryListRowViewModel(
-      key = KeyViewModel(Text(messages(keyMsg))).withCssClass("govuk-!-width-one-half"),
-      value = ValueViewModel(Text(messages(msg))).withCssClass("govuk-!-text-align-right"),
-      actions = Seq(
-        ActionItemViewModel(Text(messages("site.change")), changeUrl)
-          .withVisuallyHiddenText(messages(hiddenMsg))
-      )
-    )
-  }
+  def hasChanges(answers: UserAnswers): Boolean =
+    answers.get(ChangeFaxNumberPage).isDefined ||
+      answers.get(ChangeEmailAddressPage).isDefined ||
+      answers.get(RemoveFaxNumberPage).contains(true)
 
-  def currencyRow(
-                   keyMsg: String,
-                   amount: BigDecimal,
-                   changeUrl: Option[String] = None,
-                   hiddenMsg: Option[String] = None
-                 )(implicit messages: Messages): SummaryListRow = {
-    val summary = SummaryListRowViewModel(
-      key = KeyViewModel(Text(messages(keyMsg))).withCssClass("govuk-!-width-one-half"),
-      value = ValueViewModel(HtmlContent(CurrencyFormatter.formattedAmountHtml(amount)))
-        .withCssClass("govuk-!-text-align-right")
-    )
-
-    (changeUrl, hiddenMsg) match
-      case (Some(url), Some(hidden)) if url.trim.nonEmpty && hidden.trim.nonEmpty =>
-        summary.copy(actions =
-          Some(
-            Actions(items =
-              Seq(ActionItemViewModel(Text(messages("site.change")), url).withVisuallyHiddenText(messages(hidden)))
-            )
-          )
-        )
-      case _ => summary
-  }
-
-  def textRow(
-               keyMsg: String,
-               answer: String,
-               changeUrl: Option[String] = None,
-               hiddenMsg: Option[String] = None
-             )(implicit messages: Messages): SummaryListRow = {
-    val summary = SummaryListRowViewModel(
-      key = KeyViewModel(Text(messages(keyMsg))).withCssClass("govuk-!-width-one-half"),
-      value = ValueViewModel(Text(answer)).withCssClass("govuk-!-text-align-right")
-    )
-
-    (changeUrl, hiddenMsg) match
-      case (Some(url), Some(hidden)) if url.trim.nonEmpty && hidden.trim.nonEmpty =>
-        summary.copy(actions =
-          Some(
-            Actions(items =
-              Seq(ActionItemViewModel(Text(messages("site.change")), url).withVisuallyHiddenText(messages(hidden)))
-            )
-          )
-        )
-      case _ => summary
-  }
-
-  private def valueOrActionLinkRow(
-                                    keyMsg: String,
-                                    normalValueContent: Content,
-                                    showValueLink: Boolean,
-                                    linkTextMsg: String,
-                                    url: String,
-                                    hiddenMsg: String
-                                  )(implicit messages: Messages): SummaryListRow =
-    if (showValueLink)
-      SummaryListRowViewModel(
-        key = KeyViewModel(Text(messages(keyMsg))).withCssClass("govuk-!-width-one-half"),
-        value = ValueViewModel(HtmlContent(s"""<a class="govuk-link" href="$url">${messages(linkTextMsg)}</a>"""))
-          .withCssClass("govuk-!-text-align-right")
-      )
-    else
-      SummaryListRowViewModel(
-        key = KeyViewModel(Text(messages(keyMsg))).withCssClass("govuk-!-width-one-half"),
-        value = ValueViewModel(normalValueContent).withCssClass("govuk-!-text-align-right"),
-        actions = Seq(
-          ActionItemViewModel(Text(messages("site.change")), url)
-            .withVisuallyHiddenText(messages(hiddenMsg))
-        )
-      )
+  /** Clears the contact-detail changes once they have been submitted to CHRIS, leaving the rest of the answers intact.
+    */
+  def clearChanges(answers: UserAnswers): Try[UserAnswers] =
+    answers
+      .remove(ChangeFaxNumberPage)
+      .flatMap(_.remove(ChangeEmailAddressPage))
+      .flatMap(_.remove(RemoveFaxNumberPage))
 
   private def valueOrActionWithRemoveLinkRow(
-                                              keyMsg: String,
-                                              normalValueContent: Content,
-                                              onlyShowChangeLink: Boolean,
-                                              notProvidedMsg: String,
-                                              urlChange: String,
-                                              urlRemove: String,
-                                              hiddenMsg: String
-                                            )(implicit messages: Messages): SummaryListRow =
+    keyMsg: String,
+    normalValueContent: Content,
+    onlyShowChangeLink: Boolean,
+    notProvidedMsg: String,
+    urlChange: String,
+    urlRemove: String,
+    hiddenMsg: String
+  )(implicit messages: Messages): SummaryListRow =
     if (onlyShowChangeLink)
       SummaryListRowViewModel(
         key = KeyViewModel(Text(messages(keyMsg))),
@@ -140,79 +71,33 @@ object BusinessContactHelpers {
       )
 
   private def valueOrActionLinkRowDouble(
-                                          keyMsg: String,
-                                          normalValueContent: String,
-                                          urlChange: String,
-                                          hiddenMsg: String
-                                        )(implicit messages: Messages): SummaryListRow =
-    SummaryListRowViewModel(
+    keyMsg: String,
+    normalValueContent: String,
+    urlChange: String,
+    hiddenMsg: String
+  )(implicit messages: Messages): SummaryListRow =
+    SummaryListRow(
       key = KeyViewModel(Text(messages(keyMsg))),
-      value = ValueViewModel(HtmlContent(normalValueContent)),
-      actions = Seq(
-        ActionItemViewModel(Text(messages("site.change")), urlChange).withVisuallyHiddenText(messages(hiddenMsg))
+      value = ValueViewModel(HtmlContent(normalValueContent)).withCssClass("govuk-!-width-one-half"),
+      actions = Some(
+        Actions(
+          classes = "govuk-!-width-one-third",
+          items = Seq(
+            ActionItemViewModel(Text(messages("site.change")), urlChange).withVisuallyHiddenText(messages(hiddenMsg))
+          )
+        )
       )
     )
 
-  def currencyOrActionLinkRow(
-                               keyMsg: String,
-                               amount: BigDecimal,
-                               showValueLink: Boolean,
-                               linkTextMsg: String,
-                               url: String,
-                               hiddenMsg: String
-                             )(implicit messages: Messages): SummaryListRow =
-    valueOrActionLinkRow(
-      keyMsg,
-      HtmlContent(CurrencyFormatter.formattedAmountHtml(amount)),
-      showValueLink,
-      linkTextMsg,
-      url,
-      hiddenMsg
-    )
-
-  def yesNoOrActionLinkRow(
-                            keyMsg: String,
-                            answer: Option[Boolean],
-                            showValueLink: Boolean,
-                            linkTextMsg: String,
-                            url: String,
-                            hiddenMsg: String
-                          )(implicit messages: Messages): SummaryListRow =
-    valueOrActionLinkRow(
-      keyMsg,
-      Text(answer.map(a => messages(if (a) "site.yes" else "site.no")).getOrElse("")),
-      showValueLink,
-      linkTextMsg,
-      url,
-      hiddenMsg
-    )
-
-  def textOrActionLinkRow(
-                           keyMsg: String,
-                           answer: Option[String],
-                           showValueLink: Boolean,
-                           linkTextMsg: String,
-                           url: String,
-                           hiddenMsg: String
-                         )(implicit messages: Messages): SummaryListRow =
-    valueOrActionLinkRow(
-      keyMsg,
-      Text(answer.getOrElse("")),
-      showValueLink,
-      linkTextMsg,
-      url,
-      hiddenMsg
-    )
-
   def textOrActionWithRemoveLinkRow(
-                                     keyMsg: String,
-                                     answer: Option[String],
-                                     onlyShowChangeLink: Boolean,
-                                     notProvidedMsg: String,
-                                     urlChange: String,
-                                     urlRemove: String,
-                                     hiddenMsg: String
-                                   )(implicit messages: Messages): SummaryListRow =
+    keyMsg: String,
+    answer: Option[String],
+    onlyShowChangeLink: Boolean,
+    notProvidedMsg: String,
+    urlChange: String,
+    urlRemove: String,
+    hiddenMsg: String
+  )(implicit messages: Messages): SummaryListRow =
     valueOrActionWithRemoveLinkRow(
       keyMsg,
       Text(answer.getOrElse("")),
@@ -224,11 +109,11 @@ object BusinessContactHelpers {
     )
 
   def textOrActionLinkRowDouble(
-                                 keyMsg: String,
-                                 answer: Option[String],
-                                 urlChange: String,
-                                 hiddenMsg: String
-                               )(implicit messages: Messages): SummaryListRow =
+    keyMsg: String,
+    answer: Option[String],
+    urlChange: String,
+    hiddenMsg: String
+  )(implicit messages: Messages): SummaryListRow =
     valueOrActionLinkRowDouble(
       keyMsg,
       answer.getOrElse(""),

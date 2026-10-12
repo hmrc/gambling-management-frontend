@@ -16,8 +16,7 @@
 
 package viewmodels.businessContact
 
-import controllers.routes
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow

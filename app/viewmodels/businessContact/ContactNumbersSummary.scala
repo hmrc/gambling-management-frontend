@@ -16,10 +16,8 @@
 
 package viewmodels.businessContact
 
-import controllers.routes
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import pages.BusinessDetailsPage
-import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
@@ -30,12 +28,12 @@ object ContactNumbersSummary {
 
     val phoneNumber = answer match {
       case Some(bd) => bd.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))
-      case None => messages("changeBusinessContact.notProvided")
+      case None     => messages("changeBusinessContact.notProvided")
     }
 
     val mobileNumber = answer match {
       case Some(bd) => bd.mobileNumber.getOrElse(messages("changeBusinessContact.notProvided"))
-      case None => messages("changeBusinessContact.notProvided")
+      case None     => messages("changeBusinessContact.notProvided")
     }
 
     Seq(
