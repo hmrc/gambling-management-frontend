@@ -18,15 +18,12 @@ package controllers.businessdetails
 
 import connectors.GamblingConnector
 import controllers.actions.*
-<<<<<<< HEAD
 import forms.businessdetails.ChangeBusinessContactFormProvider
 import models.Mode
 import pages.businessdetails.ChangeBusinessContactPage
-=======
 import models.businessdetails.BusinessContactDetailSubmission
 import models.{CheckMode, Mode}
 import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
->>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,11 +42,7 @@ class ChangeBusinessContactController @Inject() (
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-<<<<<<< HEAD
-  formProvider: ChangeBusinessContactFormProvider,
-=======
   gamblingConnector: GamblingConnector,
->>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
   val controllerComponents: MessagesControllerComponents,
   view: ChangeBusinessContactView
 )(implicit ec: ExecutionContext)
@@ -69,7 +62,6 @@ class ChangeBusinessContactController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] =
-<<<<<<< HEAD
     (agentOnly andThen getData andThen requireData).async { implicit request =>
       // TODO: Submit to CHRIS
 
@@ -96,7 +88,6 @@ class ChangeBusinessContactController @Inject() (
           controllers.routes.IndexController.onPageLoad()
         )
       }
->>>>>>> d6f4eae (Added response/submit models, controller and connector changes)
     }
 
 }

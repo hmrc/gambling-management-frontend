@@ -21,7 +21,6 @@ import play.api.libs.json.{Json, OFormat}
 final case class BusinessContactDetailResponse(
   acknowledgmentReference: String,
   submissionTimestamp: String
-
 )
 
 object BusinessContactDetailResponse {
