@@ -37,6 +37,8 @@ class ChangeBusinessContactViewSpec extends SpecBase {
       val doc = Jsoup.parse(html.body)
 
       doc.title     must include(messages("changeBusinessContact.title"))
+      doc.title     must include(messages("service.name"))
+      doc.title     must include(messages("site.govuk"))
       doc.body.text must include(messages("changeBusinessContact.heading"))
       doc.body.text must include(messages("changeBusinessContact.caption"))
     }
