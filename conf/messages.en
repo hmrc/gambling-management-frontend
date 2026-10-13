@@ -202,6 +202,19 @@ changeFaxNumber.error.required = Enter the fax number for this business
 changeFaxNumber.error.invalid = The fax number must only include numbers 0 to 9 and spaces
 changeFaxNumber.error.length = The fax number must be 20 characters or less
 
+changeContactNumbers.title = What are your business contact numbers?
+changeContactNumbers.heading = What are your business contact numbers?
+changeContactNumbers.caption = Check business details
+changeContactNumbers.p1 = You must provide at least one contact number.
+changeContactNumbers.phone.label = Phone number
+changeContactNumbers.phone.error.required = Enter the fax number for this business
+changeContactNumbers.phone.error.invalid = The fax number must only include numbers 0 to 9 and spaces
+changeContactNumbers.phone.error.length = The fax number must be 20 characters or less
+changeContactNumbers.mobile.label = Mobile number
+changeContactNumbers.mobile.error.required = Enter the fax number for this business
+changeContactNumbers.mobile.error.invalid = The fax number must only include numbers 0 to 9 and spaces
+changeContactNumbers.mobile.error.length = The fax number must be 20 characters or less
+
 removeFaxNumber.title = Are you sure you want to remove the fax number?
 removeFaxNumber.heading = Are you sure you want to remove the fax number {0}?
 removeFaxNumber.caption = Check business details
