@@ -33,7 +33,7 @@
 @(summaryList: SummaryList, hasChanges: Boolean, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = messages("changeBusinessContact.title")
+    pageTitle = titleNoForm(messages("changeBusinessContact.title"))
 ) {
 
     @caption(messages("changeBusinessContact.caption"))
