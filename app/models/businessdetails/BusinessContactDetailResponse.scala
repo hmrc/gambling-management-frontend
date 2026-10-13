@@ -19,7 +19,7 @@ package models.businessdetails
 import play.api.libs.json.{Json, OFormat}
 
 final case class BusinessContactDetailResponse(
-  acknowledgmentReference: String,
+  acknowledgementReference: String,
   submissionTimestamp: String
 )
 

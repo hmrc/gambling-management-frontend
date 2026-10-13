@@ -88,7 +88,7 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
       ).thenReturn(
         Future.successful(
           BusinessContactDetailResponse(
-            acknowledgmentReference = "ABC123",
+            acknowledgementReference = "ABC123",
             submissionTimestamp = "2026-10-12T12:00:00"
           )
         )

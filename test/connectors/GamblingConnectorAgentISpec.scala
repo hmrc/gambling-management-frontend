@@ -168,7 +168,7 @@ class GamblingConnectorAgentISpec
 
       val response =
         BusinessContactDetailResponse(
-          acknowledgmentReference = "ABCDEFG",
+          acknowledgementReference = "ABCDEFG",
           submissionTimestamp = "2026-10-08T15:00:00Z"
         )
 
