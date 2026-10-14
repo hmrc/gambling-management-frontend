@@ -20,13 +20,18 @@
 @import viewmodels.govuk.errorsummary._
 @import viewmodels.govuk.input._
 @import viewmodels.govuk.label._
+@import views.html.components.*
+
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    caption: components.Caption,
+    h1: H1,
+    p:Paragraph
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -45,20 +50,24 @@
 
         @p("changeContactNumbers.p1")
 
-
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("changeContactNumbers.phone.label"))
+                field = form("phoneNumber"),
+                label = LabelViewModel(messages("changeContactNumbers.label.phoneNumber"))
             )
-@*.withWidth(Fixed20)*@
+            .withWidth(Fixed20)
+            .withAutocomplete("tel")
+            .withInputMode("tel")
         )
 
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("changeContactNumbers.mobile.label"))
-            ) 
+                field = form("mobileNumber"),
+                label = LabelViewModel(messages("changeContactNumbers.label.mobileNumber"))
+            )
+            .withWidth(Fixed20)
+            .withAutocomplete("tel")
+            .withInputMode("tel")
         )
 
        @govukButton(

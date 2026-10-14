@@ -18,15 +18,15 @@ package viewmodels.businessContact
 
 import base.SpecBase
 import controllers.routes
-import models.{BusinessDetails, CheckMode}
-import pages.BusinessDetailsPage
+import models.agent.ContactNumbers
+import pages.businessdetails.ChangeContactNumbersPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 class ContactNumbersSummarySpec extends SpecBase {
 
   private def changeContactNumbersSummaryUrl =
-    controllers.businessdetails.routes.ChangeFaxNumberController.onPageLoad().url
+    controllers.businessdetails.routes.ChangeContactNumbersController.onPageLoad().url
 
   "ContactNumbersSummary" - {
 
@@ -46,8 +46,8 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       val answers = emptyUserAnswers
         .set(
-          BusinessDetailsPage,
-          BusinessDetails(None, None, None, None, phoneNumber = Some("01234567890123456789"), None, None, None)
+          ChangeContactNumbersPage,
+          ContactNumbers(phoneNumber = Some("01234567890123456789"), None)
         )
         .success
         .value
@@ -67,8 +67,8 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       val answers = emptyUserAnswers
         .set(
-          BusinessDetailsPage,
-          BusinessDetails(None, None, None, None, None, mobileNumber = Some("01234567890123456789"), None, None)
+          ChangeContactNumbersPage,
+          ContactNumbers(None, mobileNumber = Some("01234567890123456789"))
         )
         .success
         .value
@@ -88,17 +88,8 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       val answers = emptyUserAnswers
         .set(
-          BusinessDetailsPage,
-          BusinessDetails(
-            None,
-            None,
-            None,
-            None,
-            phoneNumber = Some("01234567890123456789"),
-            mobileNumber = Some("98765432109876543210"),
-            None,
-            None
-          )
+          ChangeContactNumbersPage,
+          ContactNumbers(phoneNumber = Some("01234567890123456789"), mobileNumber = Some("98765432109876543210"))
         )
         .success
         .value

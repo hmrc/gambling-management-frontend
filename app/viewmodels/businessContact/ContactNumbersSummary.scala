@@ -49,7 +49,7 @@ object ContactNumbersSummary {
             mobileNumber
           ).mkString("<br>")
         ),
-        urlChange = controllers.businessdetails.routes.ChangeFaxNumberController // TODO Change Phone Numbers Controller
+        urlChange = controllers.businessdetails.routes.ChangeContactNumbersController
           .onPageLoad()
           .url,
         hiddenMsg = "changeBusinessContact.contactNumbers"

@@ -16,23 +16,46 @@
 
 package forms.businessdetails
 
-import forms.mappings.{Constants, Mappings}
 import forms.mappings.Validation.faxRegex
-import play.api.data.Form
+import forms.mappings.{Constants, Mappings}
+import models.Enumerable
+import models.agent.ContactNumbers
+import play.api.data.Forms.{mapping, of, optional}
+import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, Form, FormError}
 
 import javax.inject.Inject
 
 class ChangeContactNumbersFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
+  private val maxLengthChars = 20
+  private val allowedChars   = "^[0-9 ]+$"
+
+  def apply(): Form[ContactNumbers] =
     Form(
-      "value" -> text("changeFaxNumber.error.required")
-        .transform(_.trim.replace(" ", ""), identity)
+      mapping(
+        "phoneNumber"  -> optional(
+          text()
+            .verifying(
+              firstError(
+                maxLength(maxLengthChars, "changeContactNumbers.error.length.phoneNumber"),
+                regexp(allowedChars, "changeContactNumbers.error.invalid.phoneNumber")
+              )
+            )
+        ),
+        "mobileNumber" -> optional(
+          text()
+            .verifying(
+              firstError(
+                maxLength(maxLengthChars, "changeContactNumbers.error.length.mobileNumber"),
+                regexp(allowedChars, "changeContactNumbers.error.invalid.mobileNumber")
+              )
+            )
+        )
+      )(ContactNumbers.apply)(contactNumbers => Some((contactNumbers.phoneNumber, contactNumbers.mobileNumber)))
         .verifying(
-          firstError(
-            regexp(faxRegex, "changeFaxNumber.error.invalid"),
-            maxLength(Constants.MaxLength20, "changeFaxNumber.error.length")
-          )
+          "global_changeContactNumbers_error_required",
+          contactNumbers => contactNumbers.phoneNumber.isDefined || contactNumbers.mobileNumber.isDefined
         )
     )
 }

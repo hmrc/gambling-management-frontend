@@ -40,6 +40,7 @@ object BusinessContactHelpers {
       .remove(ChangeFaxNumberPage)
       .flatMap(_.remove(ChangeEmailAddressPage))
       .flatMap(_.remove(RemoveFaxNumberPage))
+      .flatMap(_.remove(ChangeContactNumbersPage))
 
   private def valueOrActionWithRemoveLinkRow(
     keyMsg: String,
