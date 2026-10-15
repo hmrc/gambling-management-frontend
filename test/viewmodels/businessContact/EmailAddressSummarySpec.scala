@@ -29,7 +29,7 @@ class EmailAddressSummarySpec extends SpecBase {
     controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
 
   private def removeEmailAddressSummaryUrl =
-    controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url
+    controllers.businessdetails.routes.RemoveEmailAddressController.onPageLoad().url
 
   "EmailAddressSummary" - {
 
