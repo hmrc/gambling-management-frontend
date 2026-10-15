@@ -38,8 +38,8 @@ class ChangeContactNumbersFormProvider @Inject() extends Mappings {
           text()
             .verifying(
               firstError(
-                maxLength(maxLengthChars, "changeContactNumbers.error.length.phoneNumber"),
-                regexp(allowedChars, "changeContactNumbers.error.invalid.phoneNumber")
+                maxLength(maxLengthChars, "changeContactNumbers.phoneNumber.error.length"),
+                regexp(allowedChars, "changeContactNumbers.phoneNumber.error.invalid")
               )
             )
         ),
@@ -47,8 +47,8 @@ class ChangeContactNumbersFormProvider @Inject() extends Mappings {
           text()
             .verifying(
               firstError(
-                maxLength(maxLengthChars, "changeContactNumbers.error.length.mobileNumber"),
-                regexp(allowedChars, "changeContactNumbers.error.invalid.mobileNumber")
+                maxLength(maxLengthChars, "changeContactNumbers.mobileNumber.error.length"),
+                regexp(allowedChars, "changeContactNumbers.mobileNumber.error.invalid")
               )
             )
         )

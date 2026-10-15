@@ -17,7 +17,7 @@
 package controllers.businessdetails
 
 import controllers.actions.*
-import controllers.businessdetails.ChangeContactNumbersController.ifBothBlankThenOnlyHighlightFirstField
+import controllers.businessdetails.ChangeContactNumbersController.highlightFirstIfBothBlank
 import forms.businessdetails.ChangeContactNumbersFormProvider
 import models.agent.ContactNumbers
 import models.{Mode, UserAnswers}
@@ -61,8 +61,7 @@ class ChangeContactNumbersController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(ifBothBlankThenOnlyHighlightFirstField(formWithErrors), mode))),
+          formWithErrors => Future.successful(BadRequest(view(highlightFirstIfBothBlank(formWithErrors), mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeContactNumbersPage, value))
@@ -74,7 +73,7 @@ class ChangeContactNumbersController @Inject() (
 
 object ChangeContactNumbersController {
 
-  def ifBothBlankThenOnlyHighlightFirstField(form: Form[ContactNumbers]): Form[ContactNumbers] =
+  def highlightFirstIfBothBlank(form: Form[ContactNumbers]): Form[ContactNumbers] =
     if (form.hasGlobalErrors) {
       form.copy(errors = Seq(FormError("phoneNumber", "changeContactNumbers.error.phoneRequired")))
     } else {

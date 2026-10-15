@@ -241,11 +241,11 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
         val content = contentAsString(result)
         content must include("href=\"#phoneNumber\"")
         content must include("id=\"phoneNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.invalid.phoneNumber"))
+        content must include(messages(application)("changeContactNumbers.phoneNumber.error.invalid"))
 
         content must include("href=\"#mobileNumber\"")
         content must include("id=\"mobileNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.invalid.mobileNumber"))
+        content must include(messages(application)("changeContactNumbers.mobileNumber.error.invalid"))
       }
     }
 
@@ -265,11 +265,11 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
         val content = contentAsString(result)
         content must include("href=\"#phoneNumber\"")
         content must include("id=\"phoneNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.length.phoneNumber"))
+        content must include(messages(application)("changeContactNumbers.phoneNumber.error.length"))
 
         content must include("href=\"#mobileNumber\"")
         content must include("id=\"mobileNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.length.mobileNumber"))
+        content must include(messages(application)("changeContactNumbers.mobileNumber.error.length"))
       }
     }
 
@@ -289,7 +289,7 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
         val content = contentAsString(result)
         content must include("href=\"#mobileNumber\"")
         content must include("id=\"mobileNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.invalid.mobileNumber"))
+        content must include(messages(application)("changeContactNumbers.mobileNumber.error.invalid"))
       }
     }
 
@@ -309,7 +309,7 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
         val content = contentAsString(result)
         content must include("href=\"#mobileNumber\"")
         content must include("id=\"mobileNumber-error\"")
-        content must include(messages(application)("changeContactNumbers.error.length.mobileNumber"))
+        content must include(messages(application)("changeContactNumbers.mobileNumber.error.length"))
       }
     }
 

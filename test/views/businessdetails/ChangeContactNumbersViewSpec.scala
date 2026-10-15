@@ -78,8 +78,8 @@ class ChangeContactNumbersViewSpec extends SpecBase with Matchers with BeforeAnd
     "must render the phone number and mobile number labels" in {
       val html: String = view(form, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.label.phoneNumber"))
-      html must include(msgs("changeContactNumbers.label.mobileNumber"))
+      html must include(msgs("changeContactNumbers.phoneNumber.label"))
+      html must include(msgs("changeContactNumbers.mobileNumber.label"))
     }
 
     "must render an input field with type tel autocomplete and inputmode" in {
@@ -112,28 +112,28 @@ class ChangeContactNumbersViewSpec extends SpecBase with Matchers with BeforeAnd
       val boundForm    = form.bind(Map("phoneNumber" -> "012345678901234567890"))
       val html: String = view(boundForm, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.error.length.phoneNumber"))
+      html must include(msgs("changeContactNumbers.phoneNumber.error.length"))
     }
 
     "must render the invalid error when the phone number contains invalid characters" in {
       val boundForm    = form.bind(Map("phoneNumber" -> "020-7946-0958"))
       val html: String = view(boundForm, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.error.invalid.phoneNumber"))
+      html must include(msgs("changeContactNumbers.phoneNumber.error.invalid"))
     }
 
     "must render the length error when the mobile number exceeds 20 characters" in {
       val boundForm    = form.bind(Map("mobileNumber" -> "012345678901234567890"))
       val html: String = view(boundForm, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.error.length.mobileNumber"))
+      html must include(msgs("changeContactNumbers.mobileNumber.error.length"))
     }
 
     "must render the invalid error when the mobile number contains invalid characters" in {
       val boundForm    = form.bind(Map("mobileNumber" -> "070-0000-0000"))
       val html: String = view(boundForm, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.error.invalid.mobileNumber"))
+      html must include(msgs("changeContactNumbers.mobileNumber.error.invalid"))
     }
 
     "must post to the PhoneNumber submit URL" in {
