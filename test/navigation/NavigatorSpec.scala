@@ -18,8 +18,9 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import pages._
-import models._
+import pages.*
+import models.*
+import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -33,6 +34,46 @@ class NavigatorSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
+      }
+
+      "must go from ChangeContactNumbersPage to ChangeBusinessContactController" in {
+        navigator.nextPage(
+          ChangeContactNumbersPage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+      }
+
+      "must go from ChangeEmailAddressPage to ChangeBusinessContactController" in {
+        navigator.nextPage(
+          ChangeEmailAddressPage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+      }
+
+      "must go from RemoveEmailAddressPage to ChangeBusinessContactController" in {
+        navigator.nextPage(
+          RemoveEmailAddressPage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+      }
+
+      "must go from ChangeFaxNumberPage to ChangeBusinessContactController" in {
+        navigator.nextPage(
+          ChangeFaxNumberPage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+      }
+
+      "must go from RemoveFaxNumberPage to ChangeBusinessContactController" in {
+        navigator.nextPage(
+          RemoveFaxNumberPage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
       }
     }
 
