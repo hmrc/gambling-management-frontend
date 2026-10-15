@@ -35,6 +35,9 @@ class RemoveEmailAddressViewSpec extends SpecBase {
       val doc: Document               = Jsoup.parse(html.body)
 
       doc.title must include(messages("removeEmailAddress.title"))
+      doc.title mustBe
+        s"""${messages("removeEmailAddress.title")} - ${messages("service.name")} - ${messages("site.govuk")}"""
+
       doc.select(".govuk-caption-l").text mustBe
         messages("removeEmailAddress.caption")
 
