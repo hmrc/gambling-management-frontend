@@ -17,7 +17,7 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
-import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
+import pages.businessdetails.*
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
@@ -31,7 +31,7 @@ object BusinessContactHelpers {
     answers.get(ChangeFaxNumberPage).isDefined ||
       answers.get(RemoveFaxNumberPage).contains(true) ||
       answers.get(ChangeEmailAddressPage).isDefined ||
-      answers.get(RemoveEmailAddressPage).contains(true)
+      answers.get(RemoveEmailAddressPage).contains(true) ||
       answers.get(ChangeContactNumbersPage).isDefined
 
   /** Clears the contact-detail changes once they have been submitted to CHRIS, leaving the rest of the answers intact.

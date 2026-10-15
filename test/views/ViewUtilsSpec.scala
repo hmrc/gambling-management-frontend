@@ -25,9 +25,9 @@ class ViewUtilsSpec extends SpecBase {
 
   implicit val msgs: Messages = messages(applicationBuilder().build())
 
-  private val titleKey                   = "removeEmailAddress.title"
-  private val cleanForm: Form[String]    = Form("value" -> text())
-  private val erroredForm: Form[String]  = cleanForm.withError("value", "error.required")
+  private val titleKey                  = "removeEmailAddress.title"
+  private val cleanForm: Form[String]   = Form("value" -> text())
+  private val erroredForm: Form[String] = cleanForm.withError("value", "error.required")
 
   "ViewUtils.title" - {
 
