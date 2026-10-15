@@ -53,9 +53,6 @@ class ChangeContactNumbersFormProvider @Inject() extends Mappings {
             )
         )
       )(ContactNumbers.apply)(contactNumbers => Some((contactNumbers.phoneNumber, contactNumbers.mobileNumber)))
-        .verifying(
-          "global_changeContactNumbers_error_required",
-          contactNumbers => contactNumbers.phoneNumber.isDefined || contactNumbers.mobileNumber.isDefined
-        )
+        .verifying(contactNumbers => contactNumbers.phoneNumber.isDefined || contactNumbers.mobileNumber.isDefined)
     )
 }

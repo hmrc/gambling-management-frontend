@@ -72,7 +72,7 @@ class ChangeContactNumbersViewSpec extends SpecBase with Matchers with BeforeAnd
     "must render the paragraph text" in {
       val html: String = view(form, NormalMode)(request, msgs).toString
 
-      html must include(msgs("changeContactNumbers.p1"))
+      html must include(msgs("changeContactNumbers.legend"))
     }
 
     "must render the phone number and mobile number labels" in {
