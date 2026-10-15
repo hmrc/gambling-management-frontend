@@ -194,6 +194,11 @@ changeEmailAddress.error.required = Enter an email address for this business
 changeEmailAddress.error.invalid = The email address must only include letters a to z, numbers 0 to 9, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
 changeEmailAddress.error.length = The email address must be 70 characters or less
 
+removeEmailAddress.title = Are you sure you want to remove the email address?
+removeEmailAddress.heading = Are you sure you want to remove the email address {0}?
+removeEmailAddress.caption = Check business details
+removeEmailAddress.error.required = Select yes if you want to remove the email address
+
 changeFaxNumber.title = What is the fax number for this business?
 changeFaxNumber.heading = What is the fax number for this business?
 changeFaxNumber.caption = Check business details

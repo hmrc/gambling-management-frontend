@@ -48,6 +48,9 @@ GET         /agent/authorisation-check/in-progress          controllers.Security
 GET         /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
 
+GET         /agent/business-details/contact-details/remove-email         controllers.businessdetails.RemoveEmailAddressController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/contact-details/remove-email         controllers.businessdetails.RemoveEmailAddressController.onSubmit(mode:Mode = NormalMode)
+
 GET         /agent/change-business-details/business-contact-details/change-fax-number         controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/change-business-details/business-contact-details/change-fax-number         controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
