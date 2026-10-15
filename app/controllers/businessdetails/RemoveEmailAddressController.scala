@@ -17,8 +17,8 @@
 package controllers.businessdetails
 
 import com.google.inject.Inject
-import controllers.actions.{AgentOnlyAction, AuthorisedAction, DataRequiredAction, DataRetrievalAction}
-import forms.businessdetails.{ChangeEmailAddressFormProvider, RemoveEmailAddressFormProvider}
+import controllers.actions.{AgentOnlyAction, DataRequiredAction, DataRetrievalAction}
+import forms.businessdetails.RemoveEmailAddressFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.businessdetails.{ChangeEmailAddressPage, RemoveEmailAddressPage}
@@ -69,7 +69,7 @@ class RemoveEmailAddressController @Inject() (
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(RemoveEmailAddressPage, mode, updatedAnswers))
             )
-        case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        case None               => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 }

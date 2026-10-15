@@ -174,7 +174,7 @@ class RemoveEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
         val request = FakeRequest(POST, removeEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -190,7 +190,7 @@ class RemoveEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, removeEmailAddressRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
@@ -203,7 +203,7 @@ class RemoveEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(POST, removeEmailAddressRoute).withFormUrlEncodedBody(("value", "true"))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 

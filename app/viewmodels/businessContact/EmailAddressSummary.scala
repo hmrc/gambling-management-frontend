@@ -33,7 +33,7 @@ object EmailAddressSummary {
         onlyShowChangeLink = answer.isEmpty,
         notProvidedMsg = "changeBusinessContact.notProvided",
         urlChange = controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url,
-        urlRemove = controllers.businessdetails.routes.ChangeEmailAddressController.onPageLoad().url,
+        urlRemove = controllers.businessdetails.routes.RemoveEmailAddressController.onPageLoad().url,
         hiddenMsg = "changeBusinessContact.emailAddress"
       )
     )
