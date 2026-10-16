@@ -17,6 +17,6 @@
 package forms.mappings
 
 object Validation {
-  final val faxRegex  = """^[0-9]+$"""
-  final val nameRegex = """^[A-Za-z0-9 '\-]+$"""
+  final val faxRegex          = """^[0-9]+$"""
+  final val businessNameRegex = """^[A-Za-z0-9 '\-]+$"""
 }

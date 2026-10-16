@@ -17,7 +17,7 @@
 package forms.businessdetails
 
 import forms.mappings.{Constants, Mappings}
-import forms.mappings.Validation.{faxRegex, nameRegex}
+import forms.mappings.Validation.{businessNameRegex, faxRegex}
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -30,7 +30,7 @@ class BusinessNameFormProvider @Inject() extends Mappings {
         .transform(_.trim.replace(" ", ""), identity)
         .verifying(
           firstError(
-            regexp(nameRegex, "businessName.error.invalid"),
+            regexp(businessNameRegex, "businessName.error.invalid"),
             maxLength(Constants.maxLength100, "businessName.error.length")
           )
         )
