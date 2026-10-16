@@ -38,7 +38,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new BusinessNameFormProvider()
+  val formProvider       = new BusinessNameFormProvider()
   val form: Form[String] = formProvider()
 
   lazy val businessNameRoute: String = routes.BusinessNameController.onPageLoad().url
@@ -50,7 +50,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, businessNameRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
 
@@ -68,7 +68,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, businessNameRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
 
@@ -86,11 +86,13 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
 
       running(application) {
         val request = FakeRequest(POST, businessNameRoute).withFormUrlEncodedBody(("value", "Name"))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
       }
@@ -102,7 +104,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(POST, businessNameRoute).withFormUrlEncodedBody(("value", ""))
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -120,7 +122,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, businessNameRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 

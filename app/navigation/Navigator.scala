@@ -21,12 +21,27 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.businessdetails.BusinessNamePage
+import pages.businessdetails.*
 
 @Singleton
 class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+
+    case ChangeContactNumbersPage =>
+      _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+
+    case ChangeEmailAddressPage =>
+      _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+
+    case RemoveEmailAddressPage =>
+      _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+
+    case ChangeFaxNumberPage =>
+      _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+
+    case RemoveFaxNumberPage =>
+      _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
 
     case BusinessNamePage =>
       _ => routes.JourneyRecoveryController.onPageLoad()

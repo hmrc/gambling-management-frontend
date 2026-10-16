@@ -132,4 +132,14 @@ trait SpecBase
                                               |""".stripMargin))
   )
 
+  def normalize(html: String): String =
+    html
+      .replaceAll(""" nonce="[^"]*"""", "")
+      .replaceAll("""csrfToken" value="[^"]*"""", """csrfToken" value="ignore"""")
+      .replaceAll("""<script\s+>""", "<script>")
+      .replaceAll(""""\s+>""", "\">")
+      .replaceAll(""">\s+<""", "><")
+      .replaceAll("""\s+""", " ")
+      .trim
+
 }

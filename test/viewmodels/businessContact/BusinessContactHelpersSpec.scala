@@ -19,7 +19,7 @@ package viewmodels.businessContact
 import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveFaxNumberPage}
+import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
 import play.api.i18n.{Messages, MessagesImpl}
 import play.api.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -66,10 +66,18 @@ class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
     "must be false when the user chose not to remove the fax number" in {
       BusinessContactHelpers.hasChanges(emptyAnswers.set(RemoveFaxNumberPage, false).get) mustBe false
     }
+
+    "must be true when the email address has been removed" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(RemoveEmailAddressPage, true).get) mustBe true
+    }
+
+    "must be false when the user chose not to remove the email address" in {
+      BusinessContactHelpers.hasChanges(emptyAnswers.set(RemoveEmailAddressPage, false).get) mustBe false
+    }
   }
 
   ".clearChanges" - {
-    "must remove the submitted contact-detail pages" in {
+    "must remove the submitted change pages" in {
       val answers = emptyAnswers
         .set(ChangeFaxNumberPage, "01881123456")
         .flatMap(_.set(ChangeEmailAddressPage, "someone@someone.com"))
@@ -79,7 +87,18 @@ class BusinessContactHelpersSpec extends AnyFreeSpec with Matchers {
 
       cleared.get(ChangeFaxNumberPage) mustBe None
       cleared.get(ChangeEmailAddressPage) mustBe None
+    }
+
+    "must remove the fax and email removal flags" in {
+      val answers = emptyAnswers
+        .set(RemoveFaxNumberPage, true)
+        .flatMap(_.set(RemoveEmailAddressPage, true))
+        .get
+
+      val cleared = BusinessContactHelpers.clearChanges(answers).get
+
       cleared.get(RemoveFaxNumberPage) mustBe None
+      cleared.get(RemoveEmailAddressPage) mustBe None
     }
 
     "must succeed when there are no changes to clear" in {

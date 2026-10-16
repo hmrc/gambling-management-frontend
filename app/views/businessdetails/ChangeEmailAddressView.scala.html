@@ -35,7 +35,7 @@
 
     @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit()) {
 
-        @if(form.errors.nonEmpty) {
+        @if(form.hasErrors) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 

@@ -16,8 +16,12 @@
 
 package controllers.businessdetails
 
+import connectors.GamblingConnector
 import controllers.actions.*
-import models.Mode
+import models.agent.ContactNumbers
+import models.businessdetails.BusinessContactDetailSubmission
+import models.{CheckMode, Mode}
+import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -35,6 +39,7 @@ class ChangeBusinessContactController @Inject() (
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  gamblingConnector: GamblingConnector,
   val controllerComponents: MessagesControllerComponents,
   view: ChangeBusinessContactView
 )(implicit ec: ExecutionContext)
@@ -55,11 +60,27 @@ class ChangeBusinessContactController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
-      // TODO: Submit to CHRIS
+
+      val (phoneNumber, mobileNumber) = request.userAnswers.get(ChangeContactNumbersPage) match {
+        case Some(ContactNumbers(phoneNumber, mobileNumber)) => (phoneNumber, mobileNumber)
+        case _                                               => (Some(""), Some(""))
+      }
+
+      val submission =
+        BusinessContactDetailSubmission(
+          submitterEmail = None,
+          phoneNumber = phoneNumber,
+          mobileNumber = mobileNumber,
+          faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
+          email = request.userAnswers.get(ChangeEmailAddressPage)
+        )
 
       for {
+        _              <- gamblingConnector.updateBusinessDetails(submission)
         updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
         _              <- sessionRepository.set(updatedAnswers)
-      } yield Redirect(controllers.routes.IndexController.onPageLoad())
+      } yield Redirect(
+        controllers.routes.IndexController.onPageLoad()
+      )
     }
 }

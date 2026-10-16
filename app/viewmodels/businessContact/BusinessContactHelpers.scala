@@ -17,7 +17,7 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
-import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveFaxNumberPage}
+import pages.businessdetails.*
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
@@ -29,16 +29,20 @@ object BusinessContactHelpers {
 
   def hasChanges(answers: UserAnswers): Boolean =
     answers.get(ChangeFaxNumberPage).isDefined ||
+      answers.get(RemoveFaxNumberPage).contains(true) ||
       answers.get(ChangeEmailAddressPage).isDefined ||
-      answers.get(RemoveFaxNumberPage).contains(true)
+      answers.get(RemoveEmailAddressPage).contains(true) ||
+      answers.get(ChangeContactNumbersPage).isDefined
 
   /** Clears the contact-detail changes once they have been submitted to CHRIS, leaving the rest of the answers intact.
     */
   def clearChanges(answers: UserAnswers): Try[UserAnswers] =
     answers
       .remove(ChangeFaxNumberPage)
-      .flatMap(_.remove(ChangeEmailAddressPage))
       .flatMap(_.remove(RemoveFaxNumberPage))
+      .flatMap(_.remove(ChangeEmailAddressPage))
+      .flatMap(_.remove(RemoveEmailAddressPage))
+      .flatMap(_.remove(ChangeContactNumbersPage))
 
   private def valueOrActionWithRemoveLinkRow(
     keyMsg: String,
