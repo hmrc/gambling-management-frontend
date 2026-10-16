@@ -17,12 +17,13 @@
 package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import models.{BusinessDetails, UserAnswers}
 
 case class OptionalDataRequest[A](
   request: Request[A],
   mgdRegNum: String,
   userAnswers: Option[UserAnswers],
+  businessDetailsData: Option[BusinessDetails],
   userId: String = "",
   isAgent: Boolean = false
 ) extends WrappedRequest[A](request)
@@ -31,6 +32,7 @@ case class DataRequest[A](
   request: Request[A],
   userId: String,
   userAnswers: UserAnswers,
+  businessDetailsData: BusinessDetails,
   mgdRegNum: String = "",
   isAgent: Boolean = false
 ) extends WrappedRequest[A](request)

@@ -48,22 +48,20 @@ class CheckBusinessDetailsController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen getData andThen requireData).async { implicit request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.userAnswers.get(BusinessDetailsPage) match {
-      case Some(details) => Future.successful(Ok(view(details)))
-      case None          =>
-        gamblingService.getAgentDetails.flatMap {
-          case Left(GamblingError.NotFound) =>
-            logger.info(s"Agent details were not found for ${request.mgdRegNum}")
-            Future.successful(Redirect(routes.PageNotFoundController.onPageLoad()))
-          case Left(_)                      =>
-            Future.successful(Redirect(routes.SystemErrorController.onPageLoad()))
-          case Right(agentDetails)          =>
-            val details = BusinessDetails.fromAgentDetails(agentDetails)
-            for {
-              updated <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))
-              _       <- sessionRepository.set(updated)
-            } yield Ok(view(details))
-        }
+    
+    gamblingService.getAgentDetails.flatMap {
+      case Left(GamblingError.NotFound) =>
+        logger.info(s"Agent details were not found for ${request.mgdRegNum}")
+        Future.successful(Redirect(routes.PageNotFoundController.onPageLoad()))
+      case Left(_)                      =>
+        Future.successful(Redirect(routes.SystemErrorController.onPageLoad()))
+      case Right(agentDetails)          =>
+        val details = BusinessDetails.fromAgentDetails(agentDetails)
+        for {
+//          updated <- request.copy(businessDetailsData = details)
+//          _       <- sessionRepository.set(request.copy(businessDetailsData = details))
+          _       <- request.copy(businessDetailsData = details)
+        } yield Ok(view(details))
     }
   }
 }
