@@ -29,6 +29,10 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import connectors.GamblingConnector
+import models.businessdetails.BusinessContactDetailSubmission
+import models.businessdetails.BusinessContactDetailResponse
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -75,6 +79,21 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
+      val mockGamblingConnector = mock[GamblingConnector]
+
+      when(
+        mockGamblingConnector.updateBusinessDetails(
+          any[BusinessContactDetailSubmission]
+        )(using any[HeaderCarrier])
+      ).thenReturn(
+        Future.successful(
+          BusinessContactDetailResponse(
+            acknowledgementReference = "ABC123",
+            submissionTimestamp = "2026-10-12T12:00:00"
+          )
+        )
+      )
+
       val userAnswers =
         emptyUserAnswers
           .set(ChangeFaxNumberPage, "01881123456")
@@ -90,7 +109,8 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[GamblingConnector].toInstance(mockGamblingConnector)
           )
           .build()
 
