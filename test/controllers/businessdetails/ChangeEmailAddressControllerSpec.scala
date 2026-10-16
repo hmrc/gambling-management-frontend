@@ -18,10 +18,11 @@ package controllers.businessdetails
 
 import base.SpecBase
 import forms.businessdetails.ChangeEmailAddressFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{BusinessDetails, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeEmailAddressPage
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -94,6 +95,33 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
 
         doc.select(".govuk-button").text() mustEqual
           "Continue"
+      }
+    }
+
+    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
+
+      val businessDetails =
+        BusinessDetails(None, None, None, None, None, None, None, emailAddress = Some("backend@example.com"))
+
+      val userAnswers =
+        UserAnswers(userAnswersId)
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, changeEmailAddressRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val doc = Jsoup.parse(contentAsString(result))
+
+        doc.select("#value").`val`() mustEqual
+          "backend@example.com"
       }
     }
 
