@@ -18,10 +18,10 @@ package controllers.businessdetails
 
 import connectors.GamblingConnector
 import controllers.actions.*
-import models.Mode
+import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
 import models.{CheckMode, Mode}
-import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
+import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeBusinessContactController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  authorise: AuthorisedAction,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -62,20 +61,23 @@ class ChangeBusinessContactController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
 
+      val (phoneNumber, mobileNumber) = request.userAnswers.get(ChangeContactNumbersPage) match {
+        case Some(ContactNumbers(phoneNumber, mobileNumber)) => (phoneNumber, mobileNumber)
+        case _                                               => (Some(""), Some(""))
+      }
+
       val submission =
         BusinessContactDetailSubmission(
           submitterEmail = None,
-          phoneNumber = Some("0191 202 2500"),
-          mobileNumber = Some("07890 123 456"),
+          phoneNumber = phoneNumber,
+          mobileNumber = mobileNumber,
           faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
           email = request.userAnswers.get(ChangeEmailAddressPage)
         )
 
       for {
         _              <- gamblingConnector.updateBusinessDetails(submission)
-        updatedAnswers <- Future.fromTry(
-                            BusinessContactHelpers.clearChanges(request.userAnswers)
-                          )
+        updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
         _              <- sessionRepository.set(updatedAnswers)
       } yield Redirect(
         controllers.routes.IndexController.onPageLoad()

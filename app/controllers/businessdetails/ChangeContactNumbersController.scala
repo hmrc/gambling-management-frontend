@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChangeContactNumbersController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -66,7 +67,7 @@ class ChangeContactNumbersController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeContactNumbersPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad())
+            } yield Redirect(navigator.nextPage(ChangeContactNumbersPage, mode, updatedAnswers))
         )
     }
 }

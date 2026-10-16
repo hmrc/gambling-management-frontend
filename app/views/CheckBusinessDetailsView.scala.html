@@ -30,12 +30,12 @@
         details: BusinessDetails
 )(implicit request: Request[_], messages: Messages)
 
-@row(keyMsg: String, value: Content) = @{
+@row(keyMsg: String, value: Content, changeUrl: String) = @{
     SummaryListRow(
         key = Key(Text(messages(keyMsg))),
         value = Value(value, classes = "govuk-!-text-align-left"),
         actions = Some(Actions(
-            items = Seq(ActionItem(href = "#", content = Text(messages("site.change")), visuallyHiddenText = Some(messages(keyMsg))))
+            items = Seq(ActionItem(href = changeUrl, content = Text(messages("site.change")), visuallyHiddenText = Some(messages(keyMsg))))
         ))
     )
 }
@@ -56,12 +56,13 @@
     @h1("checkBusinessDetails.heading")
 
     @govukSummaryList(SummaryList(rows = Seq(
-        row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse(""))),
+        row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse("")), "#"),
         row(
             "checkBusinessDetails.businessAddress",
-            HtmlContent(api.Html(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.map(HtmlFormat.escape(_).body).mkString("<br>")))
+            HtmlContent(api.Html(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.map(HtmlFormat.escape(_).body).mkString("<br>"))),
+            "#"
         ),
-        row("checkBusinessDetails.contactDetails.heading", HtmlContent(contactDetails))
+        row("checkBusinessDetails.contactDetails.heading", HtmlContent(contactDetails), controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad().url)
     ), classes = "govuk-!-margin-bottom-9"))
 
     @link("checkBusinessDetails.returnToAtAGlance", routes.IndexController.onPageLoad().url)
