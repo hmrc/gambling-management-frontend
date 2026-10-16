@@ -212,6 +212,18 @@ removeFaxNumber.heading = Are you sure you want to remove the fax number {0}?
 removeFaxNumber.caption = Check business details
 removeFaxNumber.error.required = Select yes if you want to remove the fax number
 
+changeContactNumbers.title = What are your business contact numbers?
+changeContactNumbers.heading = What are your business contact numbers?
+changeContactNumbers.caption = Check business details
+changeContactNumbers.legend = You must provide at least one contact number.
+changeContactNumbers.phoneNumber.label = Phone number
+changeContactNumbers.mobileNumber.label = Mobile number
+changeContactNumbers.phoneNumber.error.invalid = The phone number must only include numbers 0 to 9 and spaces
+changeContactNumbers.mobileNumber.error.invalid = The mobile number must only include numbers 0 to 9 and spaces
+changeContactNumbers.phoneNumber.error.length = The phone number must be 20 characters or less
+changeContactNumbers.mobileNumber.error.length = The mobile number must be 20 characters or less
+changeContactNumbers.error.phoneRequired = Enter the phone number for this business
+
 checkBusinessDetails.title = Check your business details
 checkBusinessDetails.heading = Check your business details
 checkBusinessDetails.notProvided = Not provided

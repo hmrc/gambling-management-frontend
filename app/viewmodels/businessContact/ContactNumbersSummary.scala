@@ -18,13 +18,14 @@ package viewmodels.businessContact
 
 import models.UserAnswers
 import pages.BusinessDetailsPage
+import pages.businessdetails.ChangeContactNumbersPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 object ContactNumbersSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(BusinessDetailsPage) // TODO maybe get from new Page instead (not written yet) ?
+    val answer = answers.get(ChangeContactNumbersPage)
 
     val phoneNumber = answer match {
       case Some(bd) => bd.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))
@@ -48,7 +49,7 @@ object ContactNumbersSummary {
             mobileNumber
           ).mkString("<br>")
         ),
-        urlChange = controllers.businessdetails.routes.ChangeFaxNumberController // TODO Change Phone Numbers Controller
+        urlChange = controllers.businessdetails.routes.ChangeContactNumbersController
           .onPageLoad()
           .url,
         hiddenMsg = "changeBusinessContact.contactNumbers"

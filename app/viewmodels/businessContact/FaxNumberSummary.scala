@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object FaxNumberSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeFaxNumberPage) // TODO maybe get from BusinessDetailsPage instead?
+    val answer = answers.get(ChangeFaxNumberPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(

@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object EmailAddressSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeEmailAddressPage) // TODO maybe get from BusinessDetailsPage instead?
+    val answer = answers.get(ChangeEmailAddressPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(
