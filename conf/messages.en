@@ -247,3 +247,10 @@ changeBusinessContact.faxNumber = Fax number
 changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
+
+businessName.title = What is your business name?
+businessName.heading = What is your business name?
+businessName.caption = Change registration details
+businessName.error.required = Enter the name for this business
+businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
+businessName.error.length = The business name must be 100 characters or less
