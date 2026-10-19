@@ -18,14 +18,14 @@ package controllers.businessdetails
 
 import com.google.inject.Inject
 import controllers.actions.{AgentOnlyAction, DataRequiredAction, DataRetrievalAction}
-import models.Mode
+import models.{Mode, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.businessdetails.ConfirmBusinessNameView
 
 class ConfirmBusinessNameController @Inject() (
-  override val messagesAPI: MessagesApi,
+  // override val messagesAPI: MessagesApi,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -34,14 +34,28 @@ class ConfirmBusinessNameController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
+  private val changeBusinessNameUrl =
+    "/agent/change-business-details/business-contact-details/change-business-name"
+
+  // TODO: Replace with UserAnswers.get(BusinessNamePage) once DTR-8594 is merged
+  private def proposedBusinessName(answers: UserAnswers): Option[String] =
+    (answers.data \ "businessName").asOpt[String].filter(_.trim.nonEmpty)
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData) { implicit request =>
-      val preparedForm = request.userAnswers.get(Bus)
-      Ok("Confirm business name - placeholder")
+
+      proposedBusinessName(request.userAnswers) match {
+        case Some(name) => Ok(view(name, changeBusinessNameUrl))
+        case None       => Redirect(changeBusinessNameUrl)
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData) { implicit request =>
-      NotImplemented("Submit not implemented yet")
+
+      proposedBusinessName(request.userAnswers) match {
+        case None    => Redirect(changeBusinessNameUrl)
+        case Some(_) => NotImplemented
+      }
     }
 }
