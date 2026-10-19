@@ -43,7 +43,7 @@ import scala.concurrent.Future
 
 class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute: Call = Call("GET", "/manage-gambling-tax/agent/change-business-details/business-contact-details")
+  def onwardRoute: Call = Call("GET", "/manage-gambling-tax/agent/business-details/change-business-contact-details")
 
   val formProvider               = new ChangeContactNumbersFormProvider()
   val form: Form[ContactNumbers] = formProvider()
