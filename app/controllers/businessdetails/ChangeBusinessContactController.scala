@@ -20,7 +20,7 @@ import connectors.GamblingConnector
 import controllers.actions.*
 import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
-import models.{CheckMode, Mode}
+import models.{CheckMode, Mode, NormalMode}
 import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -76,11 +76,11 @@ class ChangeBusinessContactController @Inject() (
         )
 
       for {
-        _              <- gamblingConnector.updateBusinessDetails(submission)
-        updatedAnswers <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
-        _              <- sessionRepository.set(updatedAnswers)
+        submissionResponse <- gamblingConnector.updateBusinessDetails(submission)
+        updatedAnswers     <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
+        _                  <- sessionRepository.set(updatedAnswers)
       } yield Redirect(
-        controllers.routes.IndexController.onPageLoad()
+        controllers.businessdetails.routes.UpdateBusinessContactConfirmationController.onPageLoad()
       )
     }
 }
