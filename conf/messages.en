@@ -248,6 +248,12 @@ changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
 
+confirmBusinessName.title = Confirm your business name
+confirmBusinessName.heading = Confirm your business name
+confirmBusinessName.caption = Change registration details
+confirmBusinessName.businessName = Business name
+confirmBusinessName.submit = Submit
+
 businessName.title = What is your business name?
 businessName.heading = What is your business name?
 businessName.caption = Check business details
