@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.businessdetails
 
 import controllers.actions.*
 import models.{BusinessDetails, GamblingError}
@@ -54,9 +54,9 @@ class CheckBusinessDetailsController @Inject() (
         gamblingService.getAgentDetails.flatMap {
           case Left(GamblingError.NotFound) =>
             logger.info(s"Agent details were not found for ${request.mgdRegNum}")
-            Future.successful(Redirect(routes.PageNotFoundController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.PageNotFoundController.onPageLoad()))
           case Left(_)                      =>
-            Future.successful(Redirect(routes.SystemErrorController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
           case Right(agentDetails)          =>
             val details = BusinessDetails.fromAgentDetails(agentDetails)
             for {
