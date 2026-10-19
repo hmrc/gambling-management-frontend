@@ -20,6 +20,7 @@ import controllers.actions.*
 import forms.businessdetails.ChangeFaxNumberFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,8 +49,12 @@ class ChangeFaxNumberController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(ChangeFaxNumberPage) match {
-      case None        => form
       case Some(value) => form.fill(value)
+      case None        =>
+        request.userAnswers.get(BusinessDetailsPage).flatMap(_.faxNumber) match {
+          case Some(faxNumber) => form.fill(faxNumber)
+          case None            => form
+        }
     }
     Ok(view(preparedForm, mode))
 
