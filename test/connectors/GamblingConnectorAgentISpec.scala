@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.agent.{AgentClient, AgentClientData, ClientListStatus, UpdateAgentClientRequest}
-import models.businessdetails.{BusinessContactDetailResponse, BusinessContactDetailSubmission}
+import models.businessdetails.{BusinessContactDetailSubmission, BusinessNameSubmission, ChrisSubmissionResponse}
 import models.requests.RemoveAgentClientRequest
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -167,7 +167,7 @@ class GamblingConnectorAgentISpec
         )
 
       val response =
-        BusinessContactDetailResponse(
+        ChrisSubmissionResponse(
           acknowledgementReference = "ABCDEFG",
           submissionTimestamp = "2026-10-08T15:00:00Z"
         )
@@ -199,6 +199,52 @@ class GamblingConnectorAgentISpec
             mobileNumber = Some("07700900123"),
             faxNumber = Some("02079460124"),
             email = Some("new@test.com")
+          )
+        )
+      }
+    }
+  }
+
+  "updateBusinessName" should {
+
+    "return the acknowledgement reference and timestamp" in {
+
+      val request =
+        BusinessNameSubmission(
+          fullName = "Example Agent Ltd",
+          submitterEmail = None
+        )
+
+      val response =
+        ChrisSubmissionResponse(
+          acknowledgementReference = "ABCDEFG",
+          submissionTimestamp = "2026-10-08T15:00:00Z"
+        )
+
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/business-name"))
+          .willReturn(
+            okJson(Json.toJson(response).toString())
+          )
+      )
+
+      connector
+        .updateBusinessName(request)
+        .map(_ mustBe response)
+    }
+
+    "fail on a non-200 response" in {
+
+      wireMockServer.stubFor(
+        post(urlEqualTo("/gambling/agent/business-name"))
+          .willReturn(serverError())
+      )
+
+      recoverToSucceededIf[UpstreamErrorResponse] {
+        connector.updateBusinessName(
+          BusinessNameSubmission(
+            fullName = "Example Agent Ltd",
+            submitterEmail = None
           )
         )
       }

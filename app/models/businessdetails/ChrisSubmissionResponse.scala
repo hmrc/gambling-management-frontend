@@ -18,12 +18,12 @@ package models.businessdetails
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class BusinessContactDetailResponse(
+final case class ChrisSubmissionResponse(
   acknowledgementReference: String,
   submissionTimestamp: String
 )
 
-object BusinessContactDetailResponse {
-  implicit val format: OFormat[BusinessContactDetailResponse] =
-    Json.format[BusinessContactDetailResponse]
+object ChrisSubmissionResponse {
+  implicit val format: OFormat[ChrisSubmissionResponse] =
+    Json.format[ChrisSubmissionResponse]
 }
