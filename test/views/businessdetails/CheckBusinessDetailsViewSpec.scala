@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package views
+package views.businessdetails
 
 import base.SpecBase
 import models.BusinessDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
+import views.html.businessdetails.CheckBusinessDetailsView
 
 import scala.jdk.CollectionConverters.*
 
@@ -48,7 +49,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
 
     "must render the page title and heading" in {
       val app           = applicationBuilder().build()
-      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val view          = app.injector.instanceOf[CheckBusinessDetailsView]
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 
@@ -60,7 +61,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
 
     "must render each row with its value and a Change link" in {
       val app           = applicationBuilder().build()
-      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val view          = app.injector.instanceOf[CheckBusinessDetailsView]
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 
@@ -101,7 +102,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
 
     "must render missing optional contact fields as 'Not Provided'" in {
       val app           = applicationBuilder().build()
-      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val view          = app.injector.instanceOf[CheckBusinessDetailsView]
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(
@@ -120,7 +121,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
 
     "must render a Return to at a glance link to the index page instead of a form" in {
       val app           = applicationBuilder().build()
-      val view          = app.injector.instanceOf[views.html.CheckBusinessDetailsView]
+      val view          = app.injector.instanceOf[CheckBusinessDetailsView]
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 

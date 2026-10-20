@@ -21,7 +21,7 @@ import com.google.inject.name.Names
 import controllers.actions.*
 import forms.businessdetails.ChangeContactNumbersFormProvider
 import models.agent.ContactNumbers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{BusinessDetails, CheckMode, NormalMode, UserAnswers}
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -43,7 +43,7 @@ import scala.concurrent.Future
 
 class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute: Call = Call("GET", "/manage-gambling-tax/agent/change-business-details/business-contact-details")
+  def onwardRoute: Call = Call("GET", "/manage-gambling-tax/agent/business-details/change-business-contact-details")
 
   val formProvider               = new ChangeContactNumbersFormProvider()
   val form: Form[ContactNumbers] = formProvider()
@@ -96,6 +96,41 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         normalize(contentAsString(result)) mustEqual normalize(
           view(form.fill(validContactNumberPhone), NormalMode)(
+            request,
+            messages(application)
+          ).toString
+        )
+      }
+    }
+
+    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
+
+      val businessDetails =
+        BusinessDetails(
+          None,
+          None,
+          None,
+          None,
+          phoneNumber = Some(validPhoneNumber),
+          mobileNumber = Some(validMobileNumber),
+          None,
+          None
+        )
+
+      val userAnswers = baseAnswers.set(BusinessDetailsPage, businessDetails).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = addCSRFToken(FakeRequest(GET, phoneNumberRoute))
+
+        val view = application.injector.instanceOf[ChangeContactNumbersView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        normalize(contentAsString(result)) mustEqual normalize(
+          view(form.fill(validContactNumbersBoth), NormalMode)(
             request,
             messages(application)
           ).toString

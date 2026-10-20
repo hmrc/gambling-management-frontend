@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.businessdetails
 
 import base.SpecBase
 import models.{BusinessDetails, GamblingError, UserAnswers}
@@ -135,7 +135,7 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.PageNotFoundController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.PageNotFoundController.onPageLoad().url
       }
     }
 
@@ -150,7 +150,7 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.SystemErrorController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.SystemErrorController.onPageLoad().url
       }
     }
 
