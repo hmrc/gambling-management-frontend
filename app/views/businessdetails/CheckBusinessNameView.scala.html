@@ -29,29 +29,27 @@
         changeUrl: String
 )(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("confirmBusinessName.title"))) {
+@layout(pageTitle = titleNoForm(messages("checkBusinessName.title"))) {
 
-        <span class="govuk-caption-l">@messages("confirmBusinessName.caption")</span>
+    <span class="govuk-caption-l">@messages("checkBusinessName.caption")</span>
 
-        @h1("confirmBusinessName.heading")
+    @h1("checkBusinessName.heading")
 
         @govukSummaryList(SummaryList(rows = Seq(
             SummaryListRow(
-                key =
-        Key(Text(messages("confirmBusinessName.businessName"))),
-            value = Value(Text(businessName)),
-            actions = Some(Actions(
-                items = Seq(ActionItem(
-                    href = changeUrl,
-                    content = Text(messages("site.change")),
-                    visuallyHiddenText = Some(messages("confirmBusinessName.businessName"))
+                key = Key(Text(messages("checkBusinessName.businessName"))),
+                value = Value(Text(businessName)),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        href = changeUrl,
+                        content = Text(messages("site.change")),
+                        visuallyHiddenText = Some(messages("checkBusinessName.businessName"))
+                    ))
                 ))
-            ))
-        )
+            )
         ), classes = "govuk-!-margin-bottom-9"))
 
-    @formHelper(action = controllers.businessdetails.routes.ConfirmBusinessNameController.onSubmit()) {
-
-    @govukButton(ButtonViewModel(messages("confirmBusinessName.submit")))
+    @formHelper(action = controllers.businessdetails.routes.CheckBusinessNameController.onSubmit()) {
+        @govukButton(ButtonViewModel(messages("checkBusinessName.submit")))
     }
 }

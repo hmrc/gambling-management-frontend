@@ -254,8 +254,8 @@ businessName.error.required = Enter the name for this business
 businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
 businessName.error.length = The business name must be 100 characters or less
 
-confirmBusinessName.title = Confirm your business name
-confirmBusinessName.heading = Confirm your business name
-confirmBusinessName.caption = Change registration details
-confirmBusinessName.businessName = Business name
-confirmBusinessName.submit = Submit
+checkBusinessName.title = Confirm your business name
+checkBusinessName.heading = Confirm your business name
+checkBusinessName.caption = Change registration details
+checkBusinessName.businessName = Business name
+checkBusinessName.submit = Submit
