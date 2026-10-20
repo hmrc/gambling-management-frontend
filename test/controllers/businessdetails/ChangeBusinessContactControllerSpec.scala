@@ -124,7 +124,7 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
         redirectLocation(
           result
-        ).value mustEqual controllers.businessdetails.routes.UpdateBusinessContactConfirmationController
+        ).value mustEqual controllers.businessdetails.routes.ChangeBusinessContactConfirmationController
           .onPageLoad()
           .url
 
