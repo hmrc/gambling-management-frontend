@@ -1,69 +1,69 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                  hmrcfrontend.Routes
+->          /hmrc-frontend                                           hmrcfrontend.Routes
 
-GET         /assets/*file                                   controllers.Assets.versioned(path = "/public", file: Asset)
+GET         /assets/*file                                            controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET         /there-is-a-problem                             controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                      controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /refresh-session                                controllers.KeepAliveController.keepAlive()
+GET         /refresh-session                                         controllers.KeepAliveController.keepAlive()
 
-GET         /account/sign-out-survey                        controllers.auth.AuthController.signOut()
-GET         /account/sign-out                               controllers.auth.AuthController.signOutNoSurvey()
-GET         /account/signed-out                             controllers.auth.SignedOutController.onPageLoad()
+GET         /account/sign-out-survey                                 controllers.auth.AuthController.signOut()
+GET         /account/sign-out                                        controllers.auth.AuthController.signOutNoSurvey()
+GET         /account/signed-out                                      controllers.auth.SignedOutController.onPageLoad()
 
-GET         /                                               controllers.IndexController.onPageLoad()
-GET         /there-is-a-problem-with-the-service            controllers.SystemErrorController.onPageLoad()
-GET         /there-is-a-problem-access-denied               controllers.AccessDeniedController.onPageLoad()
-GET         /page-not-found                                 controllers.PageNotFoundController.onPageLoad()
+GET         /                                                        controllers.IndexController.onPageLoad()
+GET         /there-is-a-problem-with-the-service                     controllers.SystemErrorController.onPageLoad()
+GET         /there-is-a-problem-access-denied                        controllers.AccessDeniedController.onPageLoad()
+GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()
 
-GET         /registration-certificate                       controllers.ViewRegistrationCertificateController.onPageLoad()
+GET         /registration-certificate                                controllers.ViewRegistrationCertificateController.onPageLoad()
 
 # Agent client-list flow
-GET         /agent/retrieving-client                        controllers.agent.RetrievingClientController.onPageLoad()
-GET         /agent/retrieving-client/start                  controllers.agent.RetrievingClientController.start()
-GET         /agent/retrieving-client/poll                   controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
-GET         /agent/client-list                              controllers.agent.ClientListSearchController.onPageLoad()
-GET         /agent/client/:regNumber                        controllers.agent.AgentLandingController.onPageLoad(regNumber: String)
-GET         /agent/failed-to-retrieve-client                controllers.agent.FailedToRetrieveClientController.onPageLoad()
-GET         /agent/no-authorised-clients                    controllers.agent.NoAuthorisedClientsController.onPageLoad()
-GET         /agent/cannot-access-service                    controllers.agent.AgentLostAccessController.onPageLoad()
+GET         /agent/retrieving-client                                 controllers.agent.RetrievingClientController.onPageLoad()
+GET         /agent/retrieving-client/start                           controllers.agent.RetrievingClientController.start()
+GET         /agent/retrieving-client/poll                            controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
+GET         /agent/client-list                                       controllers.agent.ClientListSearchController.onPageLoad()
+GET         /agent/client/:regNumber                                 controllers.agent.AgentLandingController.onPageLoad(regNumber: String)
+GET         /agent/failed-to-retrieve-client                         controllers.agent.FailedToRetrieveClientController.onPageLoad()
+GET         /agent/no-authorised-clients                             controllers.agent.NoAuthorisedClientsController.onPageLoad()
+GET         /agent/cannot-access-service                             controllers.agent.AgentLostAccessController.onPageLoad()
 
 # Client details management
-GET         /agent/manage-client                            controllers.clientdetails.ManageClientDetailsController.onPageLoad()
-GET         /agent/change-client-reference/:regNumber       controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
-POST        /agent/change-client-reference/:regNumber       controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
-GET         /agent/client-reference-updated                 controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
-GET         /agent/remove-client/:regNumber                 controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
-POST        /agent/remove-client/:regNumber                 controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
-GET         /agent/client-removed                           controllers.clientdetails.ClientRemovedController.onPageLoad()
+GET         /agent/manage-client                                     controllers.clientdetails.ManageClientDetailsController.onPageLoad()
+GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
+POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
+GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
+GET         /agent/remove-client/:regNumber                          controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
+POST        /agent/remove-client/:regNumber                          controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
+GET         /agent/client-removed                                    controllers.clientdetails.ClientRemovedController.onPageLoad()
 
 # Security check (client-list retrieval in-progress spinner)
-GET         /agent/authorisation-check                      controllers.SecurityCheckController.onClientListCheck(continueUrl: RedirectUrl)
-GET         /agent/authorisation-check/poll                 controllers.SecurityCheckController.pollClientListCheck(continueUrl: RedirectUrl, retryCount: Int ?= 0)
-GET         /agent/authorisation-check/in-progress          controllers.SecurityCheckController.onPageLoad()
+GET         /agent/authorisation-check                               controllers.SecurityCheckController.onClientListCheck(continueUrl: RedirectUrl)
+GET         /agent/authorisation-check/poll                          controllers.SecurityCheckController.pollClientListCheck(continueUrl: RedirectUrl, retryCount: Int ?= 0)
+GET         /agent/authorisation-check/in-progress                   controllers.SecurityCheckController.onPageLoad()
 
 #Business details management
 
-GET         /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details/change-email-address     controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/change-email-address             controllers.businessdetails.ChangeEmailAddressController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/change-email-address             controllers.businessdetails.ChangeEmailAddressController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/business-details/contact-details/remove-email         controllers.businessdetails.RemoveEmailAddressController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/business-details/contact-details/remove-email         controllers.businessdetails.RemoveEmailAddressController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/remove-email-address             controllers.businessdetails.RemoveEmailAddressController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/remove-email-address             controllers.businessdetails.RemoveEmailAddressController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/change-business-details/business-contact-details/change-fax-number         controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details/change-fax-number         controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/change-fax-number                controllers.businessdetails.ChangeFaxNumberController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/change-fax-number                controllers.businessdetails.ChangeFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/business-details/change-contact-numbers                                    controllers.businessdetails.ChangeContactNumbersController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/business-details/change-contact-numbers                                    controllers.businessdetails.ChangeContactNumbersController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/change-contact-numbers           controllers.businessdetails.ChangeContactNumbersController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/change-contact-numbers           controllers.businessdetails.ChangeContactNumbersController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/change-business-details/business-contact-details/remove-fax-number         controllers.businessdetails.RemoveFaxNumberController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details/remove-fax-number         controllers.businessdetails.RemoveFaxNumberController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/remove-fax-number                controllers.businessdetails.RemoveFaxNumberController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/remove-fax-number                controllers.businessdetails.RemoveFaxNumberController.onSubmit(mode:Mode = NormalMode)
 
-GET         /agent/change-business-details                                                    controllers.CheckBusinessDetailsController.onPageLoad()
+GET         /agent/business-details/check-business-details           controllers.businessdetails.CheckBusinessDetailsController.onPageLoad()
 
-GET         /agent/change-business-details/business-contact-details                             controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
-POST        /agent/change-business-details/business-contact-details                             controllers.businessdetails.ChangeBusinessContactController.onSubmit()
+GET         /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
+POST        /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onSubmit()
 
 GET         /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onSubmit(mode:Mode = NormalMode)

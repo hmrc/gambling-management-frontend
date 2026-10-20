@@ -22,6 +22,7 @@ import forms.businessdetails.ChangeContactNumbersFormProvider
 import models.agent.ContactNumbers
 import models.{Mode, UserAnswers}
 import navigation.Navigator
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeContactNumbersPage
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,8 +52,12 @@ class ChangeContactNumbersController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(ChangeContactNumbersPage) match {
-      case None        => form
       case Some(value) => form.fill(value)
+      case None        =>
+        request.userAnswers.get(BusinessDetailsPage) match {
+          case Some(details) => form.fill(ContactNumbers(details.phoneNumber, details.mobileNumber))
+          case None          => form
+        }
     }
     Ok(view(preparedForm, mode))
   }

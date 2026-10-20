@@ -18,7 +18,7 @@ package controllers.businessdetails
 
 import base.SpecBase
 import forms.businessdetails.ChangeFaxNumberFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{BusinessDetails, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,6 +29,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.businessdetails.ChangeFaxNumberView
 import org.jsoup.Jsoup
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeFaxNumberPage
 
 import scala.concurrent.Future
@@ -94,6 +95,32 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
 
         doc.select(".govuk-button").text() mustEqual
           "Continue"
+      }
+    }
+
+    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
+
+      val businessDetails = BusinessDetails(None, None, None, None, None, None, faxNumber = Some("09876543210"), None)
+
+      val userAnswers =
+        UserAnswers(userAnswersId)
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, changeFaxNumberRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val doc = Jsoup.parse(contentAsString(result))
+
+        doc.select("#value").`val`() mustEqual
+          "09876543210"
       }
     }
 
