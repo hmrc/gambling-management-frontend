@@ -253,3 +253,11 @@ businessName.caption = Change registration details
 businessName.error.required = Enter the name for this business
 businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
 businessName.error.length = The business name must be 100 characters or less
+
+updateBusinessContactConfirmation.title= Changes submitted
+updateBusinessContactConfirmation.heading= Changes submitted
+updateBusinessContactConfirmation.reference= Your reference number is
+updateBusinessContactConfirmation.whatHappensNext= What happens next
+updateBusinessContactConfirmation.reviewing= We are reviewing your changes and will notify you if there are any issues.
+updateBusinessContactConfirmation.processingTime= It may take up to 48 hours for HMRC to approve your changes.
+updateBusinessContactConfirmation.returnLink= Return to check your business details

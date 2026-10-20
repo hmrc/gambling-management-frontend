@@ -16,13 +16,13 @@
 
 package pages.businessdetails
 
-import models.agent.ContactNumbers
+import models.businessdetails.BusinessContactDetailResponse
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object BusinessContactDetailResponsePage extends QuestionPage[String] {
+case object BusinessContactDetailResponsePage extends QuestionPage[BusinessContactDetailResponse] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "acknowledgementReference"
+  override def toString: String = "businessContactDetailResponse"
 }

@@ -122,7 +122,11 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(
+          result
+        ).value mustEqual controllers.businessdetails.routes.UpdateBusinessContactConfirmationController
+          .onPageLoad()
+          .url
 
         val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(captor.capture())

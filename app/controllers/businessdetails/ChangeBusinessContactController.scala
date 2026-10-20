@@ -21,7 +21,7 @@ import controllers.actions.*
 import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
 import models.{CheckMode, Mode, NormalMode}
-import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
+import pages.businessdetails.{BusinessContactDetailResponsePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,6 +47,8 @@ class ChangeBusinessContactController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
+
+    println("ENTERED ChangeBusinessContactController")
 
     val answers     = request.userAnswers
     val summaryList = SummaryListViewModel(
@@ -77,8 +79,18 @@ class ChangeBusinessContactController @Inject() (
 
       for {
         submissionResponse <- gamblingConnector.updateBusinessDetails(submission)
-        updatedAnswers     <- Future.fromTry(BusinessContactHelpers.clearChanges(request.userAnswers))
-        _                  <- sessionRepository.set(updatedAnswers)
+        clearedAnswers     <- Future.fromTry(
+                                BusinessContactHelpers.clearChanges(request.userAnswers)
+                              )
+
+        updatedAnswers <- Future.fromTry(
+                            clearedAnswers.set(
+                              BusinessContactDetailResponsePage,
+                              submissionResponse
+                            )
+                          )
+
+        _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(
         controllers.businessdetails.routes.UpdateBusinessContactConfirmationController.onPageLoad()
       )

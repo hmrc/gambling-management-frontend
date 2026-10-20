@@ -18,14 +18,13 @@ package controllers.businessdetails
 
 import controllers.actions.*
 import models.{CheckMode, Mode}
-import pages.businessdetails.AcknowledgementReferencePage
+import pages.businessdetails.{AcknowledgementReferencePage, BusinessContactDetailResponsePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.businessdetails.UpdateBusinessContactConfirmationView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateBusinessContactConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
@@ -34,14 +33,18 @@ class UpdateBusinessContactConfirmationController @Inject() (
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view: UpdateBusinessContactConfirmationView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(AcknowledgementReferencePage) match {
-      case Some(reference) =>
-        Ok(view(reference))
+    request.userAnswers.get(BusinessContactDetailResponsePage) match {
+      case Some(response) =>
+        Ok(
+          view(
+            response.acknowledgementReference,
+            response.submissionTimestamp
+          )
+        )
 
       case None =>
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

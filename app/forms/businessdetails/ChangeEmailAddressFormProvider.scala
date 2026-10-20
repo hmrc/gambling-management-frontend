@@ -19,6 +19,7 @@ package forms.businessdetails
 import javax.inject.Inject
 
 import forms.mappings.Mappings
+import forms.mappings.Constraints
 import play.api.data.Form
 
 class ChangeEmailAddressFormProvider @Inject() extends Mappings {
@@ -27,13 +28,12 @@ class ChangeEmailAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text(
-        "changeEmailAddress.error.required"
-      ).verifying(
-        firstError(
-          maxLength(maxEmailLength, "changeEmailAddress.error.length"),
-          validEmail("changeEmailAddress.error.invalid")
+      "value" -> text()
+        .verifying(
+          firstError(
+            maxLength(maxEmailLength, "changeEmailAddress.error.length"),
+            validEmailIfPresent("changeEmailAddress.error.invalid")
+          )
         )
-      )
     )
 }

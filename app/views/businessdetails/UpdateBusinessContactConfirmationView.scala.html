@@ -25,40 +25,40 @@
   govukPanel: GovukPanel
 )
 
-@(reference: String)(implicit request: Request[_], messages: Messages)
+@(acknowledgementReference: String, submissionTimestamp: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("businessContactConfirmation.title"))
+  pageTitle = titleNoForm(messages("updateBusinessContactConfirmation.title"))
 ) {
 
   @govukPanel(
     Panel(
-      title = Text(messages("businessContactConfirmation.heading")),
+      title = Text(messages("updateBusinessContactConfirmation.heading")),
       content = HtmlContent(
-        s"""
-           |Your reference number<br>
-           |<strong>$reference</strong>
-           |""".stripMargin
-      )
+      s"""
+     ${messages("updateBusinessContactConfirmation.reference")}<br>
+     <strong>$acknowledgementReference</strong>
+     """.stripMargin
+        )
     )
   )
 
   <h2 class="govuk-heading-m">
-    @messages("businessContactConfirmation.whatHappensNext")
+    @messages("updateBusinessContactConfirmation.whatHappensNext")
   </h2>
 
   <p class="govuk-body">
-    @messages("businessContactConfirmation.reviewing")
+    @messages("updateBusinessContactConfirmation.reviewing")
   </p>
 
   <p class="govuk-body">
-    @messages("businessContactConfirmation.processingTime")
+    @messages("updateBusinessContactConfirmation.processingTime")
   </p>
 
   <p class="govuk-body">
     <a class="govuk-link"
-       href="@controllers.routes.IndexController.onPageLoad().url">
-      @messages("businessContactConfirmation.returnLink")
+       href="@controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad().url">
+      @messages("updateBusinessContactConfirmation.returnLink")
     </a>
   </p>
 }
