@@ -64,3 +64,6 @@ GET         /agent/business-details/check-business-details           controllers
 
 GET         /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
 POST        /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onSubmit()
+
+GET         /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onSubmit(mode:Mode = NormalMode)
