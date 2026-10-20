@@ -28,15 +28,16 @@
 @(acknowledgementReference: String, submissionTimestamp: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("updateBusinessContactConfirmation.title"))
+  pageTitle = titleNoForm(messages("changeBusinessContactConfirmation.title")),
+showBackLink = false
 ) {
 
   @govukPanel(
     Panel(
-      title = Text(messages("updateBusinessContactConfirmation.heading")),
+      title = Text(messages("changeBusinessContactConfirmation.heading")),
       content = HtmlContent(
       s"""
-     ${messages("updateBusinessContactConfirmation.reference")}<br>
+     ${messages("changeBusinessContactConfirmation.reference")}<br>
      <strong>$acknowledgementReference</strong>
      """.stripMargin
         )
@@ -44,21 +45,21 @@
   )
 
   <h2 class="govuk-heading-m">
-    @messages("updateBusinessContactConfirmation.whatHappensNext")
+    @messages("changeBusinessContactConfirmation.whatHappensNext")
   </h2>
 
   <p class="govuk-body">
-    @messages("updateBusinessContactConfirmation.reviewing")
+    @messages("changeBusinessContactConfirmation.reviewing")
   </p>
 
   <p class="govuk-body">
-    @messages("updateBusinessContactConfirmation.processingTime")
+    @messages("changeBusinessContactConfirmation.processingTime")
   </p>
 
   <p class="govuk-body">
     <a class="govuk-link"
        href="@controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad().url">
-      @messages("updateBusinessContactConfirmation.returnLink")
+      @messages("changeBusinessContactConfirmation.returnLink")
     </a>
   </p>
 }

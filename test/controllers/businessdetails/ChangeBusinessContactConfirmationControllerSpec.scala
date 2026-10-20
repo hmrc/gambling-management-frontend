@@ -21,7 +21,7 @@ import models.businessdetails.ChrisSubmissionResponse
 import pages.businessdetails.BusinessContactDetailConfirmationPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.businessdetails.UpdateBusinessContactConfirmationView
+import views.html.businessdetails.ChangeBusinessContactConfirmationView
 
 import scala.jdk.CollectionConverters.*
 import org.jsoup.Jsoup
@@ -39,7 +39,7 @@ class ChangeBusinessContactConfirmationControllerSpec extends SpecBase {
       .success
       .value
 
-  "UpdateBusinessContactConfirmationController" - {
+  "ChangeBusinessContactConfirmationController" - {
 
     "must return OK and the correct content for a GET" in {
 

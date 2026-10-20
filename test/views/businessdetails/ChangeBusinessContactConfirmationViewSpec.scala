@@ -21,11 +21,11 @@ import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.businessdetails.UpdateBusinessContactConfirmationView
+import views.html.businessdetails.ChangeBusinessContactConfirmationView
 
 class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
 
-  "UpdateBusinessContactConfirmationView" - {
+  "ChangeBusinessContactConfirmationView" - {
 
     "must render the page with the correct title and content" in new Setup {
 
@@ -38,7 +38,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       val doc = Jsoup.parse(html.body)
 
       doc.title must include(
-        messages("updateBusinessContactConfirmation.title")
+        messages("changeBusinessContactConfirmation.title")
       )
 
       doc.title must include(
@@ -50,24 +50,24 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       )
 
       doc.select("h1.govuk-panel__title").text() mustEqual
-        messages("updateBusinessContactConfirmation.heading")
+        messages("changeBusinessContactConfirmation.heading")
 
       doc.select(".govuk-panel__body").text() must include(
-        messages("updateBusinessContactConfirmation.reference")
+        messages("changeBusinessContactConfirmation.reference")
       )
 
       doc.select(".govuk-panel__body strong").text() mustEqual
         acknowledgementReference
 
       doc.select("main h2.govuk-heading-m").text() mustEqual
-        messages("updateBusinessContactConfirmation.whatHappensNext")
+        messages("changeBusinessContactConfirmation.whatHappensNext")
 
       doc.select("main").text() must include(
-        messages("updateBusinessContactConfirmation.reviewing")
+        messages("changeBusinessContactConfirmation.reviewing")
       )
 
       doc.select("main").text() must include(
-        messages("updateBusinessContactConfirmation.processingTime")
+        messages("changeBusinessContactConfirmation.processingTime")
       )
     }
 
@@ -84,7 +84,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       val panelBody = doc.select(".govuk-panel__body")
 
       panelBody.text() must include(
-        messages("updateBusinessContactConfirmation.reference")
+        messages("changeBusinessContactConfirmation.reference")
       )
 
       panelBody.select("strong").text() mustEqual
@@ -102,7 +102,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       val doc = Jsoup.parse(html.body)
 
       doc.select("main h2.govuk-heading-m").text() mustEqual
-        messages("updateBusinessContactConfirmation.whatHappensNext")
+        messages("changeBusinessContactConfirmation.whatHappensNext")
     }
 
     "must render the return to business details link" in new Setup {
@@ -127,7 +127,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       returnLink must not be null
 
       returnLink.text() mustEqual
-        messages("updateBusinessContactConfirmation.returnLink")
+        messages("changeBusinessContactConfirmation.returnLink")
 
       returnLink.attr("href") mustEqual
         controllers.businessdetails.routes.ChangeBusinessContactController
@@ -155,7 +155,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       applicationBuilder().build()
 
     val view =
-      app.injector.instanceOf[UpdateBusinessContactConfirmationView]
+      app.injector.instanceOf[ChangeBusinessContactConfirmationView]
 
     val acknowledgementReference =
       "ABC123"

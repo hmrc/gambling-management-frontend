@@ -22,7 +22,7 @@ import pages.businessdetails.BusinessContactDetailConfirmationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.businessdetails.UpdateBusinessContactConfirmationView
+import views.html.businessdetails.ChangeBusinessContactConfirmationView
 
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class ChangeBusinessContactConfirmationController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: UpdateBusinessContactConfirmationView
+  view: ChangeBusinessContactConfirmationView
 ) extends FrontendBaseController
     with I18nSupport {
 
