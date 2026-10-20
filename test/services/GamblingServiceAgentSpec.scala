@@ -19,6 +19,7 @@ package services
 import connectors.GamblingConnector
 import models.GetClientListStatusResponse
 import models.agent.{ClientListStatus, HasClientResponse}
+import models.businessdetails.{BusinessNameSubmission, ChrisSubmissionResponse}
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -57,5 +58,13 @@ class GamblingServiceAgentSpec extends AnyWordSpec with Matchers with ScalaFutur
     val (service, connector) = newService
     when(connector.hasClient(anyString, anyString)(using any)).thenReturn(Future.successful(HasClientResponse(true)))
     service.hasClient("mgd", "RN1").futureValue mustBe true
+  }
+
+  "updateBusinessName delegates to the connector" in {
+    val (service, connector) = newService
+    val request              = BusinessNameSubmission(fullName = "Example Agent Ltd", submitterEmail = None)
+    val response             = ChrisSubmissionResponse("ABCDEFG", "2026-10-08T15:00:00Z")
+    when(connector.updateBusinessName(any[BusinessNameSubmission])(using any)).thenReturn(Future.successful(response))
+    service.updateBusinessName(request).futureValue mustBe response
   }
 }

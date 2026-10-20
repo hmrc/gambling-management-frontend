@@ -31,7 +31,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import connectors.GamblingConnector
 import models.businessdetails.BusinessContactDetailSubmission
-import models.businessdetails.BusinessContactDetailResponse
+import models.businessdetails.ChrisSubmissionResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -87,7 +87,7 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
         )(using any[HeaderCarrier])
       ).thenReturn(
         Future.successful(
-          BusinessContactDetailResponse(
+          ChrisSubmissionResponse(
             acknowledgementReference = "ABC123",
             submissionTimestamp = "2026-10-12T12:00:00"
           )

@@ -19,6 +19,7 @@ package services
 import connectors.GamblingConnector
 import models.{GamblingError, MgdCertificate, ReturnSummary, ReturnSummaryError}
 import models.agent.{AgentDetails, ClientListStatus}
+import models.businessdetails.{BusinessNameSubmission, ChrisSubmissionResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -48,3 +49,6 @@ class GamblingService @Inject() (
 
   def hasClient(regime: String, regNumber: String)(using HeaderCarrier): Future[Boolean] =
     connector.hasClient(regime, regNumber).map(_.hasClient)
+
+  def updateBusinessName(request: BusinessNameSubmission)(using HeaderCarrier): Future[ChrisSubmissionResponse] =
+    connector.updateBusinessName(request)
