@@ -17,24 +17,25 @@
 package controllers.businessdetails
 
 import base.SpecBase
-import models.businessdetails.BusinessContactDetailResponse
-import pages.businessdetails.BusinessContactDetailResponsePage
+import models.businessdetails.ChrisSubmissionResponse
+import pages.businessdetails.BusinessContactDetailConfirmationPage
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.businessdetails.UpdateBusinessContactConfirmationView
+
 import scala.jdk.CollectionConverters.*
 import org.jsoup.Jsoup
 
 class ChangeBusinessContactConfirmationControllerSpec extends SpecBase {
 
-  private val response = BusinessContactDetailResponse(
+  private val response = ChrisSubmissionResponse(
     acknowledgementReference = "ABC123",
     submissionTimestamp = "2026-10-12T12:00:00"
   )
 
   private val userAnswers =
     emptyUserAnswers
-      .set(BusinessContactDetailResponsePage, response)
+      .set(BusinessContactDetailConfirmationPage, response)
       .success
       .value
 

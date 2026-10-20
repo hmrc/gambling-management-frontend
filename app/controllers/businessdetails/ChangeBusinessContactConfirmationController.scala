@@ -18,7 +18,7 @@ package controllers.businessdetails
 
 import controllers.actions.*
 import models.{CheckMode, Mode}
-import pages.businessdetails.{AcknowledgementReferencePage, BusinessContactDetailResponsePage}
+import pages.businessdetails.BusinessContactDetailConfirmationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,7 +37,7 @@ class ChangeBusinessContactConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
-    request.userAnswers.get(BusinessContactDetailResponsePage) match {
+    request.userAnswers.get(BusinessContactDetailConfirmationPage) match {
       case Some(response) =>
         Ok(
           view(

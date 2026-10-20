@@ -21,7 +21,7 @@ import controllers.actions.*
 import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
 import models.{CheckMode, Mode, NormalMode}
-import pages.businessdetails.{BusinessContactDetailResponsePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
+import pages.businessdetails.{BusinessContactDetailConfirmationPage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -83,7 +83,7 @@ class ChangeBusinessContactController @Inject() (
 
         updatedAnswers <- Future.fromTry(
                             clearedAnswers.set(
-                              BusinessContactDetailResponsePage,
+                              BusinessContactDetailConfirmationPage,
                               submissionResponse
                             )
                           )
