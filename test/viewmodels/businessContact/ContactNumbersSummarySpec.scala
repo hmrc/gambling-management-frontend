@@ -18,7 +18,9 @@ package viewmodels.businessContact
 
 import base.SpecBase
 import controllers.routes
+import models.BusinessDetails
 import models.agent.ContactNumbers
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeContactNumbersPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -99,6 +101,35 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       row.value.content mustBe HtmlContent(
         "Phone number:<br>01234567890123456789<br><br>Mobile number:<br>98765432109876543210"
+      )
+      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
+      row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl
+    }
+
+    "must pre-populate the values from the backend-loaded BusinessDetailsPage when ChangeContactNumbersPage is empty" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val validPhoneNumber  = "01632 960 001"
+      val validMobileNumber = "07700 900 982"
+      val businessDetails   =
+        BusinessDetails(
+          None,
+          None,
+          None,
+          None,
+          phoneNumber = Some(validPhoneNumber),
+          mobileNumber = Some(validMobileNumber),
+          None,
+          None
+        )
+
+      val answers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
+
+      val rows = ContactNumbersSummary.rows(answers)
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+
+      row.value.content mustBe HtmlContent(
+        s"Phone number:<br>$validPhoneNumber<br><br>Mobile number:<br>$validMobileNumber"
       )
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl

@@ -78,14 +78,18 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       rowFor(doc, msgs("checkBusinessDetails.businessName"))
         .select(".govuk-summary-list__actions a")
         .text() mustEqual s"""${msgs("site.change")} ${msgs("checkBusinessDetails.businessName")}"""
-      // rowFor(doc, msgs("checkBusinessDetails.businessName"))
-      //  .select(".govuk-summary-list__actions a").eachAttr("href").toArray must contain(TODO
+
+      rowFor(doc, msgs("checkBusinessDetails.businessName"))
+        .select(".govuk-summary-list__actions a")
+        .eachAttr("href")
+        .toArray must contain(
+        controllers.businessdetails.routes.BusinessNameController.onPageLoad().url
+      )
 
       rowFor(doc, msgs("checkBusinessDetails.businessAddress"))
         .select(".govuk-summary-list__actions a")
         .text() mustEqual s"""${msgs("site.change")} ${msgs("checkBusinessDetails.businessAddress")}"""
-      // rowFor(doc, msgs("checkBusinessDetails.businessAddress"))
-      //  .select(".govuk-summary-list__actions a").eachAttr("href").toArray must contain(TODO
+      // TODO - add check for url href
 
       rowFor(doc, msgs("checkBusinessDetails.contactDetails.heading"))
         .select(".govuk-summary-list__actions a")

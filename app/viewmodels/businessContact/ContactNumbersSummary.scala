@@ -17,6 +17,7 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
+import models.agent.ContactNumbers
 import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeContactNumbersPage
 import play.api.i18n.Messages
@@ -25,15 +26,22 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object ContactNumbersSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeContactNumbersPage)
+    val answer = answers.get(ChangeContactNumbersPage) match {
+      case Some(cn) => Some(cn)
+      case _        =>
+        answers.get(BusinessDetailsPage) match {
+          case Some(bd) => Some(ContactNumbers(bd.phoneNumber, bd.mobileNumber))
+          case None     => None
+        }
+    }
 
     val phoneNumber = answer match {
-      case Some(bd) => bd.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))
+      case Some(cn) => cn.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))
       case None     => messages("changeBusinessContact.notProvided")
     }
 
     val mobileNumber = answer match {
-      case Some(bd) => bd.mobileNumber.getOrElse(messages("changeBusinessContact.notProvided"))
+      case Some(cn) => cn.mobileNumber.getOrElse(messages("changeBusinessContact.notProvided"))
       case None     => messages("changeBusinessContact.notProvided")
     }
 

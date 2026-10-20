@@ -56,7 +56,7 @@
     @h1("checkBusinessDetails.heading")
 
     @govukSummaryList(SummaryList(rows = Seq(
-        row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse("")), "#"),
+        row("checkBusinessDetails.businessName", Text(details.businessName.getOrElse("")), controllers.businessdetails.routes.BusinessNameController.onPageLoad().url),
         row(
             "checkBusinessDetails.businessAddress",
             HtmlContent(api.Html(Seq(details.addressLine1, details.addressLine2, details.addressLine3).flatten.map(HtmlFormat.escape(_).body).mkString("<br>"))),

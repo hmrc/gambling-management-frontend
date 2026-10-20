@@ -20,6 +20,7 @@ import controllers.actions.*
 import forms.businessdetails.BusinessNameFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
+import pages.BusinessDetailsPage
 import pages.businessdetails.BusinessNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,8 +49,12 @@ class BusinessNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(BusinessNamePage) match {
-      case None        => form
       case Some(value) => form.fill(value)
+      case None        =>
+        request.userAnswers.get(BusinessDetailsPage) match {
+          case Some(details) => form.fill(details.businessName.getOrElse(""))
+          case None          => form
+        }
     }
     Ok(view(preparedForm, mode))
 

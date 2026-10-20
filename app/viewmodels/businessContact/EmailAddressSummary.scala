@@ -17,6 +17,7 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeEmailAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -24,7 +25,14 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object EmailAddressSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeEmailAddressPage)
+    val answer = answers.get(ChangeEmailAddressPage) match {
+      case Some(cn) => Some(cn)
+      case _        =>
+        answers.get(BusinessDetailsPage) match {
+          case Some(bd) => bd.emailAddress
+          case None     => None
+        }
+    }
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(
