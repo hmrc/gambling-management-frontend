@@ -18,14 +18,15 @@ package controllers.businessdetails
 
 import com.google.inject.Inject
 import controllers.actions.{AgentOnlyAction, DataRequiredAction, DataRetrievalAction}
-import models.{Mode, UserAnswers}
+import models.Mode
+import pages.businessdetails.BusinessNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.businessdetails.ConfirmBusinessNameView
 
 class ConfirmBusinessNameController @Inject() (
-  // override val messagesAPI: MessagesApi,
+  override val messagesApi: MessagesApi,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -34,28 +35,29 @@ class ConfirmBusinessNameController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  private val changeBusinessNameUrl =
-    "/agent/change-business-details/business-contact-details/change-business-name"
-
-  // TODO: Replace with UserAnswers.get(BusinessNamePage) once DTR-8594 is merged
-  private def proposedBusinessName(answers: UserAnswers): Option[String] =
-    (answers.data \ "businessName").asOpt[String].filter(_.trim.nonEmpty)
+  private val changeBusinessNameRoute = routes.BusinessNameController.onPageLoad()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData) { implicit request =>
-
-      proposedBusinessName(request.userAnswers) match {
-        case Some(name) => Ok(view(name, changeBusinessNameUrl))
-        case None       => Redirect(changeBusinessNameUrl)
+      request.userAnswers.get(BusinessNamePage) match {
+        case None       => Redirect(changeBusinessNameRoute)
+        case Some(name) => Ok(view(name, changeBusinessNameRoute.url))
       }
     }
 
+  /*  def onPageLoad(mode: Mode): Action[AnyContent] =
+  (agentOnly andThen getData andThen requireData) { implicit request =>
+    request.userAnswers.get(BusinessNamePage) match {
+      case None => Ok(view("Test Business Ltd", changeBusinessNameRoute.url))
+      case Some(name) => Ok(view(name, changeBusinessNameRoute.url))
+    }
+  }*/
+
   def onSubmit(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData) { implicit request =>
-
-      proposedBusinessName(request.userAnswers) match {
-        case None    => Redirect(changeBusinessNameUrl)
+      request.userAnswers.get(BusinessNamePage) match {
         case Some(_) => NotImplemented
+        case None    => Redirect(changeBusinessNameRoute)
       }
     }
 }
