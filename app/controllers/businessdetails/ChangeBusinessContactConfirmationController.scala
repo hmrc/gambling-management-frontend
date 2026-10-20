@@ -26,7 +26,7 @@ import views.html.businessdetails.UpdateBusinessContactConfirmationView
 
 import javax.inject.Inject
 
-class UpdateBusinessContactConfirmationController @Inject() (
+class ChangeBusinessContactConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,

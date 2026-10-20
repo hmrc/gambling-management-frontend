@@ -48,8 +48,6 @@ class ChangeBusinessContactController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
-    println("ENTERED ChangeBusinessContactController")
-
     val answers     = request.userAnswers
     val summaryList = SummaryListViewModel(
       rows = ContactNumbersSummary.rows(answers) ++
@@ -92,7 +90,7 @@ class ChangeBusinessContactController @Inject() (
 
         _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(
-        controllers.businessdetails.routes.UpdateBusinessContactConfirmationController.onPageLoad()
+        controllers.businessdetails.routes.ChangeBusinessContactConfirmationController.onPageLoad()
       )
     }
 }
