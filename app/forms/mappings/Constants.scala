@@ -17,6 +17,7 @@
 package forms.mappings
 
 object Constants {
-  final val MaxLength20: Int = 20
+  final val MaxLength20: Int  = 20
+  final val maxLength100: Int = 100
 
 }

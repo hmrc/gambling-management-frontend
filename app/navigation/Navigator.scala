@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
+import pages.businessdetails.*
 
 @Singleton
 class Navigator @Inject() () {
@@ -42,6 +42,9 @@ class Navigator @Inject() () {
 
     case RemoveFaxNumberPage =>
       _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
+
+    case BusinessNamePage =>
+      _ => routes.JourneyRecoveryController.onPageLoad()
 
     case _ =>
       _ => routes.IndexController.onPageLoad()
