@@ -27,7 +27,7 @@ class BusinessNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("businessName.error.required")
-        .transform(_.trim.replace(" ", ""), identity)
+        .transform(_.trim, identity)
         .verifying(
           firstError(
             regexp(businessNameRegex, "businessName.error.invalid"),
