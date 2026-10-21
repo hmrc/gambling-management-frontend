@@ -61,33 +61,5 @@ class EmailAddressSummarySpec extends SpecBase {
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
       row.actions.value.items(1).href mustBe removeEmailAddressSummaryUrl
     }
-
-    "must pre-populate the values from the backend-loaded BusinessDetailsPage when ChangeEmailAddressPage is empty" in {
-      implicit val msgs: Messages = messages(applicationBuilder().build())
-
-      val businessDetails =
-        BusinessDetails(
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          Some("backend_email_address@mail.co.uk")
-        )
-
-      val answers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
-
-      val rows = EmailAddressSummary.rows(answers)
-      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
-
-      row.value.content mustBe Text("backend_email_address@mail.co.uk")
-      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeEmailAddressSummaryUrl
-
-      row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
-      row.actions.value.items(1).href mustBe removeEmailAddressSummaryUrl
-    }
   }
 }

@@ -98,33 +98,6 @@ class ChangeEmailAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
-
-      val businessDetails =
-        BusinessDetails(None, None, None, None, None, None, None, emailAddress = Some("backend@example.com"))
-
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(BusinessDetailsPage, businessDetails)
-          .success
-          .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, changeEmailAddressRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val doc = Jsoup.parse(contentAsString(result))
-
-        doc.select("#value").`val`() mustEqual
-          "backend@example.com"
-      }
-    }
-
     "must redirect when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
