@@ -256,6 +256,6 @@ businessName.error.length = The business name must be 100 characters or less
 
 confirmBusinessName.title = Confirm your business name
 confirmBusinessName.heading = Confirm your business name
-confirmBusinessName.caption = Change registration details
+confirmBusinessName.caption = Check business details
 confirmBusinessName.businessName = Business name
 confirmBusinessName.submit = Submit

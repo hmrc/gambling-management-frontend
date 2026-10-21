@@ -35,19 +35,19 @@
 
     @h1("confirmBusinessName.heading")
 
-        @govukSummaryList(SummaryList(rows = Seq(
-            SummaryListRow(
-                key = Key(Text(messages("confirmBusinessName.businessName"))),
-                value = Value(Text(businessName)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                        href = changeUrl,
-                        content = Text(messages("site.change")),
-                        visuallyHiddenText = Some(messages("confirmBusinessName.businessName"))
-                    ))
+    @govukSummaryList(SummaryList(rows = Seq(
+        SummaryListRow(
+            key = Key(Text(messages("confirmBusinessName.businessName"))),
+            value = Value(Text(businessName)),
+            actions = Some(Actions(
+                items = Seq(ActionItem(
+                    href = changeUrl,
+                    content = Text(messages("site.change")),
+                    visuallyHiddenText = Some(messages("confirmBusinessName.businessName"))
                 ))
-            )
-        ), classes = "govuk-!-margin-bottom-9"))
+            ))
+        )
+    ), classes = "govuk-!-margin-bottom-9"))
 
     @formHelper(action = controllers.businessdetails.routes.ConfirmBusinessNameController.onSubmit()) {
         @govukButton(ButtonViewModel(messages("confirmBusinessName.submit")))
