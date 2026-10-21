@@ -23,25 +23,25 @@ import pages.businessdetails.BusinessNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.businessdetails.CheckBusinessNameView
+import views.html.businessdetails.ConfirmBusinessNameView
 
-class CheckBusinessNameController @Inject() (
+class ConfirmBusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: CheckBusinessNameView
+  view: ConfirmBusinessNameView
 ) extends FrontendBaseController
     with I18nSupport {
 
-  private val changeBusinessNameRoute = routes.BusinessNameController.onPageLoad()
+  private def changeBusinessNameRoute = routes.BusinessNameController.onPageLoad().url
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData) { implicit request =>
       request.userAnswers.get(BusinessNamePage) match {
-        case None       => Redirect(routes.BusinessNameController.onPageLoad().url)
-        case Some(name) => Ok(view(name, routes.BusinessNameController.onPageLoad().url))
+        case None       => Redirect(changeBusinessNameRoute)
+        case Some(name) => Ok(view(name, changeBusinessNameRoute))
       }
     }
 

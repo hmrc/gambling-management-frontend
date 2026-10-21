@@ -21,25 +21,25 @@ import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.businessdetails.CheckBusinessNameView
+import views.html.businessdetails.ConfirmBusinessNameView
 
-class CheckBusinessNameViewSpec extends SpecBase {
+class ConfirmBusinessNameViewSpec extends SpecBase {
 
-  "CheckBusinessNameView" - {
+  "ConfirmBusinessNameView" - {
     "must render the page with the correct content" in new Setup {
       val html = view(businessName, changeUrl)
       val doc  = Jsoup.parse(html.body)
 
-      doc.title     must include(messages("checkBusinessName.title"))
-      doc.select("h1").text() mustEqual messages("checkBusinessName.heading")
-      doc.body.text must include(messages("checkBusinessName.caption"))
+      doc.title     must include(messages("confirmBusinessName.title"))
+      doc.select("h1").text() mustEqual messages("confirmBusinessName.heading")
+      doc.body.text must include(messages("confirmBusinessName.caption"))
     }
 
     "must display the proposed business name" in new Setup {
       val html = view(businessName, changeUrl)
       val doc  = Jsoup.parse(html.body)
 
-      doc.select(".govuk-summary-list__key").text() mustEqual messages("checkBusinessName.businessName")
+      doc.select(".govuk-summary-list__key").text() mustEqual messages("confirmBusinessName.businessName")
       doc.select(".govuk-summary-list__value").text() mustEqual businessName
     }
 
@@ -47,7 +47,7 @@ class CheckBusinessNameViewSpec extends SpecBase {
       val html = view(businessName, changeUrl)
       val doc  = Jsoup.parse(html.body)
 
-      doc.select(".govuk-button").text() mustEqual messages("checkBusinessName.submit")
+      doc.select(".govuk-button").text() mustEqual messages("confirmBusinessName.submit")
     }
 
     "must render a Change link with the correct URL" in new Setup {
@@ -63,7 +63,7 @@ class CheckBusinessNameViewSpec extends SpecBase {
 
   trait Setup {
     val app          = applicationBuilder().build()
-    val view         = app.injector.instanceOf[CheckBusinessNameView]
+    val view         = app.injector.instanceOf[ConfirmBusinessNameView]
     val businessName = "Test Ltd"
     val changeUrl    = controllers.businessdetails.routes.BusinessNameController.onPageLoad().url
 

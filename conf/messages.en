@@ -248,11 +248,11 @@ changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
 
-checkBusinessName.title = Confirm your business name
-checkBusinessName.heading = Confirm your business name
-checkBusinessName.caption = Check business details
-checkBusinessName.businessName = Business name
-checkBusinessName.submit = Submit
+confirmBusinessName.title = Confirm your business name
+confirmBusinessName.heading = Confirm your business name
+confirmBusinessName.caption = Check business details
+confirmBusinessName.businessName = Business name
+confirmBusinessName.submit = Submit
 
 businessName.title = What is your business name?
 businessName.heading = What is your business name?

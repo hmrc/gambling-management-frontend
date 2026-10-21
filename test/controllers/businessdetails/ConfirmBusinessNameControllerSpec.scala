@@ -22,13 +22,14 @@ import org.jsoup.Jsoup
 import pages.businessdetails.BusinessNamePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import controllers.businessdetails.ConfirmBusinessNameController
 
-class CheckBusinessNameControllerSpec extends SpecBase {
+class ConfirmBusinessNameControllerSpec extends SpecBase {
 
-  lazy val checkBusinessNameRoute: String = routes.CheckBusinessNameController.onPageLoad().url
-  lazy val businessNameRoute: String      = routes.BusinessNameController.onPageLoad().url
+  lazy val confirmBusinessNameRoute: String = routes.ConfirmBusinessNameController.onPageLoad().url
+  lazy val businessNameRoute: String        = routes.BusinessNameController.onPageLoad().url
 
-  "CheckBusinessName Controller" - {
+  "ConfirmBusinessName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -36,7 +37,7 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, checkBusinessNameRoute)
+        val request = FakeRequest(GET, confirmBusinessNameRoute)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -55,7 +56,7 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, checkBusinessNameRoute)
+        val request = FakeRequest(GET, confirmBusinessNameRoute)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -63,27 +64,12 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       }
     }
 
-    /*    "must redirect when Submit is clicked" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessNamePage, "Test Ltd").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(POST, routes.CheckBusinessNameController.onSubmit().url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }*/
-
     "must redirect to Business Name when submitting without a name" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(POST, routes.CheckBusinessNameController.onSubmit().url)
+        val request = FakeRequest(POST, routes.ConfirmBusinessNameController.onSubmit().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -96,7 +82,7 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, checkBusinessNameRoute)
+        val request = FakeRequest(GET, confirmBusinessNameRoute)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -110,7 +96,7 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(POST, routes.CheckBusinessNameController.onSubmit().url)
+        val request = FakeRequest(POST, routes.ConfirmBusinessNameController.onSubmit().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -124,7 +110,7 @@ class CheckBusinessNameControllerSpec extends SpecBase {
       val application = organisationDeniedApplicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val result = route(application, FakeRequest(GET, checkBusinessNameRoute)).value
+        val result = route(application, FakeRequest(GET, confirmBusinessNameRoute)).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
