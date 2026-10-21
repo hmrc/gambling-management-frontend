@@ -18,19 +18,20 @@ package controllers.businessdetails
 
 import base.SpecBase
 import forms.businessdetails.BusinessNameFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{BusinessDetails, NormalMode, UserAnswers}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.BusinessDetailsPage
+import pages.businessdetails.BusinessNamePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.businessdetails.BusinessNameView
-import org.jsoup.Jsoup
-import pages.businessdetails.BusinessNamePage
-import play.api.data.Form
 
 import scala.concurrent.Future
 
@@ -76,6 +77,36 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
         doc.select("h1").text() mustEqual "What is your business name?"
         doc.select("#value").`val`() mustEqual "Name"
+        doc.select(".govuk-button").text() mustEqual "Continue"
+      }
+    }
+
+    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
+      val businessDetails =
+        BusinessDetails(
+          Some("Business Name from the backend"),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessDetailsPage, businessDetails).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, businessNameRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val doc = Jsoup.parse(contentAsString(result))
+
+        doc.select("h1").text() mustEqual "What is your business name?"
+        doc.select("#value").`val`() mustEqual "Business Name from the backend"
         doc.select(".govuk-button").text() mustEqual "Continue"
       }
     }

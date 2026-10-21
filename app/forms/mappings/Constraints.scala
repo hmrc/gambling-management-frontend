@@ -16,8 +16,10 @@
 
 package forms.mappings
 
+import forms.mappings.Validation.faxRegex
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import views.CurrencyFormatter
+
 import java.time.LocalDate
 
 trait Constraints {
@@ -128,9 +130,20 @@ trait Constraints {
       }
     }
 
-  protected def validEmail(errorKey: String): Constraint[String] =
+  protected def validEmailIfPresent(errorKey: String): Constraint[String] =
     Constraint { email =>
-      if (email.matches("^[A-Za-z0-9._-]{1,64}@[A-Za-z0-9._-]{1,64}$"))
+      if (
+        email.isEmpty ||
+        email.matches("^[A-Za-z0-9._-]{1,64}@[A-Za-z0-9._-]{1,64}$")
+      )
+        Valid
+      else
+        Invalid(errorKey)
+    }
+
+  protected def validFaxIfPresent(errorKey: String): Constraint[String] =
+    Constraint { fax =>
+      if (fax.isEmpty || fax.matches(faxRegex))
         Valid
       else
         Invalid(errorKey)

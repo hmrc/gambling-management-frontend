@@ -17,6 +17,7 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -24,7 +25,14 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object FaxNumberSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeFaxNumberPage)
+    val answer = answers.get(ChangeFaxNumberPage) match {
+      case Some(cn) => Some(cn)
+      case _        =>
+        answers.get(BusinessDetailsPage) match {
+          case Some(bd) => bd.faxNumber
+          case None     => None
+        }
+    }
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(

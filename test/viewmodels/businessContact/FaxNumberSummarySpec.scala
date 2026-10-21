@@ -18,7 +18,8 @@ package viewmodels.businessContact
 
 import base.SpecBase
 import controllers.routes
-import models.CheckMode
+import models.{BusinessDetails, CheckMode}
+import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeFaxNumberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -51,6 +52,34 @@ class FaxNumberSummarySpec extends SpecBase {
       val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
 
       row.value.content mustBe Text("01234567890123456789")
+      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
+      row.actions.value.items.head.href mustBe changeFaxNumberSummaryUrl
+
+      row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
+      row.actions.value.items(1).href mustBe removeFaxNumberSummaryUrl
+    }
+
+    "must pre-populate the values from the backend-loaded BusinessDetailsPage when ChangeFaxNumberPage is empty" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val businessDetails =
+        BusinessDetails(
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          Some("111222333444"),
+          None
+        )
+
+      val answers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
+
+      val rows = FaxNumberSummary.rows(answers)
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.faxNumber"))).value
+
+      row.value.content mustBe Text("111222333444")
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeFaxNumberSummaryUrl
 
