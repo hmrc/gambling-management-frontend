@@ -26,14 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object ContactNumbersSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeContactNumbersPage) match {
-      case Some(cn) => Some(cn)
-      case _        =>
-        answers.get(BusinessDetailsPage) match {
-          case Some(bd) => Some(ContactNumbers(bd.phoneNumber, bd.mobileNumber))
-          case None     => None
-        }
-    }
+    val answer = answers.get(ChangeContactNumbersPage)
 
     val phoneNumber = answer match {
       case Some(cn) => cn.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))

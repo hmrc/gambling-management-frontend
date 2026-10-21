@@ -51,12 +51,8 @@ class ChangeEmailAddressController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
 
     val preparedForm = request.userAnswers.get(ChangeEmailAddressPage) match {
+      case None        => form
       case Some(value) => form.fill(value)
-      case None        =>
-        request.userAnswers.get(BusinessDetailsPage).flatMap(_.emailAddress) match {
-          case Some(email) => form.fill(email)
-          case None        => form
-        }
     }
 
     Ok(view(preparedForm, mode))

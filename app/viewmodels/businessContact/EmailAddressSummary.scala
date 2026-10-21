@@ -25,14 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object EmailAddressSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeEmailAddressPage) match {
-      case Some(cn) => Some(cn)
-      case _        =>
-        answers.get(BusinessDetailsPage) match {
-          case Some(bd) => bd.emailAddress
-          case None     => None
-        }
-    }
+    val answer = answers.get(ChangeEmailAddressPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(

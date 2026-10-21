@@ -17,16 +17,19 @@
 package controllers.businessdetails
 
 import controllers.actions.*
+import models.agent.ContactNumbers
+import models.requests.DataRequest
 import models.{BusinessDetails, GamblingError}
 import pages.BusinessDetailsPage
+import pages.businessdetails.{BusinessNamePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.Logging
-import repositories.SessionRepository
-import services.GamblingService
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.businessdetails.CheckBusinessDetailsView
 
 import javax.inject.Inject
@@ -58,12 +61,45 @@ class CheckBusinessDetailsController @Inject() (
           case Left(_)                      =>
             Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
           case Right(agentDetails)          =>
-            val details = BusinessDetails.fromAgentDetails(agentDetails)
-            for {
-              updated <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, details))
-              _       <- sessionRepository.set(updated)
-            } yield Ok(view(details))
+            val bd = BusinessDetails.fromAgentDetails(agentDetails)
+            updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd)))
         }
     }
   }
+
+  private def updateUserAnswersFromBusinessDetails(bd: BusinessDetails, request: DataRequest[_]) =
+    for {
+      updatedBD <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, bd))
+
+      updatedName <-
+        (updatedBD.get(BusinessNamePage), bd.businessName) match {
+          case (None, Some(businessName)) =>
+            Future.fromTry(updatedBD.set(BusinessNamePage, businessName))
+          case _                          => Future.successful(updatedBD)
+        }
+
+      updatedContactNums <-
+        (updatedName.get(ChangeContactNumbersPage), bd.phoneNumber, bd.mobileNumber) match {
+          case (None, phone, mobile) if phone.isDefined | mobile.isDefined =>
+            Future.fromTry(updatedName.set(ChangeContactNumbersPage, ContactNumbers(phone, mobile)))
+          case _                                                           => Future.successful(updatedName)
+        }
+
+      updatedFax <-
+        (updatedContactNums.get(ChangeFaxNumberPage), bd.faxNumber) match {
+          case (None, Some(faxNumber)) =>
+            Future.fromTry(updatedContactNums.set(ChangeFaxNumberPage, faxNumber))
+          case _                       => Future.successful(updatedContactNums)
+        }
+
+      updatedEmail <-
+        (updatedFax.get(ChangeEmailAddressPage), bd.emailAddress) match {
+          case (None, Some(emailAddress)) =>
+            Future.fromTry(updatedFax.set(ChangeEmailAddressPage, emailAddress))
+          case _                          => Future.successful(updatedFax)
+        }
+
+      _ <- sessionRepository.set(updatedEmail)
+    } yield updatedEmail
+
 }

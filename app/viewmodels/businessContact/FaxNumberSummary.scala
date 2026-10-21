@@ -25,14 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 object FaxNumberSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeFaxNumberPage) match {
-      case Some(cn) => Some(cn)
-      case _        =>
-        answers.get(BusinessDetailsPage) match {
-          case Some(bd) => bd.faxNumber
-          case None     => None
-        }
-    }
+    val answer = answers.get(ChangeFaxNumberPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(
