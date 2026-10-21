@@ -18,13 +18,25 @@ package controllers.businessdetails
 
 import base.SpecBase
 import models.UserAnswers
+import models.businessdetails.{BusinessNameSubmission, ChrisSubmissionResponse}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import org.scalatestplus.mockito.MockitoSugar
 import pages.businessdetails.BusinessNamePage
+import play.api.http.Status.NOT_IMPLEMENTED
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.GamblingService
+import uk.gov.hmrc.http.HeaderCarrier
 import controllers.businessdetails.ConfirmBusinessNameController
 
-class ConfirmBusinessNameControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class ConfirmBusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val confirmBusinessNameRoute: String = routes.ConfirmBusinessNameController.onPageLoad().url
   lazy val businessNameRoute: String        = routes.BusinessNameController.onPageLoad().url
@@ -61,6 +73,45 @@ class ConfirmBusinessNameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual businessNameRoute
+      }
+    }
+
+    "must call the service to update the business name when submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val mockGamblingService = mock[GamblingService]
+      when(
+        mockGamblingService.updateBusinessName(any[BusinessNameSubmission])(using any[HeaderCarrier])
+      ).thenReturn(
+        Future.successful(
+          ChrisSubmissionResponse(
+            acknowledgementReference = "ABC123",
+            submissionTimestamp = "2026-10-12T12:00:00"
+          )
+        )
+      )
+
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessNamePage, "Test Ltd").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[GamblingService].toInstance(mockGamblingService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(POST, routes.ConfirmBusinessNameController.onSubmit().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual NOT_IMPLEMENTED
+
+        val captor = ArgumentCaptor.forClass(classOf[BusinessNameSubmission])
+        verify(mockGamblingService).updateBusinessName(captor.capture())(using any[HeaderCarrier])
+        captor.getValue mustBe BusinessNameSubmission("Test Ltd", None)
       }
     }
 
