@@ -19,20 +19,28 @@ package controllers.businessdetails
 import com.google.inject.Inject
 import controllers.actions.{AgentOnlyAction, DataRequiredAction, DataRetrievalAction}
 import models.Mode
-import pages.businessdetails.BusinessNamePage
+import models.businessdetails.BusinessNameSubmission
+import pages.businessdetails.{BusinessNameConfirmationPage, BusinessNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.businessdetails.ConfirmBusinessNameView
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class ConfirmBusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   agentOnly: AgentOnlyAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  gamblingService: GamblingService,
   val controllerComponents: MessagesControllerComponents,
   view: ConfirmBusinessNameView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
   private def changeBusinessNameRoute = routes.BusinessNameController.onPageLoad().url
@@ -46,10 +54,26 @@ class ConfirmBusinessNameController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (agentOnly andThen getData andThen requireData) { implicit request =>
+    (agentOnly andThen getData andThen requireData).async { implicit request =>
       request.userAnswers.get(BusinessNamePage) match {
-        case Some(_) => NotImplemented
-        case None    => Redirect(changeBusinessNameRoute)
+        case Some(name) =>
+          val submission =
+            BusinessNameSubmission(
+              fullName = name,
+              submitterEmail = None
+            )
+
+          for {
+            submissionResponse <- gamblingService.updateBusinessName(submission)
+            updatedAnswers     <- Future.fromTry(
+                                    request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse)
+                                  )
+            _                  <- sessionRepository.set(updatedAnswers)
+          } yield
+            // TODO: redirect to the business-name confirmation page once it is built
+            NotImplemented
+
+        case None => Future.successful(Redirect(changeBusinessNameRoute))
       }
     }
 }
