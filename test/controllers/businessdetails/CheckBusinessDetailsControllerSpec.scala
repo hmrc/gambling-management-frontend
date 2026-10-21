@@ -17,20 +17,21 @@
 package controllers.businessdetails
 
 import base.SpecBase
+import models.agent.{AgentDetails, ContactNumbers}
 import models.{BusinessDetails, GamblingError, UserAnswers}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
-import models.agent.AgentDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import pages.BusinessDetailsPage
+import pages.businessdetails.{BusinessNamePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.inject.bind
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.GamblingService
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import pages.BusinessDetailsPage
-import play.api.test.FakeRequest
-import play.api.test.Helpers.*
 
 class CheckBusinessDetailsControllerSpec extends SpecBase {
 
@@ -119,6 +120,13 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepo).set(captor.capture())
         captor.getValue.get(BusinessDetailsPage).value mustEqual businessDetails.copy(businessName = Some("Agent 1"))
+        captor.getValue.get(BusinessNamePage).value mustEqual "Agent 1"
+        captor.getValue.get(ChangeContactNumbersPage).value mustEqual ContactNumbers(
+          Some("0191 202 2500"),
+          Some("07890 123 456")
+        )
+        captor.getValue.get(ChangeFaxNumberPage).value mustEqual "0800 202 2500"
+        captor.getValue.get(ChangeEmailAddressPage).value mustEqual "sarah.phillips@example.com"
       }
     }
 
