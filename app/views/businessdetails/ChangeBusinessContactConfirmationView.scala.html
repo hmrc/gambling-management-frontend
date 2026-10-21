@@ -38,7 +38,7 @@ showBackLink = false
       content = HtmlContent(
       s"""
      ${messages("changeBusinessContactConfirmation.reference")}<br>
-     <strong>$acknowledgementReference</strong>
+     <strong>${acknowledgementReference.grouped(4).mkString(" ")}</strong>
      """.stripMargin
         )
     )
