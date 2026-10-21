@@ -37,6 +37,8 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
 
       val doc = Jsoup.parse(html.body)
 
+      val formattedRef = acknowledgementReference.grouped(4).mkString(" ")
+
       doc.title must include(
         messages("changeBusinessContactConfirmation.title")
       )
@@ -57,7 +59,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       )
 
       doc.select(".govuk-panel__body strong").text() mustEqual
-        acknowledgementReference
+        formattedRef
 
       doc.select("main h2.govuk-heading-m").text() mustEqual
         messages("changeBusinessContactConfirmation.whatHappensNext")
@@ -81,6 +83,8 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
 
       val doc = Jsoup.parse(html.body)
 
+      val formattedRef = acknowledgementReference.grouped(4).mkString(" ")
+
       val panelBody = doc.select(".govuk-panel__body")
 
       panelBody.text() must include(
@@ -88,7 +92,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       )
 
       panelBody.select("strong").text() mustEqual
-        acknowledgementReference
+        formattedRef
     }
 
     "must render the what happens next heading" in new Setup {

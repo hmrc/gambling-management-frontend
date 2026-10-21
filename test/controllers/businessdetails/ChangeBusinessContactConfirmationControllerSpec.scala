@@ -70,7 +70,7 @@ class ChangeBusinessContactConfirmationControllerSpec extends SpecBase {
         )
 
         doc.select(".govuk-panel__body strong").text() mustEqual
-          "ABC123"
+          "ABC1 23"
 
         doc.select("main h2.govuk-heading-m").text() mustEqual
           "What happens next"
