@@ -26,7 +26,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.businessdetails.BusinessNamePage
-import play.api.http.Status.NOT_IMPLEMENTED
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -107,7 +106,8 @@ class ConfirmBusinessNameControllerSpec extends SpecBase with MockitoSugar {
         val request = FakeRequest(POST, routes.ConfirmBusinessNameController.onSubmit().url)
         val result  = route(application, request).value
 
-        status(result) mustEqual NOT_IMPLEMENTED
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ChangeBusinessNameConfirmationController.onPageLoad().url
 
         val captor = ArgumentCaptor.forClass(classOf[BusinessNameSubmission])
         verify(mockGamblingService).updateBusinessName(captor.capture())(using any[HeaderCarrier])
