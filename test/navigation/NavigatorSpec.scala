@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import pages.*
 import models.*
-import pages.businessdetails.{ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
+import pages.businessdetails.*
 
 class NavigatorSpec extends SpecBase {
 
@@ -75,6 +75,15 @@ class NavigatorSpec extends SpecBase {
           emptyUserAnswers
         ) mustBe controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
       }
+
+      "must go from Change Business Name to Confirm Business Name Page" in {
+        navigator.nextPage(
+          BusinessNamePage,
+          NormalMode,
+          emptyUserAnswers
+        ) mustBe controllers.businessdetails.routes.ConfirmBusinessNameController.onPageLoad()
+      }
+
     }
 
     "in Check mode" - {
