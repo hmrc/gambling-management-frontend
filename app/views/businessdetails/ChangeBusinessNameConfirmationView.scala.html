@@ -24,29 +24,29 @@
 @(acknowledgementReference: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("changeConfirmation.title")),
+  pageTitle = titleNoForm(messages("changeBusinessNameConfirmation.title")),
   showBackLink = false
 ) {
 
   @govukPanel(
     Panel(
-      title = Text(messages("changeConfirmation.heading")),
+      title = Text(messages("changeBusinessNameConfirmation.heading")),
       content = HtmlContent(
         s"""
-        ${messages("changeConfirmation.reference")}<br>
+        ${messages("changeBusinessNameConfirmation.reference")}<br>
         <strong>${acknowledgementReference.grouped(4).mkString(" ")}</strong>
         """
       )
     )
   )
 
-  <h2 class="govuk-heading-m">@messages("changeConfirmation.whatHappensNext")</h2>
+  <h2 class="govuk-heading-m">@messages("changeBusinessNameConfirmation.whatHappensNext")</h2>
 
-  <p class="govuk-body">@messages("changeConfirmation.reviewing")</p>
+  <p class="govuk-body">@messages("changeBusinessNameConfirmation.reviewing")</p>
 
-  <p class="govuk-body">@messages("changeConfirmation.processingTime")</p>
+  <p class="govuk-body">@messages("changeBusinessNameConfirmation.processingTime")</p>
 
   <p class="govuk-body">
-    <a class="govuk-link" href="@returnUrl">@messages("changeConfirmation.returnLink")</a>
+    <a class="govuk-link" href="@returnUrl">@messages("changeBusinessNameConfirmation.returnLink")</a>
   </p>
 }

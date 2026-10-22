@@ -267,10 +267,10 @@ changeBusinessContactConfirmation.reviewing= We are reviewing your changes and w
 changeBusinessContactConfirmation.processingTime= It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessContactConfirmation.returnLink= Return to check your business details
 
-changeConfirmation.title = Changes submitted
-changeConfirmation.heading = Changes submitted
-changeConfirmation.reference = Your reference number is
-changeConfirmation.whatHappensNext = What happens next
-changeConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
-changeConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
-changeConfirmation.returnLink = Return to check your business details
+changeBusinessNameConfirmation.title = Changes submitted
+changeBusinessNameConfirmation.heading = Changes submitted
+changeBusinessNameConfirmation.reference = Your reference number is
+changeBusinessNameConfirmation.whatHappensNext = What happens next
+changeBusinessNameConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
+changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
+changeBusinessNameConfirmation.returnLink = Return to check your business details

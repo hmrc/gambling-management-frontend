@@ -21,7 +21,7 @@ import pages.businessdetails.BusinessNameConfirmationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.businessdetails.ChangeConfirmationView
+import views.html.businessdetails.ChangeBusinessNameConfirmationView
 
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class ChangeBusinessNameConfirmationController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: ChangeConfirmationView
+  view: ChangeBusinessNameConfirmationView
 ) extends FrontendBaseController
     with I18nSupport {
 
