@@ -122,7 +122,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
       val returnLink =
         doc
           .select(
-            s"""main a[href="${controllers.businessdetails.routes.ChangeBusinessContactController
+            s"""main a[href="${controllers.businessdetails.routes.CheckBusinessDetailsController
                 .onPageLoad()
                 .url}"]"""
           )
@@ -134,7 +134,7 @@ class ChangeBusinessContactConfirmationViewSpec extends SpecBase {
         messages("changeBusinessContactConfirmation.returnLink")
 
       returnLink.attr("href") mustEqual
-        controllers.businessdetails.routes.ChangeBusinessContactController
+        controllers.businessdetails.routes.CheckBusinessDetailsController
           .onPageLoad()
           .url
     }

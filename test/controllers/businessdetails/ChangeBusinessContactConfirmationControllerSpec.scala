@@ -91,7 +91,7 @@ class ChangeBusinessContactConfirmationControllerSpec extends SpecBase {
             .value
 
         returnLink.attr("href") mustEqual
-          routes.ChangeBusinessContactController.onPageLoad().url
+          routes.CheckBusinessDetailsController.onPageLoad().url
       }
     }
 

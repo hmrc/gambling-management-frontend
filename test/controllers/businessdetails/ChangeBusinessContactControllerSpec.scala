@@ -17,6 +17,8 @@
 package controllers.businessdetails
 
 import base.SpecBase
+import connectors.GamblingConnector
+import models.businessdetails.{BusinessContactDetailSubmission, ChrisSubmissionResponse}
 import models.{BusinessDetails, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
@@ -24,14 +26,11 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.BusinessDetailsPage
-import pages.businessdetails.{ChangeEmailAddressPage, ChangeFaxNumberPage}
+import pages.businessdetails.*
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import connectors.GamblingConnector
-import models.businessdetails.BusinessContactDetailSubmission
-import models.businessdetails.ChrisSubmissionResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -133,7 +132,10 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
 
         val saved = captor.getValue
         saved.get(ChangeFaxNumberPage) mustBe None
+        saved.get(RemoveFaxNumberPage) mustBe None
         saved.get(ChangeEmailAddressPage) mustBe None
+        saved.get(RemoveEmailAddressPage) mustBe None
+        saved.get(ChangeContactNumbersPage) mustBe None
         saved.get(BusinessDetailsPage) mustBe Some(businessDetails)
       }
     }

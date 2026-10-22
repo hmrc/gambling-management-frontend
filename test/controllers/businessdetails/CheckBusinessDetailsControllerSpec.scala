@@ -48,30 +48,6 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
 
   "Check Business Details Controller" - {
 
-    "must return OK and render the values already stored in the user's answers" in {
-      val userAnswers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val doc = Jsoup.parse(contentAsString(result))
-        doc.text() must include("Agent 1")
-        doc.text() must include("0191 202 2500")
-        doc.text() must include("sarah.phillips@example.com")
-        doc.select(".govuk-summary-list").size() mustEqual 1
-        doc.select(".govuk-summary-list__row").size() mustEqual 3
-        doc.select(".govuk-summary-list__key").size() mustEqual 3
-        doc.select(".govuk-summary-list__value.govuk-\\!-text-align-left").size() mustEqual 3
-        doc.select(".govuk-summary-list__actions").size() mustEqual 3
-      }
-    }
-
     "must fetch details from the backend and store them when none are in the user's answers" in {
       val mockService     = org.mockito.Mockito.mock(classOf[GamblingService])
       val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])

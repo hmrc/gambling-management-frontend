@@ -19,11 +19,12 @@ package controllers.businessdetails
 import controllers.actions.*
 import models.agent.ContactNumbers
 import models.requests.DataRequest
-import models.{BusinessDetails, GamblingError}
-import pages.BusinessDetailsPage
+import models.{BusinessDetails, GamblingError, UserAnswers}
 import pages.businessdetails.{BusinessNamePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
+import pages.{BusinessDetailsPage, QuestionPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{Reads, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.GamblingService
@@ -34,6 +35,7 @@ import views.html.businessdetails.CheckBusinessDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 class CheckBusinessDetailsController @Inject() (
   override val messagesApi: MessagesApi,
@@ -51,55 +53,49 @@ class CheckBusinessDetailsController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen getData andThen requireData).async { implicit request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.userAnswers.get(BusinessDetailsPage) match {
-      case Some(details) => Future.successful(Ok(view(details)))
-      case None          =>
-        gamblingService.getAgentDetails.flatMap {
-          case Left(GamblingError.NotFound) =>
-            logger.info(s"Agent details were not found for ${request.mgdRegNum}")
-            Future.successful(Redirect(controllers.routes.PageNotFoundController.onPageLoad()))
-          case Left(_)                      =>
-            Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
-          case Right(agentDetails)          =>
-            val bd = BusinessDetails.fromAgentDetails(agentDetails)
-            updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd)))
-        }
+    gamblingService.getAgentDetails.flatMap {
+      case Left(GamblingError.NotFound) =>
+        logger.info(s"Agent details were not found for ${request.mgdRegNum}")
+        Future.successful(Redirect(controllers.routes.PageNotFoundController.onPageLoad()))
+      case Left(_)                      =>
+        Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
+      case Right(agentDetails)          =>
+        val bd = BusinessDetails.fromAgentDetails(agentDetails)
+        updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd)))
     }
+
   }
 
-  private def updateUserAnswersFromBusinessDetails(bd: BusinessDetails, request: DataRequest[_]) =
+  private def updateUserAnswersFromBusinessDetails(
+    bd: BusinessDetails,
+    request: DataRequest[_]
+  ): Future[UserAnswers] = {
+    val prefilled =
+      for {
+        withDetails <- request.userAnswers.set(BusinessDetailsPage, bd)
+        withName    <- setIfAbsent(withDetails, BusinessNamePage, bd.businessName)
+        withContact <- setIfAbsent(withName, ChangeContactNumbersPage, contactNumbers(bd))
+        withFax     <- setIfAbsent(withContact, ChangeFaxNumberPage, bd.faxNumber)
+        withEmail   <- setIfAbsent(withFax, ChangeEmailAddressPage, bd.emailAddress)
+      } yield withEmail
+
     for {
-      updatedBD <- Future.fromTry(request.userAnswers.set(BusinessDetailsPage, bd))
+      answers <- Future.fromTry(prefilled)
+      _       <- sessionRepository.set(answers)
+    } yield answers
+  }
 
-      updatedName <-
-        (updatedBD.get(BusinessNamePage), bd.businessName) match {
-          case (None, Some(businessName)) =>
-            Future.fromTry(updatedBD.set(BusinessNamePage, businessName))
-          case _                          => Future.successful(updatedBD)
-        }
+  private def setIfAbsent[A](answers: UserAnswers, page: QuestionPage[A], value: Option[A])(implicit
+    reads: Reads[A],
+    writes: Writes[A]
+  ): Try[UserAnswers] =
+    value match {
+      case Some(v) if answers.get(page).isEmpty => answers.set(page, v)
+      case _                                    => Success(answers)
+    }
 
-      updatedContactNums <-
-        (updatedName.get(ChangeContactNumbersPage), bd.phoneNumber, bd.mobileNumber) match {
-          case (None, phone, mobile) if phone.isDefined | mobile.isDefined =>
-            Future.fromTry(updatedName.set(ChangeContactNumbersPage, ContactNumbers(phone, mobile)))
-          case _                                                           => Future.successful(updatedName)
-        }
-
-      updatedFax <-
-        (updatedContactNums.get(ChangeFaxNumberPage), bd.faxNumber) match {
-          case (None, Some(faxNumber)) =>
-            Future.fromTry(updatedContactNums.set(ChangeFaxNumberPage, faxNumber))
-          case _                       => Future.successful(updatedContactNums)
-        }
-
-      updatedEmail <-
-        (updatedFax.get(ChangeEmailAddressPage), bd.emailAddress) match {
-          case (None, Some(emailAddress)) =>
-            Future.fromTry(updatedFax.set(ChangeEmailAddressPage, emailAddress))
-          case _                          => Future.successful(updatedFax)
-        }
-
-      _ <- sessionRepository.set(updatedEmail)
-    } yield updatedEmail
-
+  private def contactNumbers(bd: BusinessDetails): Option[ContactNumbers] =
+    Option.when(bd.phoneNumber.isDefined || bd.mobileNumber.isDefined)(
+      ContactNumbers(bd.phoneNumber, bd.mobileNumber)
+    )
 }

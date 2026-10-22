@@ -44,7 +44,7 @@ class Navigator @Inject() () {
       _ => controllers.businessdetails.routes.ChangeBusinessContactController.onPageLoad()
 
     case BusinessNamePage =>
-      _ => routes.JourneyRecoveryController.onPageLoad()
+      _ => controllers.businessdetails.routes.ConfirmBusinessNameController.onPageLoad()
 
     case _ =>
       _ => routes.IndexController.onPageLoad()
