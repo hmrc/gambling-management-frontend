@@ -55,25 +55,16 @@ class ConfirmBusinessNameController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
-      request.userAnswers.get(BusinessNamePage) match {
-        case Some(name) =>
-          val submission =
-            BusinessNameSubmission(
-              fullName = name,
-              submitterEmail = None
-            )
+      request.userAnswers
+        .get(BusinessNamePage)
+        .fold(Future.successful(Redirect(changeBusinessNameRoute)))(name =>
+          val submission = BusinessNameSubmission(fullName = name, submitterEmail = None)
 
           for {
             submissionResponse <- gamblingService.updateBusinessName(submission)
-            updatedAnswers     <- Future.fromTry(
-                                    request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse)
-                                  )
+            updatedAnswers     <- Future.fromTry(request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse))
             _                  <- sessionRepository.set(updatedAnswers)
-          } yield
-            // TODO: redirect to the business-name confirmation page once it is built
-            NotImplemented
-
-        case None => Future.successful(Redirect(changeBusinessNameRoute))
-      }
+          } yield Redirect(routes.ChangeBusinessNameConfirmationController.onPageLoad())
+        )
     }
 }
