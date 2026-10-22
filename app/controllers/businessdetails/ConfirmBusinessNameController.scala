@@ -63,7 +63,8 @@ class ConfirmBusinessNameController @Inject() (
           for {
             submissionResponse <- gamblingService.updateBusinessName(submission)
             updatedAnswers     <- Future.fromTry(request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse))
-            _                  <- sessionRepository.set(updatedAnswers)
+            clearedAnswers     <- Future.fromTry(updatedAnswers.remove(BusinessNamePage))
+            _                  <- sessionRepository.set(clearedAnswers)
           } yield Redirect(routes.ChangeBusinessNameConfirmationController.onPageLoad())
         )
     }

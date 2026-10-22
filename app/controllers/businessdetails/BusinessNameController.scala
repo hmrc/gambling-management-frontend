@@ -49,12 +49,8 @@ class BusinessNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (agentOnly andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(BusinessNamePage) match {
+      case None        => form
       case Some(value) => form.fill(value)
-      case None        =>
-        request.userAnswers.get(BusinessDetailsPage) match {
-          case Some(details) => form.fill(details.businessName.getOrElse(""))
-          case None          => form
-        }
     }
     Ok(view(preparedForm, mode))
 

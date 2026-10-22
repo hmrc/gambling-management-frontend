@@ -17,6 +17,7 @@
 package controllers.businessdetails
 
 import base.SpecBase
+import controllers.businessdetails.ConfirmBusinessNameController
 import models.UserAnswers
 import models.businessdetails.{BusinessNameSubmission, ChrisSubmissionResponse}
 import org.jsoup.Jsoup
@@ -31,7 +32,6 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
-import controllers.businessdetails.ConfirmBusinessNameController
 
 import scala.concurrent.Future
 
@@ -112,6 +112,10 @@ class ConfirmBusinessNameControllerSpec extends SpecBase with MockitoSugar {
         val captor = ArgumentCaptor.forClass(classOf[BusinessNameSubmission])
         verify(mockGamblingService).updateBusinessName(captor.capture())(using any[HeaderCarrier])
         captor.getValue mustBe BusinessNameSubmission("Test Ltd", None)
+
+        val captorUa = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(captorUa.capture())
+        captorUa.getValue.get(BusinessNamePage) mustBe None
       }
     }
 

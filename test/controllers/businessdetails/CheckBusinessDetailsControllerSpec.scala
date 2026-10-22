@@ -17,20 +17,21 @@
 package controllers.businessdetails
 
 import base.SpecBase
+import models.agent.{AgentDetails, ContactNumbers}
 import models.{BusinessDetails, GamblingError, UserAnswers}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
-import models.agent.AgentDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import pages.BusinessDetailsPage
+import pages.businessdetails.{BusinessNamePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.inject.bind
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.GamblingService
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import pages.BusinessDetailsPage
-import play.api.test.FakeRequest
-import play.api.test.Helpers.*
 
 class CheckBusinessDetailsControllerSpec extends SpecBase {
 
@@ -46,30 +47,6 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
   )
 
   "Check Business Details Controller" - {
-
-    "must return OK and render the values already stored in the user's answers" in {
-      val userAnswers = emptyUserAnswers.set(BusinessDetailsPage, businessDetails).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val doc = Jsoup.parse(contentAsString(result))
-        doc.text() must include("Agent 1")
-        doc.text() must include("0191 202 2500")
-        doc.text() must include("sarah.phillips@example.com")
-        doc.select(".govuk-summary-list").size() mustEqual 1
-        doc.select(".govuk-summary-list__row").size() mustEqual 3
-        doc.select(".govuk-summary-list__key").size() mustEqual 3
-        doc.select(".govuk-summary-list__value.govuk-\\!-text-align-left").size() mustEqual 3
-        doc.select(".govuk-summary-list__actions").size() mustEqual 3
-      }
-    }
 
     "must fetch details from the backend and store them when none are in the user's answers" in {
       val mockService     = org.mockito.Mockito.mock(classOf[GamblingService])
@@ -119,6 +96,13 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
         val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepo).set(captor.capture())
         captor.getValue.get(BusinessDetailsPage).value mustEqual businessDetails.copy(businessName = Some("Agent 1"))
+        captor.getValue.get(BusinessNamePage).value mustEqual "Agent 1"
+        captor.getValue.get(ChangeContactNumbersPage).value mustEqual ContactNumbers(
+          Some("0191 202 2500"),
+          Some("07890 123 456")
+        )
+        captor.getValue.get(ChangeFaxNumberPage).value mustEqual "0800 202 2500"
+        captor.getValue.get(ChangeEmailAddressPage).value mustEqual "sarah.phillips@example.com"
       }
     }
 

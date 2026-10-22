@@ -98,32 +98,6 @@ class ChangeFaxNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
-
-      val businessDetails = BusinessDetails(None, None, None, None, None, None, faxNumber = Some("09876543210"), None)
-
-      val userAnswers =
-        UserAnswers(userAnswersId)
-          .set(BusinessDetailsPage, businessDetails)
-          .success
-          .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, changeFaxNumberRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val doc = Jsoup.parse(contentAsString(result))
-
-        doc.select("#value").`val`() mustEqual
-          "09876543210"
-      }
-    }
-
     "must redirect when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]

@@ -81,36 +81,6 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
-      val businessDetails =
-        BusinessDetails(
-          Some("Business Name from the backend"),
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None
-        )
-
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessDetailsPage, businessDetails).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, businessNameRoute)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val doc = Jsoup.parse(contentAsString(result))
-
-        doc.select("h1").text() mustEqual "What is your business name?"
-        doc.select("#value").`val`() mustEqual "Business Name from the backend"
-        doc.select(".govuk-button").text() mustEqual "Continue"
-      }
-    }
-
     "must redirect when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
