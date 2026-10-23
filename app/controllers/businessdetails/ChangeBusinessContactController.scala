@@ -60,37 +60,43 @@ class ChangeBusinessContactController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
+      request.userAnswers.get(ChangeContactNumbersPage) match {
 
-      val (phoneNumber, mobileNumber) = request.userAnswers.get(ChangeContactNumbersPage) match {
-        case Some(ContactNumbers(phoneNumber, mobileNumber)) => (phoneNumber, mobileNumber)
-        case _                                               => (Some(""), Some(""))
-      }
+        case Some(ContactNumbers(phoneNumber, mobileNumber)) =>
 
-      val submission =
-        BusinessContactDetailSubmission(
-          submitterEmail = None,
-          phoneNumber = phoneNumber,
-          mobileNumber = mobileNumber,
-          faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
-          email = request.userAnswers.get(ChangeEmailAddressPage)
-        )
+          val submission =
+            BusinessContactDetailSubmission(
+              submitterEmail = None,
+              phoneNumber = phoneNumber,
+              mobileNumber = mobileNumber,
+              faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
+              email = request.userAnswers.get(ChangeEmailAddressPage)
+            )
 
-      for {
-        submissionResponse <- gamblingConnector.updateBusinessDetails(submission)
-        clearedAnswers     <- Future.fromTry(
-                                BusinessContactHelpers.clearChanges(request.userAnswers)
+          for {
+            submissionResponse <- gamblingConnector.updateBusinessDetails(submission)
+            clearedAnswers     <- Future.fromTry(
+                                    BusinessContactHelpers.clearChanges(request.userAnswers)
+                                  )
+
+            updatedAnswers <- Future.fromTry(
+                                clearedAnswers.set(
+                                  BusinessContactDetailConfirmationPage,
+                                  submissionResponse
+                                )
                               )
 
-        updatedAnswers <- Future.fromTry(
-                            clearedAnswers.set(
-                              BusinessContactDetailConfirmationPage,
-                              submissionResponse
-                            )
-                          )
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(
+            controllers.businessdetails.routes.ChangeBusinessContactConfirmationController.onPageLoad()
+          )
 
-        _ <- sessionRepository.set(updatedAnswers)
-      } yield Redirect(
-        controllers.businessdetails.routes.ChangeBusinessContactConfirmationController.onPageLoad()
-      )
+        case None =>
+          Future.successful(
+            Redirect(
+              controllers.businessdetails.routes.ChangeContactNumbersController.onPageLoad()
+            )
+          )
+      }
     }
 }

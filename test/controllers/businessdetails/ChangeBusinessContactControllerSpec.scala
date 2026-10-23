@@ -18,6 +18,7 @@ package controllers.businessdetails
 
 import base.SpecBase
 import connectors.GamblingConnector
+import models.agent.ContactNumbers
 import models.businessdetails.{BusinessContactDetailSubmission, ChrisSubmissionResponse}
 import models.{BusinessDetails, UserAnswers}
 import org.jsoup.Jsoup
@@ -95,6 +96,15 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers =
         emptyUserAnswers
+          .set(
+            ChangeContactNumbersPage,
+            ContactNumbers(
+              Some("02071234567"),
+              None
+            )
+          )
+          .success
+          .value
           .set(ChangeFaxNumberPage, "01881123456")
           .success
           .value

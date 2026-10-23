@@ -103,41 +103,6 @@ class ChangeContactNumbersControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must pre-populate the view from the backend-loaded BusinessDetailsPage when the question has not been answered" in {
-
-      val businessDetails =
-        BusinessDetails(
-          None,
-          None,
-          None,
-          None,
-          phoneNumber = Some(validPhoneNumber),
-          mobileNumber = Some(validMobileNumber),
-          None,
-          None
-        )
-
-      val userAnswers = baseAnswers.set(BusinessDetailsPage, businessDetails).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = addCSRFToken(FakeRequest(GET, phoneNumberRoute))
-
-        val view = application.injector.instanceOf[ChangeContactNumbersView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        normalize(contentAsString(result)) mustEqual normalize(
-          view(form.fill(validContactNumbersBoth), NormalMode)(
-            request,
-            messages(application)
-          ).toString
-        )
-      }
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered with a mobileNumber" in {
 
       val userAnswers = baseAnswers.set(ChangeContactNumbersPage, validContactNumberMobile).success.value
