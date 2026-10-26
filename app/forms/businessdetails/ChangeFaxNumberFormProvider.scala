@@ -27,7 +27,7 @@ class ChangeFaxNumberFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text()
+      "value" -> text("changeFaxNumber.error.required")
         .transform(_.trim.replace(" ", ""), identity)
         .verifying(
           firstError(
