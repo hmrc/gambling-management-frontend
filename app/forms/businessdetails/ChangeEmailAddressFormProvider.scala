@@ -28,7 +28,7 @@ class ChangeEmailAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text()
+      "value" -> text("changeEmailAddress.error.required")
         .verifying(
           firstError(
             maxLength(maxEmailLength, "changeEmailAddress.error.length"),
