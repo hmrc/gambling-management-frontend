@@ -152,6 +152,10 @@ clientListSearch.noResults = No clients match your search.
 clientListSearch.th.clientName = Client name
 clientListSearch.th.regNumber = Registration number
 clientListSearch.th.clientReference = Client reference
+clientListSearch.download.th.clientName =  Enw’r cleient
+clientListSearch.download.th.regNumber =  Cyfeirnod Toll Peiriannau Hapchwarae
+clientListSearch.download.th.clientReference =  Eich cyfeirnod cleient
+clientListSearch.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 

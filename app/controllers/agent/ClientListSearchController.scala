@@ -16,10 +16,11 @@
 
 package controllers.agent
 
-import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRetrievalAction}
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction}
 import models.UserAnswers
+import pages.AgentClientsPage
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,6 +37,7 @@ class ClientListSearchController @Inject() (
   authorise: AuthorisedAction,
   clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
   view: ClientListSearchView
@@ -45,14 +47,10 @@ class ClientListSearchController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (authorise
-      andThen clientListCheck
-      andThen getData).async { implicit request =>
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-      val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.userId))
-      val searchQuery = request.getQueryString("search").getOrElse("")
+    (authorise andThen clientListCheck andThen getData).async { implicit request =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      val userAnswers                = request.userAnswers.getOrElse(UserAnswers(request.userId))
+      val searchQuery                = request.getQueryString("search").getOrElse("")
 
       manageService
         .resolveAndStoreAgentClients(userAnswers)
@@ -69,4 +67,50 @@ class ClientListSearchController @Inject() (
           Redirect(controllers.routes.SystemErrorController.onPageLoad())
         }
     }
+
+  def downloadClientList(): Action[AnyContent] =
+    (authorise andThen clientListCheck andThen getData andThen requireData).async { implicit request =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      manageService
+        .resolveAndStoreAgentClients(request.userAnswers)
+        .map {
+          case (Nil, _)        =>
+            Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
+          case (clientList, _) =>
+            val clientsToDownload = ClientListViewModel.fromAgentClients(clientList)
+
+            implicit val msgs: Messages = messagesApi.preferred(request)
+            val header                  = Seq(
+              msgs("clientListSearch.download.th.clientName"),
+              msgs("clientListSearch.download.th.regNumber"),
+              msgs("clientListSearch.download.th.clientReference")
+            ).mkString(",")
+
+            val rows: Seq[String] = clientsToDownload.map { c =>
+              val name      = csvEscape(c.clientName)
+              val regNumber = csvEscape(c.regNumber)
+              val clientRef = csvEscape(c.clientReference)
+              s"$name,$regNumber,$clientRef"
+            }
+
+            val csvContent = (header +: rows).mkString("\n")
+
+            Ok(csvContent)
+              .as("text/csv")
+              .withHeaders(
+                "Content-Disposition" -> s"attachment; filename=${msgs("clientListSearch.download.filename")}"
+              )
+        }
+        .recover { case e =>
+          logger.error(s"downloadClientList failed: ${e.getMessage}", e)
+          Redirect(controllers.routes.SystemErrorController.onPageLoad())
+        }
+    }
+
+  private def csvEscape(raw: String): String = {
+    val trimmed     = raw.dropWhile(_.isWhitespace)
+    val dangerous   = trimmed.nonEmpty && "=+-@\t\r\n".contains(trimmed.head)
+    val neutralised = if (dangerous) "'" + raw else raw
+    "\"" + neutralised.replace("\"", "\"\"") + "\""
+  }
 }

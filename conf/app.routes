@@ -24,6 +24,7 @@ GET         /agent/retrieving-client                                 controllers
 GET         /agent/retrieving-client/start                           controllers.agent.RetrievingClientController.start()
 GET         /agent/retrieving-client/poll                            controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
 GET         /agent/client-list                                       controllers.agent.ClientListSearchController.onPageLoad()
+GET         /agent/client-list/download                              controllers.agent.ClientListSearchController.downloadClientList()
 GET         /agent/client/:regNumber                                 controllers.agent.AgentLandingController.onPageLoad(regNumber: String)
 GET         /agent/failed-to-retrieve-client                         controllers.agent.FailedToRetrieveClientController.onPageLoad()
 GET         /agent/no-authorised-clients                             controllers.agent.NoAuthorisedClientsController.onPageLoad()
