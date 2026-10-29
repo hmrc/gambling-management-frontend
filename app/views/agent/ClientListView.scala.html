@@ -26,30 +26,30 @@
 @(clients: Seq[ClientListViewModel], searchQuery: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("clientListSearch.title")),
+    pageTitle = titleNoForm(messages("clientList.title")),
     showBackLink = false,
     showSignOut = true
 ) {
 
-    @h1("clientListSearch.heading", classes = "govuk-heading-l")
+    @h1("clientList.heading", classes = "govuk-heading-l")
 
-    <form method="get" action="@controllers.agent.routes.ClientListSearchController.onPageLoad().url" class="govuk-!-margin-bottom-6">
+    <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-6">
         <div class="govuk-form-group">
-            <label class="govuk-label" for="search">@messages("clientListSearch.search.label")</label>
+            <label class="govuk-label" for="search">@messages("clientList.search.label")</label>
             <input class="govuk-input govuk-input--width-20" id="search" name="search" type="text" value="@searchQuery">
         </div>
-        <button class="govuk-button" data-module="govuk-button">@messages("clientListSearch.search.button")</button>
+        <button class="govuk-button" data-module="govuk-button">@messages("clientList.search.button")</button>
     </form>
 
     @if(clients.isEmpty) {
-        @paragraph(message = "clientListSearch.noResults")
+        @paragraph(message = "clientList.noResults")
     } else {
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.clientName")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.regNumber")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientListSearch.th.clientReference")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientList.th.clientName")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientList.th.regNumber")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientList.th.clientReference")</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">

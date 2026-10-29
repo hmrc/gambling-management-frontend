@@ -48,7 +48,7 @@ class RetrievingClientController @Inject() (
   def start: Action[AnyContent] = authorise.async { implicit request =>
     gamblingService.startClientListRetrieval
       .map {
-        case ClientListStatus.Succeeded  => Redirect(routes.ClientListSearchController.onPageLoad())
+        case ClientListStatus.Succeeded  => Redirect(routes.ClientListController.onPageLoad())
         case ClientListStatus.Failed     => Redirect(routes.FailedToRetrieveClientController.onPageLoad())
         case ClientListStatus.InProgress => refreshResult(nextRetry = 1)
         case _                           => Redirect(controllers.routes.SystemErrorController.onPageLoad())
@@ -66,7 +66,7 @@ class RetrievingClientController @Inject() (
     } else {
       gamblingService.getClientListStatus
         .map {
-          case ClientListStatus.Succeeded  => Redirect(routes.ClientListSearchController.onPageLoad())
+          case ClientListStatus.Succeeded  => Redirect(routes.ClientListController.onPageLoad())
           case ClientListStatus.Failed     => Redirect(routes.FailedToRetrieveClientController.onPageLoad())
           case ClientListStatus.InProgress => refreshResult(nextRetry)
           case _                           => Redirect(controllers.routes.SystemErrorController.onPageLoad())
