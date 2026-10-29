@@ -27,6 +27,6 @@ case object AgentClientsPage extends Gettable[List[AgentClient]] with Settable[L
 
   override def toString: String = "agentClients"
 
-  def findClient(ua: UserAnswers, regNumber: String): Option[AgentClient] =
+  def findInClientList(ua: UserAnswers, regNumber: String): Option[AgentClient] =
     ua.get(AgentClientsPage).flatMap(_.find(_.regNumber == regNumber))
 }
