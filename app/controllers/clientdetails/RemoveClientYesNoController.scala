@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.clientdetails.RemoveClientYesNoView
+import pages.clientdetails.RemoveClientYesNoPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,11 +61,16 @@ class RemoveClientYesNoController @Inject() (
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
       AgentClientsPage.findClient(request.userAnswers, regNumber) match {
         case Some(client) =>
+          val preparedForm =
+            request.userAnswers
+              .get(RemoveClientYesNoPage)
+              .fold(form)(form.fill)
+
           Future.successful(
             Ok(
               view(
                 client.clientName.getOrElse(""),
-                form,
+                preparedForm,
                 regNumber
               )
             )
@@ -90,24 +96,41 @@ class RemoveClientYesNoController @Inject() (
               formWithErrors =>
                 Future.successful(BadRequest(view(client.clientName.getOrElse(""), formWithErrors, regNumber))),
               value =>
-                if (value) removeAndConfirm(regNumber)
-                else Future.successful(Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
+                Future
+                  .fromTry(
+                    request.userAnswers.set(RemoveClientYesNoPage, value)
+                  )
+                  .flatMap { updatedAnswers =>
+                    sessionRepository.set(updatedAnswers).flatMap { _ =>
+                      if (value) {
+                        removeAndConfirm(regNumber, updatedAnswers)
+                      } else {
+                        for {
+                          clearedAnswers <- Future.fromTry(
+                                              updatedAnswers.remove(RemoveClientYesNoPage)
+                                            )
+                          _              <- sessionRepository.set(clearedAnswers)
+                        } yield Redirect(
+                          controllers.agent.routes.ClientListSearchController.onPageLoad()
+                        )
+                      }
+                    }
+                  }
             )
-
-        case None =>
+        case None         =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
-  private def removeAndConfirm(regNumber: String)(using
-    request: models.requests.DataRequest[?],
+  private def removeAndConfirm(regNumber: String, userAnswers: models.UserAnswers)(using
     hc: HeaderCarrier
   ): Future[play.api.mvc.Result] =
     (for {
-      _                <- manageService.removeClient(regNumber, request.userAnswers)
-      clearedClients   <- Future.fromTry(request.userAnswers.remove(AgentClientsPage))
+      _                <- manageService.removeClient(regNumber, userAnswers)
+      clearedClients   <- Future.fromTry(userAnswers.remove(AgentClientsPage))
       clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
-      _                <- sessionRepository.set(clearedSelection)
+      clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientYesNoPage))
+      _                <- sessionRepository.set(clearedAnswer)
     } yield Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
       .recover { case ex =>
         logger.error(s"Failed to remove client regNumber=$regNumber", ex)
