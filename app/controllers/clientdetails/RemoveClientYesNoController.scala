@@ -18,7 +18,6 @@ package controllers.clientdetails
 
 import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import forms.clientdetails.RemoveClientYesNoFormProvider
-import pages.clientdetails.RemoveClientYesNoPage
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.data.Form
@@ -61,8 +60,15 @@ class RemoveClientYesNoController @Inject() (
       andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
       AgentClientsPage.findClient(request.userAnswers, regNumber) match {
         case Some(client) =>
-          val preparedForm = request.userAnswers.get(RemoveClientYesNoPage).fold(form)(form.fill)
-          Future.successful(Ok(view(client.clientName.getOrElse(""), preparedForm, regNumber)))
+          Future.successful(
+            Ok(
+              view(
+                client.clientName.getOrElse(""),
+                form,
+                regNumber
+              )
+            )
+          )
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -85,7 +91,7 @@ class RemoveClientYesNoController @Inject() (
                 Future.successful(BadRequest(view(client.clientName.getOrElse(""), formWithErrors, regNumber))),
               value =>
                 if (value) removeAndConfirm(regNumber)
-                else Future.successful(Redirect(routes.ManageClientDetailsController.onPageLoad()))
+                else Future.successful(Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
             )
 
         case None =>
@@ -102,7 +108,7 @@ class RemoveClientYesNoController @Inject() (
       clearedClients   <- Future.fromTry(request.userAnswers.remove(AgentClientsPage))
       clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
       _                <- sessionRepository.set(clearedSelection)
-    } yield Redirect(routes.ClientRemovedController.onPageLoad()))
+    } yield Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
       .recover { case ex =>
         logger.error(s"Failed to remove client regNumber=$regNumber", ex)
         Redirect(controllers.routes.SystemErrorController.onPageLoad())

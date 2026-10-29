@@ -81,6 +81,41 @@ class ClientDetailsViewsSpec extends SpecBase {
       val doc = Jsoup.parse(view("Acme Casinos", form.bind(Map.empty[String, String]), "u1").body)
       doc.select(".govuk-error-summary").size mustBe 1
     }
+    "renders the caption" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-caption-l").text() mustBe
+        messages("removeClientYesNo.caption")
+    }
+
+    "renders the dynamic heading" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select("h1").text() mustBe
+        messages("removeClientYesNo.heading", "Acme Casinos")
+    }
+
+    "renders the body content" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-body").text() mustBe
+        messages("removeClientYesNo.body")
+    }
+
+    "renders the Continue button" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-button").text() mustBe
+        messages("site.continue")
+    }
   }
 
   "ClientRefUpdateConfirmationView" - {

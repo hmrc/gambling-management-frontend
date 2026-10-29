@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package pages.clientdetails
+package forms.agent
 
-import play.api.libs.json.JsPath
-import queries.{Gettable, Settable}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object RemoveClientYesNoPage extends Gettable[Boolean] with Settable[Boolean] {
-  override def path: JsPath     = JsPath \ toString
-  override def toString: String = "removeClientYesNo"
+import javax.inject.Inject
+
+class RemoveClientFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("removeClient.error.required")
+    )
 }

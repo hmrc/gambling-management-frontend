@@ -24,7 +24,7 @@
 @(clientName: String, form: Form[Boolean], regNumber: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = title(form, messages("removeClientYesNo.title")),
+    pageTitle = title(form, messages("removeClientYesNo.title", clientName)),
     showBackLink = true,
     showSignOut = true
 ) {
@@ -50,8 +50,14 @@
         <div class="govuk-form-group @if(form.hasErrors){govuk-form-group--error}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <span class="govuk-caption-l">
+                        @messages("removeClientYesNo.caption")
+                    </span>
                     <h1 class="govuk-fieldset__heading">@messages("removeClientYesNo.heading", clientName)</h1>
                 </legend>
+                    <p class="govuk-body">
+                      @messages("removeClientYesNo.body")
+                    </p>
                 @for(error <- form.errors) {
                     <p id="value-error" class="govuk-error-message">
                         <span class="govuk-visually-hidden">@messages("error.prefix")</span> @messages(error.message, error.args*)
