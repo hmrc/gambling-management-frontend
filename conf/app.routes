@@ -34,8 +34,8 @@ GET         /agent/manage-client                                    controllers.
 GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
-GET         /agent/manage-your-details/remove/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
-POST        /agent/manage-your-details/remove/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
+GET         /agent/manage-your-details/remove-client/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
+POST        /agent/manage-your-details/remove-client/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
 GET         /agent/client-removed                                    controllers.clientdetails.ClientRemovedController.onPageLoad()
 
 # Security check (client-list retrieval in-progress spinner)
