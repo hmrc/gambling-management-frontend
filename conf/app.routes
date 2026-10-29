@@ -18,7 +18,6 @@ GET         /there-is-a-problem-access-denied                        controllers
 GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()
 
 GET         /registration-certificate                                controllers.ViewRegistrationCertificateController.onPageLoad()
-GET         /manage-your-details                                     controllers.agent.ManageYourDetailsController.onPageLoad()
 
 # Agent client-list flow
 GET         /agent/retrieving-client                                 controllers.agent.RetrievingClientController.onPageLoad()
@@ -32,6 +31,7 @@ GET         /agent/no-authorised-clients                             controllers
 GET         /agent/cannot-access-service                             controllers.agent.AgentLostAccessController.onPageLoad()
 
 # Client details management
+GET         /agent/manage-your-details                               controllers.agent.ManageYourDetailsController.onPageLoad()
 GET         /agent/manage-client                                     controllers.clientdetails.ManageClientDetailsController.onPageLoad()
 GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)

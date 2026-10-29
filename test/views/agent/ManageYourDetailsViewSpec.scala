@@ -36,6 +36,9 @@ class ManageYourDetailsViewSpec extends SpecBase {
       doc.select(".card-heading").eachText().toArray mustBe Array("Client search", "Your business details")
       doc.select(".card-action a").size() mustBe 3
       doc
+        .select(".card-action a[href=\"" + controllers.agent.routes.ClientListController.onPageLoad().url + "\"]")
+        .size() mustBe 1
+      doc
         .select(
           ".card-action a[href=\"" + controllers.agent.routes.ClientListController.downloadClientList().url + "\"]"
         )

@@ -25,24 +25,24 @@
 
 @(agentName: String, isClientListEmpty: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageYourDetails.title")), includeCustomCss = true) {
-    @h1("manageYourDetails.heading")
+@layout(pageTitle = titleNoForm(messages("agentManageYourDetails.title")), includeCustomCss = true) {
+    @h1("agentManageYourDetails.heading")
     <p class="govuk-body">@agentName</p>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             @linkCard(
-                "manageYourDetails.clientSearch.heading",
+                "agentManageYourDetails.clientSearch.heading",
                 Seq(
-                    "manageYourDetails.clientSearch.search" -> "#",
-                    "manageYourDetails.clientSearch.download" -> controllers.agent.routes.ClientListController.downloadClientList().url
+                    "agentManageYourDetails.clientSearch.search" -> controllers.agent.routes.ClientListController.onPageLoad().url,
+                    "agentManageYourDetails.clientSearch.download" -> controllers.agent.routes.ClientListController.downloadClientList().url
                 ),
-                Option.when(isClientListEmpty)("manageYourDetails.clientSearch.empty")
+                Option.when(isClientListEmpty)("agentManageYourDetails.clientSearch.empty")
             )
         </div>
         <div class="govuk-grid-column-one-half">
-            @linkCard("manageYourDetails.businessDetails.heading", Seq(
-                "manageYourDetails.businessDetails.check" -> controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
+            @linkCard("agentManageYourDetails.businessDetails.heading", Seq(
+                "agentManageYourDetails.businessDetails.check" -> controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
             ))
         </div>
     </div>

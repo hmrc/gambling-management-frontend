@@ -22,9 +22,7 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{GamblingService, ManageService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.agent.ManageYourDetailsView
 
 import javax.inject.Inject
@@ -45,8 +43,7 @@ class ManageYourDetailsController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen clientListCheck andThen getData).async { implicit request =>
-    given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val userAnswers     = request.userAnswers.getOrElse(UserAnswers(request.userId))
+    val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.userId))
 
     (for {
       (clients, _) <- manageService.resolveAndStoreAgentClients(userAnswers)
