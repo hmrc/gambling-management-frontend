@@ -69,7 +69,6 @@ class ClientListController @Inject() (
 
   def downloadClientList(): Action[AnyContent] =
     (authorise andThen clientListCheck andThen getData andThen requireData).async { implicit request =>
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       manageService
         .resolveAndStoreAgentClients(request.userAnswers)
         .map {
