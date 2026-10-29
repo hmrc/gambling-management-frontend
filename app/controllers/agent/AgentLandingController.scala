@@ -54,11 +54,11 @@ class AgentLandingController @Inject() (
     (authorise
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
 
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
         case Some(client) =>
           loadLandingPage(regNumber, client)
 
