@@ -77,12 +77,57 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
       redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe systemErrorUrl
     }
 
+    "redirects to system error when findClient returns None" in {
+      val uaMissingClient = UserAnswers(userId)
+        .set(AgentClientsPage, List(client))
+        .flatMap(_.set(SelectedClientPage, "RN1-MISSING"))
+        .get
+
+      val (guard, repo, service, _) = newGuard()
+      when(repo.get(userId)).thenReturn(Future.successful(Some(uaMissingClient)))
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+
+      redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe systemErrorUrl
+    }
+
     "returns None when the agent still has the client" in {
       val (guard, repo, service, _) = newGuard()
       when(repo.get(userId)).thenReturn(Future.successful(Some(userAnswersWithSelectedClient)))
       when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
 
       guard.check(request).futureValue mustBe None
+    }
+
+    "returns system error agent when the regime is empty" in {
+      val uaMissingClient = UserAnswers(userId)
+        .set(
+          AgentClientsPage,
+          List(AgentClient(regime = "", regNumber = "RN1", clientName = Some("Acme"), agentOwnRef = Some("ref")))
+        )
+        .flatMap(_.set(SelectedClientPage, "RN1"))
+        .get
+
+      val (guard, repo, service, _) = newGuard()
+      when(repo.get(userId)).thenReturn(Future.successful(Some(uaMissingClient)))
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+
+      redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe systemErrorUrl
+    }
+
+    "returns system error agent when the regNum is empty" in {
+      val uaMissingClient = UserAnswers(userId)
+        .set(
+          AgentClientsPage,
+          List(AgentClient(regime = "MGD", regNumber = "", clientName = Some("Acme"), agentOwnRef = Some("ref")))
+        )
+        .flatMap(_.set(SelectedClientPage, "RN1"))
+        .get
+
+      val (guard, repo, service, _) = newGuard()
+      when(repo.get(userId)).thenReturn(Future.successful(Some(uaMissingClient)))
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+
+      redirectLocation(Future.successful(guard.check(request).futureValue.value)).value mustBe systemErrorUrl
     }
 
     "audits and redirects to agent lost access when the agent no longer has the client" in {
@@ -132,6 +177,34 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
 
       redirectLocation(
         Future.successful(guard.checkForInstanceId(request, "missing").futureValue.value)
+      ).value mustBe systemErrorUrl
+    }
+  }
+
+  "checkCurrentClient" - {
+
+    "passes through (None) for a non-agent request without calling the backend" in {
+      val (guard, _, service, _) = newGuard()
+      val orgRequest             = models.requests.DataRequest(FakeRequest(), userId, UserAnswers(userId), isAgent = false)
+
+      guard.checkCurrentClient(orgRequest).futureValue mustBe None
+      verify(service, never).hasClient(anyString, anyString)(using any[HeaderCarrier])
+    }
+
+    "returns None for an agent who still has the client" in {
+      val (guard, _, service, _) = newGuard()
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+      val request                = models.requests.DataRequest(FakeRequest(), userId, userAnswersWithSelectedClient, isAgent = true)
+
+      guard.checkCurrentClient(request).futureValue mustBe None
+    }
+
+    "returns system error for an agent when no client is selected" in {
+      val (guard, _, service, _) = newGuard()
+      when(service.hasClient(anyString, anyString)(using any[HeaderCarrier])).thenReturn(Future.successful(true))
+      val request                = models.requests.DataRequest(FakeRequest(), userId, UserAnswers(userId), isAgent = true)
+      redirectLocation(
+        Future.successful(guard.checkCurrentClient(request).futureValue.value)
       ).value mustBe systemErrorUrl
     }
   }
