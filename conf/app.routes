@@ -30,7 +30,7 @@ GET         /agent/no-authorised-clients                             controllers
 GET         /agent/cannot-access-service                             controllers.agent.AgentLostAccessController.onPageLoad()
 
 # Client details management
-GET         /agent/manage-client                                    controllers.clientdetails.ManageClientDetailsController.onPageLoad()
+GET         /agent/manage-client                                     controllers.clientdetails.ManageClientDetailsController.onPageLoad()
 GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()

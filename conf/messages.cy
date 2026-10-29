@@ -277,9 +277,3 @@ changeBusinessNameConfirmation.whatHappensNext = What happens next
 changeBusinessNameConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
-
-removeClient.title=Are you sure you want to remove {0}?
-removeClient.heading=Are you sure you want to remove {0}?
-removeClient.caption=Manage your client details
-removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
-removeClient.error.required=Select yes if you want to remove this client
