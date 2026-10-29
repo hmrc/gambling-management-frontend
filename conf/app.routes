@@ -18,6 +18,7 @@ GET         /there-is-a-problem-access-denied                        controllers
 GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()
 
 GET         /registration-certificate                                controllers.ViewRegistrationCertificateController.onPageLoad()
+GET         /manage-your-details                                     controllers.agent.ManageYourDetailsController.onPageLoad()
 
 # Agent client-list flow
 GET         /agent/retrieving-client                                 controllers.agent.RetrievingClientController.onPageLoad()
