@@ -74,8 +74,8 @@ class AgentViewsSpec extends SpecBase {
     }
   }
 
-  "ClientListSearchView" - {
-    val view = app.injector.instanceOf[ClientListSearchView]
+  "ClientListView" - {
+    val view = app.injector.instanceOf[ClientListView]
 
     "renders a row with a select link per client" in {
       val clients = Seq(
@@ -93,7 +93,7 @@ class AgentViewsSpec extends SpecBase {
 
     "renders the no-results message when the list is empty" in {
       val doc = Jsoup.parse(view(Seq.empty, "abc").body)
-      doc.text must include(messages("clientListSearch.noResults"))
+      doc.text must include(messages("clientList.noResults"))
     }
   }
 

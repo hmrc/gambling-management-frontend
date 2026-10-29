@@ -144,18 +144,18 @@ agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
 
-clientListSearch.title = Your clients
-clientListSearch.heading = Your clients
-clientListSearch.search.label = Search by client name
-clientListSearch.search.button = Search
-clientListSearch.noResults = No clients match your search.
-clientListSearch.th.clientName = Client name
-clientListSearch.th.regNumber = Registration number
-clientListSearch.th.clientReference = Client reference
-clientListSearch.download.th.clientName =  Enw’r cleient
-clientListSearch.download.th.regNumber =  Cyfeirnod Toll Peiriannau Hapchwarae
-clientListSearch.download.th.clientReference =  Eich cyfeirnod cleient
-clientListSearch.download.filename = MgdAgentClientList.csv
+clientList.title = Your clients
+clientList.heading = Your clients
+clientList.search.label = Search by client name
+clientList.search.button = Search
+clientList.noResults = No clients match your search.
+clientList.th.clientName = Client name
+clientList.th.regNumber = Registration number
+clientList.th.clientReference = Client reference
+clientList.download.th.clientName = Enw’r cleient
+clientList.download.th.regNumber = Cyfeirnod Toll Peiriannau Hapchwarae
+clientList.download.th.clientReference = Eich cyfeirnod cleient
+clientList.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 

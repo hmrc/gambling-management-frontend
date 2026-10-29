@@ -31,17 +31,17 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.{GamblingService, ManageService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.agent.ClientListSearchView
+import views.html.agent.ClientListView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ClientListSearchControllerSpec extends SpecBase {
+class ClientListControllerSpec extends SpecBase {
 
   private val app             = applicationBuilder().build()
   private val mcc             = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers     = app.injector.instanceOf[PlayBodyParsers]
-  private val view            = app.injector.instanceOf[ClientListSearchView]
+  private val view            = app.injector.instanceOf[ClientListView]
   private val clientListCheck = new PassThroughClientListCheckAction()
 
   private class StubManageService(clients: List[AgentClient]) extends ManageService(null, null) {
@@ -52,7 +52,7 @@ class ClientListSearchControllerSpec extends SpecBase {
   }
 
   private def controller(clients: List[AgentClient], userAnswers: Option[UserAnswers]) =
-    new ClientListSearchController(
+    new ClientListController(
       mcc.messagesApi,
       new FakeAgentIdentifierAction(bodyParsers),
       clientListCheck,
@@ -151,10 +151,11 @@ class ClientListSearchControllerSpec extends SpecBase {
   }
 
   private def expectedHeader =
+    val bom  = "\uFEFF"
     val msgs = messages(app)
-    Seq(
-      msgs("clientListSearch.download.th.clientName"),
-      msgs("clientListSearch.download.th.regNumber"),
-      msgs("clientListSearch.download.th.clientReference")
+    bom + Seq(
+      msgs("clientList.download.th.clientName"),
+      msgs("clientList.download.th.regNumber"),
+      msgs("clientList.download.th.clientReference")
     ).mkString(",")
 }

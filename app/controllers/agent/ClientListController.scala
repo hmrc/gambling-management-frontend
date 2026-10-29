@@ -27,12 +27,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import viewmodels.agent.ClientListViewModel
-import views.html.agent.ClientListSearchView
+import views.html.agent.ClientListView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClientListSearchController @Inject() (
+class ClientListController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
   clientListCheck: ClientListCheckAction,
@@ -40,7 +40,7 @@ class ClientListSearchController @Inject() (
   requireData: DataRequiredAction,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
-  view: ClientListSearchView
+  view: ClientListView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -48,9 +48,8 @@ class ClientListSearchController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (authorise andThen clientListCheck andThen getData).async { implicit request =>
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      val userAnswers                = request.userAnswers.getOrElse(UserAnswers(request.userId))
-      val searchQuery                = request.getQueryString("search").getOrElse("")
+      val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.userId))
+      val searchQuery = request.getQueryString("search").getOrElse("")
 
       manageService
         .resolveAndStoreAgentClients(userAnswers)
@@ -80,11 +79,6 @@ class ClientListSearchController @Inject() (
             val clientsToDownload = ClientListViewModel.fromAgentClients(clientList)
 
             implicit val msgs: Messages = messagesApi.preferred(request)
-            val header                  = Seq(
-              msgs("clientListSearch.download.th.clientName"),
-              msgs("clientListSearch.download.th.regNumber"),
-              msgs("clientListSearch.download.th.clientReference")
-            ).mkString(",")
 
             val rows: Seq[String] = clientsToDownload.map { c =>
               val name      = csvEscape(c.clientName)
@@ -93,12 +87,15 @@ class ClientListSearchController @Inject() (
               s"$name,$regNumber,$clientRef"
             }
 
-            val csvContent = (header +: rows).mkString("\n")
+            // Prepend a UTF-8 BOM so spreadsheet tools (notably Excel on Windows) detect the
+            // encoding and render accented/Welsh characters correctly.
+            val bom        = "\uFEFF"
+            val csvContent = bom + (csvHeader(msgs) +: rows).mkString("\n")
 
             Ok(csvContent)
-              .as("text/csv")
+              .as("text/csv; charset=UTF-8")
               .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=${msgs("clientListSearch.download.filename")}"
+                "Content-Disposition" -> s"attachment; filename=${msgs("clientList.download.filename")}"
               )
         }
         .recover { case e =>
@@ -107,10 +104,21 @@ class ClientListSearchController @Inject() (
         }
     }
 
+  private def csvHeader(implicit msgs: Messages): String = Seq(
+    msgs("clientList.download.th.clientName"),
+    msgs("clientList.download.th.regNumber"),
+    msgs("clientList.download.th.clientReference")
+  ).mkString(",")
+
   private def csvEscape(raw: String): String = {
+    // Guard against CSV formula injection: a cell whose first non-whitespace character is one of
+    // these is treated as a formula by spreadsheet tools, so neutralise it with a leading quote.
     val trimmed     = raw.dropWhile(_.isWhitespace)
-    val dangerous   = trimmed.nonEmpty && "=+-@\t\r\n".contains(trimmed.head)
+    val dangerous   = trimmed.nonEmpty && "=+-@".contains(trimmed.head)
     val neutralised = if (dangerous) "'" + raw else raw
+
+    // Wrap every field in double quotes (escaping any internal quotes by doubling)
+    // so embedded commas, quotes and newlines don't break the CSV structure.
     "\"" + neutralised.replace("\"", "\"\"") + "\""
   }
 }
