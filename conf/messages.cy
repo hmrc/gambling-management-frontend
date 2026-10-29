@@ -173,11 +173,11 @@ clientRefUpdateConfirmation.heading = Client reference updated
 clientRefUpdateConfirmation.p1 = The client reference has been updated.
 clientRefUpdateConfirmation.link.backToClientList = Back to your client list
 
-removeClientYesNo.title = Are you sure you want to remove {0}?
-removeClientYesNo.heading = Are you sure you want to remove {0}?
-removeClientYesNo.caption=Manage your client details
-removeClientYesNo.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
-removeClientYesNo.error.required = Select yes if you want to remove this client
+removeClient.title = Are you sure you want to remove {0}?
+removeClient.heading = Are you sure you want to remove {0}?
+removeClient.caption=Manage your client details
+removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
+removeClient.error.required = Select yes if you want to remove this client
 
 
 clientRemoved.title = Client removed

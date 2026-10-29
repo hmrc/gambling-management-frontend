@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientYesNoFormProvider}
+import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -43,7 +43,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       hrefs must contain(
         controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
       )
-      hrefs must contain(controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad("XMM00000000123").url)
+      hrefs must contain(controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url)
     }
   }
 
@@ -65,15 +65,15 @@ class ClientDetailsViewsSpec extends SpecBase {
     }
   }
 
-  "RemoveClientYesNoView" - {
-    val view = app.injector.instanceOf[RemoveClientYesNoView]
-    val form = new RemoveClientYesNoFormProvider()()
+  "RemoveClientView" - {
+    val view = app.injector.instanceOf[RemoveClientView]
+    val form = new RemoveClientFormProvider()()
 
     "renders yes/no radios and posts to onSubmit" in {
       val doc = Jsoup.parse(view("Acme Casinos", form, "u1").body)
       doc.select("input[type=radio]").size mustBe 2
       doc.select("form").attr("action") mustBe
-        controllers.clientdetails.routes.RemoveClientYesNoController.onSubmit("u1").url
+        controllers.clientdetails.routes.RemoveClientController.onSubmit("u1").url
       doc.text must include("Acme Casinos")
     }
 
@@ -87,7 +87,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       )
 
       doc.select(".govuk-caption-l").text() mustBe
-        messages("removeClientYesNo.caption")
+        messages("removeClient.caption")
     }
 
     "renders the dynamic heading" in {
@@ -96,7 +96,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       )
 
       doc.select("h1").text() mustBe
-        messages("removeClientYesNo.heading", "Acme Casinos")
+        messages("removeClient.heading", "Acme Casinos")
     }
 
     "renders the body content" in {
@@ -105,7 +105,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       )
 
       doc.select(".govuk-body").text() mustBe
-        messages("removeClientYesNo.body")
+        messages("removeClient.body")
     }
 
     "renders the Continue button" in {

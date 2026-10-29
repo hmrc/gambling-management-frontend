@@ -34,8 +34,8 @@ GET         /agent/manage-client                                     controllers
 GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
-GET         /agent/manage-your-details/remove-client/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onPageLoad(regNumber: String)
-POST        /agent/manage-your-details/remove-client/:regNumber             controllers.clientdetails.RemoveClientYesNoController.onSubmit(regNumber: String)
+GET         /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onPageLoad(regNumber: String)
+POST        /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onSubmit(regNumber: String)
 GET         /agent/client-removed                                    controllers.clientdetails.ClientRemovedController.onPageLoad()
 
 # Security check (client-list retrieval in-progress spinner)
@@ -65,10 +65,11 @@ GET         /agent/business-details/check-business-details           controllers
 GET         /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onPageLoad(mode: Mode = NormalMode)
 POST        /agent/business-details/change-business-contact-details  controllers.businessdetails.ChangeBusinessContactController.onSubmit()
 
-GET         /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onPageLoad(mode:Mode = NormalMode)
-POST        /agent/business-details/change-business-name         controllers.businessdetails.BusinessNameController.onSubmit(mode:Mode = NormalMode)
+GET         /agent/business-details/change-business-name             controllers.businessdetails.BusinessNameController.onPageLoad(mode:Mode = NormalMode)
+POST        /agent/business-details/change-business-name             controllers.businessdetails.BusinessNameController.onSubmit(mode:Mode = NormalMode)
 
 GET         /agent/business-details/confirm-business-name            controllers.businessdetails.ConfirmBusinessNameController.onPageLoad(mode:Mode = NormalMode)
 POST        /agent/business-details/confirm-business-name            controllers.businessdetails.ConfirmBusinessNameController.onSubmit(mode:Mode = NormalMode)
-GET         /agent/business-details/change-business-contact-details/confirmation               controllers.businessdetails.ChangeBusinessContactConfirmationController.onPageLoad(mode: Mode = NormalMode)
-GET         /agent/change-business-details/business-name/confirmation  controllers.businessdetails.ChangeBusinessNameConfirmationController.onPageLoad()
+
+GET         /agent/business-details/change-business-contact-details/confirmation        controllers.businessdetails.ChangeBusinessContactConfirmationController.onPageLoad(mode: Mode = NormalMode)
+GET         /agent/change-business-details/business-name/confirmation                   controllers.businessdetails.ChangeBusinessNameConfirmationController.onPageLoad()

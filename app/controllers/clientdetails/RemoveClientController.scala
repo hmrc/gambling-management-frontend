@@ -17,7 +17,7 @@
 package controllers.clientdetails
 
 import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
-import forms.clientdetails.RemoveClientYesNoFormProvider
+import forms.clientdetails.RemoveClientFormProvider
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.data.Form
@@ -28,13 +28,13 @@ import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.clientdetails.RemoveClientYesNoView
-import pages.clientdetails.RemoveClientYesNoPage
+import views.html.clientdetails.RemoveClientView
+import pages.clientdetails.RemoveClientPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RemoveClientYesNoController @Inject() (
+class RemoveClientController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
@@ -42,10 +42,10 @@ class RemoveClientYesNoController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
-  formProvider: RemoveClientYesNoFormProvider,
+  formProvider: RemoveClientFormProvider,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
-  view: RemoveClientYesNoView
+  view: RemoveClientView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -63,7 +63,7 @@ class RemoveClientYesNoController @Inject() (
         case Some(client) =>
           val preparedForm =
             request.userAnswers
-              .get(RemoveClientYesNoPage)
+              .get(RemoveClientPage)
               .fold(form)(form.fill)
 
           Future.successful(
@@ -98,7 +98,7 @@ class RemoveClientYesNoController @Inject() (
               value =>
                 Future
                   .fromTry(
-                    request.userAnswers.set(RemoveClientYesNoPage, value)
+                    request.userAnswers.set(RemoveClientPage, value)
                   )
                   .flatMap { updatedAnswers =>
                     sessionRepository.set(updatedAnswers).flatMap { _ =>
@@ -107,7 +107,7 @@ class RemoveClientYesNoController @Inject() (
                       } else {
                         for {
                           clearedAnswers <- Future.fromTry(
-                                              updatedAnswers.remove(RemoveClientYesNoPage)
+                                              updatedAnswers.remove(RemoveClientPage)
                                             )
                           _              <- sessionRepository.set(clearedAnswers)
                         } yield Redirect(
@@ -129,7 +129,7 @@ class RemoveClientYesNoController @Inject() (
       _                <- manageService.removeClient(regNumber, userAnswers)
       clearedClients   <- Future.fromTry(userAnswers.remove(AgentClientsPage))
       clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
-      clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientYesNoPage))
+      clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientPage))
       _                <- sessionRepository.set(clearedAnswer)
     } yield Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
       .recover { case ex =>
