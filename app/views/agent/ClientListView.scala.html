@@ -16,29 +16,40 @@
 
 @import views.html.components.*
 @import viewmodels.agent.ClientListViewModel
+@import viewmodels.govuk.PaginationFluency._
 
 @this(
         layout: templates.Layout,
         h1: H1,
-        paragraph: Paragraph
+        paragraph: Paragraph,
+        link: Link,
+        pageNavigator: PageNavigator
 )
 
-@(clients: Seq[ClientListViewModel], searchQuery: String)(implicit request: Request[_], messages: Messages)
+@(clients: Seq[ClientListViewModel], searchQuery: String, paginationViewModel: PaginationViewModel = PaginationViewModel())(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("clientList.title")),
     showBackLink = false,
     showSignOut = true
 ) {
+    <span class="govuk-caption-l">@messages("clientList.caption")</span>
 
     @h1("clientList.heading", classes = "govuk-heading-l")
 
     <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-6">
         <div class="govuk-form-group">
             <label class="govuk-label" for="search">@messages("clientList.search.label")</label>
-            <input class="govuk-input govuk-input--width-20" id="search" name="search" type="text" value="@searchQuery">
+            <input class="govuk-input govuk-input--width-30" id="search" name="search" type="text" value="@searchQuery">
         </div>
-        <button class="govuk-button" data-module="govuk-button">@messages("clientList.search.button")</button>
+        <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">@messages("clientList.search.button")</button>
+                @link(
+                    "clientList.clearSearch",
+                     controllers.agent.routes.ClientListController.onPageLoad().url,
+                     extraClasses = "govuk-link"
+                )
+        </div>
     </form>
 
     @if(clients.isEmpty) {
@@ -50,6 +61,7 @@
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.clientName")</th>
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.regNumber")</th>
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.clientReference")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientList.th.remove")</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -60,9 +72,12 @@
                         </td>
                         <td class="govuk-table__cell">@client.regNumber</td>
                         <td class="govuk-table__cell">@client.clientReference</td>
+                        <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">Remove<span class="govuk-visually-hidden">@client.clientName</span></a></td>
                     </tr>
                 }
             </tbody>
         </table>
+
+        @pageNavigator(paginationViewModel)
     }
 }

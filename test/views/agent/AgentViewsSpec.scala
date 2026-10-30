@@ -79,8 +79,8 @@ class AgentViewsSpec extends SpecBase {
 
     "renders a row with a select link per client" in {
       val clients = Seq(
-        ClientListViewModel("Acme Casinos", "RN1", "ref1"),
-        ClientListViewModel("Bingo Ltd", "RN2", "ref2")
+        ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"),
+        ClientListViewModel("Bingo Ltd", "RN2", "ref2", "remove2")
       )
       val doc     = Jsoup.parse(view(clients, "").body)
 
