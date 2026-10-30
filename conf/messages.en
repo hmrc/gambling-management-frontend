@@ -280,3 +280,12 @@ changeBusinessNameConfirmation.whatHappensNext = What happens next
 changeBusinessNameConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
+
+agentManageYourDetails.title = Manage your details
+agentManageYourDetails.heading = Manage your details
+agentManageYourDetails.clientSearch.heading = Client search
+agentManageYourDetails.clientSearch.search = Search for a client
+agentManageYourDetails.clientSearch.download = Download client list
+agentManageYourDetails.businessDetails.heading = Your business details
+agentManageYourDetails.businessDetails.check = Check your business details
+agentManageYourDetails.clientSearch.empty = You have no clients to view.
