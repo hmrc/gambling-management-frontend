@@ -85,13 +85,13 @@ class RemoveClientControllerSpec extends SpecBase {
     "removes the client and redirects to search-for-a-client when Yes" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "true")
       val result  = controller.onSubmit("RN1")(request)
-      redirectLocation(result).value mustBe controllers.agent.routes.ClientListSearchController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.agent.routes.ClientListController.onPageLoad().url
     }
 
     "redirects back to search-for-a-client when No" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "false")
       val result  = controller.onSubmit("RN1")(request)
-      redirectLocation(result).value mustBe controllers.agent.routes.ClientListSearchController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.agent.routes.ClientListController.onPageLoad().url
     }
 
     "returns BadRequest when nothing is selected" in {

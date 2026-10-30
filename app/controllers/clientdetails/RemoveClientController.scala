@@ -111,7 +111,7 @@ class RemoveClientController @Inject() (
                                             )
                           _              <- sessionRepository.set(clearedAnswers)
                         } yield Redirect(
-                          controllers.agent.routes.ClientListSearchController.onPageLoad()
+                          controllers.agent.routes.ClientListController.onPageLoad()
                         )
                       }
                     }
@@ -133,7 +133,7 @@ class RemoveClientController @Inject() (
       clearedSelection <- Future.fromTry(updatedClients.remove(SelectedClientPage))
       clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientPage))
       _                <- sessionRepository.set(clearedAnswer)
-    } yield Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
+    } yield Redirect(controllers.agent.routes.ClientListController.onPageLoad()))
       .recover { case ex =>
         logger.error(s"Failed to remove client regNumber=$regNumber", ex)
         Redirect(controllers.routes.SystemErrorController.onPageLoad())
