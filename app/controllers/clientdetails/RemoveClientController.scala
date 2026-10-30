@@ -127,8 +127,10 @@ class RemoveClientController @Inject() (
   ): Future[play.api.mvc.Result] =
     (for {
       _                <- manageService.removeClient(regNumber, userAnswers)
-      clearedClients   <- Future.fromTry(userAnswers.remove(AgentClientsPage))
-      clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
+      clients           = userAnswers.get(AgentClientsPage).getOrElse(List.empty)
+      remainingClients  = clients.filterNot(_.regNumber == regNumber)
+      updatedClients   <- Future.fromTry(userAnswers.set(AgentClientsPage, remainingClients))
+      clearedSelection <- Future.fromTry(updatedClients.remove(SelectedClientPage))
       clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientPage))
       _                <- sessionRepository.set(clearedAnswer)
     } yield Redirect(controllers.agent.routes.ClientListSearchController.onPageLoad()))
