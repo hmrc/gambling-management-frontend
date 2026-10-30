@@ -20,6 +20,12 @@ date.error.day = day
 date.error.month = month
 date.error.year = year
 
+site.pagination.goToPage                                =  Go to page {0}
+site.pagination.landmark                                =  Pagination
+site.pagination.previous                                =  Previous
+site.pagination.next                                    =  Next
+site.pagination.pageTitle                               =  (page {0} of {1})
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -145,14 +151,17 @@ agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
 
-clientList.title = Your clients
-clientList.heading = Your clients
-clientList.search.label = Search by client name
+clientList.title = Search for a client
+clientList.heading = Search for a client
+clientList.caption = Manage your details
+clientList.search.label = You can search by client name, Machine Games Duty (MGD) registration number or client reference.
 clientList.search.button = Search
+clientList.clearSearch = Clear search
 clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
 clientList.th.regNumber = Registration number
 clientList.th.clientReference = Client reference
+clientList.th.remove = Action
 clientList.download.th.clientName = Client name
 clientList.download.th.regNumber = Machine Games Duty Registration Number
 clientList.download.th.clientReference = Your client reference

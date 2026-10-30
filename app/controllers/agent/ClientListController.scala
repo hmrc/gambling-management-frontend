@@ -22,13 +22,15 @@ import pages.AgentClientsPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ManageService
+import services.{ManageService, PaginationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import viewmodels.agent.ClientListViewModel
 import views.html.agent.ClientListView
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,6 +41,7 @@ class ClientListController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   manageService: ManageService,
+  paginationService: PaginationService,
   val controllerComponents: MessagesControllerComponents,
   view: ClientListView
 )(implicit ec: ExecutionContext)
@@ -50,6 +53,8 @@ class ClientListController @Inject() (
     (authorise andThen clientListCheck andThen getData).async { implicit request =>
       val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.userId))
       val searchQuery = request.getQueryString("search").getOrElse("")
+      val pageParam   = request.getQueryString("page")
+      val currentPage = pageParam.flatMap(_.toIntOption).getOrElse(1)
 
       manageService
         .resolveAndStoreAgentClients(userAnswers)
@@ -58,8 +63,29 @@ class ClientListController @Inject() (
             Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
           case (clients, _) =>
             val allClients      = ClientListViewModel.fromAgentClients(clients)
-            val filteredClients = ClientListViewModel.filterByName(searchQuery, allClients)
-            Ok(view(filteredClients, searchQuery))
+            val filteredClients = ClientListViewModel.filterByField(searchQuery, allClients)
+            val baseUrl         = routes.ClientListController.onPageLoad().url
+
+            // Preserve the search filter when navigating between pages
+            val paginationBaseUrl =
+              if (searchQuery.trim.nonEmpty) {
+                val encodedSearch =
+                  URLEncoder.encode(searchQuery.trim, StandardCharsets.UTF_8.toString)
+                s"$baseUrl?search=$encodedSearch"
+              } else {
+                baseUrl
+              }
+
+            val paginationResult =
+              paginationService.paginateClientList(
+                allClients = filteredClients,
+                currentPage = currentPage,
+                baseUrl = paginationBaseUrl,
+                sortBy = None,
+                sortOrder = None
+              )
+
+            Ok(view(paginationResult.paginatedData, searchQuery, paginationResult.paginationViewModel))
         }
         .recover { case e =>
           logger.error("failed to resolve and store agent clients", e)

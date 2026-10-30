@@ -21,7 +21,8 @@ import models.agent.AgentClient
 case class ClientListViewModel(
   clientName: String,
   regNumber: String,
-  clientReference: String
+  clientReference: String,
+  removeLink: String
 )
 
 object ClientListViewModel {
@@ -31,13 +32,21 @@ object ClientListViewModel {
       ClientListViewModel(
         clientName = client.clientName.getOrElse(""),
         regNumber = client.regNumber,
-        clientReference = client.agentOwnRef.getOrElse("")
+        clientReference = client.agentOwnRef.getOrElse(""),
+        removeLink = controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad(client.regNumber).url
       )
     }
 
-  def filterByName(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
-    val trimmed = query.trim.toLowerCase
-    if (trimmed.isEmpty) clients
-    else clients.filter(_.clientName.toLowerCase.contains(trimmed))
+  def filterByField(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
+    val search = query.trim.toLowerCase
+    if (search.isEmpty) clients
+    else {
+      clients.find(_.regNumber.equalsIgnoreCase(search)) match {
+        case Some(client) => Seq(client)
+        case None         =>
+          val (refMatches, name) = clients.partition(_.clientReference.toLowerCase.contains(search))
+          refMatches ++ name.filter(_.clientName.toLowerCase.contains(search))
+      }
+    }
   }
 }
