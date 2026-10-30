@@ -21,13 +21,13 @@
     <div class="card-body card-body--compact">
         <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">@messages(headingKey)</h2>
     </div>
-    <div class="card-action">
+    <div class="card-action card-action--grow">
         @emptyMessageKey.map { key =>
             <p class="govuk-body">@messages(key)</p>
         }.getOrElse {
             <ul class="govuk-list">
                 @for((textKey, url) <- links) {
-                    <li class="govuk-!-margin-bottom-2">@link(textKey, url, paragraphWrapped = false)</li>
+                    <li>@link(textKey, url, paragraphWrapped = false)</li>
                 }
             </ul>
         }

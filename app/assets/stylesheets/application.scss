@@ -56,6 +56,10 @@
   background-color: #ffffff;
 }
 
+.card .card-action--grow {
+  flex-grow: 1;
+}
+
 .card .card-action ul {
   margin-bottom: 0;
 }
