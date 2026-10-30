@@ -23,18 +23,18 @@ import viewmodels.govuk.PaginationFluency.*
 import javax.inject.{Inject, Singleton}
 
 case class PaginationConfig(
-                             recordsPerPage: Int = 10,
-                             maxRecords: Int = 99,
-                             maxVisiblePages: Int = 5
-                           )
+  recordsPerPage: Int = 10,
+  maxRecords: Int = 99,
+  maxVisiblePages: Int = 5
+)
 
 case class ClientListPaginationResult(
-                                       paginatedData: Seq[ClientListViewModel],
-                                       paginationViewModel: PaginationViewModel,
-                                       totalRecords: Int,
-                                       currentPage: Int,
-                                       totalPages: Int
-                                     )
+  paginatedData: Seq[ClientListViewModel],
+  paginationViewModel: PaginationViewModel,
+  totalRecords: Int,
+  currentPage: Int,
+  totalPages: Int
+)
 
 @Singleton
 class PaginationService @Inject() {
@@ -42,12 +42,12 @@ class PaginationService @Inject() {
   private val config = PaginationConfig()
 
   def paginateClientList(
-                          allClients: Seq[ClientListViewModel],
-                          currentPage: Int = 1,
-                          baseUrl: String,
-                          sortBy: Option[String] = None,
-                          sortOrder: Option[String] = None
-                        )(implicit messages: Messages): ClientListPaginationResult = {
+    allClients: Seq[ClientListViewModel],
+    currentPage: Int = 1,
+    baseUrl: String,
+    sortBy: Option[String] = None,
+    sortOrder: Option[String] = None
+  )(implicit messages: Messages): ClientListPaginationResult = {
 
     val totalRecords     = allClients.length
     val totalPages       = calculateTotalPages(totalRecords)
@@ -87,12 +87,12 @@ class PaginationService @Inject() {
   }
 
   private def createPaginationViewModel(
-                                         currentPage: Int,
-                                         totalPages: Int,
-                                         baseUrl: String,
-                                         sortBy: Option[String],
-                                         sortOrder: Option[String]
-                                       )(implicit messages: Messages): PaginationViewModel =
+    currentPage: Int,
+    totalPages: Int,
+    baseUrl: String,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  )(implicit messages: Messages): PaginationViewModel =
     if (totalPages <= 1) {
       PaginationViewModel()
     } else {
@@ -107,13 +107,12 @@ class PaginationService @Inject() {
       )
     }
 
-
   private def buildUrlWithParams(
-                                  baseUrl: String,
-                                  page: Int,
-                                  sortBy: Option[String],
-                                  sortOrder: Option[String]
-                                ): String = {
+    baseUrl: String,
+    page: Int,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  ): String = {
 
     val params = scala.collection.mutable.ListBuffer[String]()
     params += s"page=$page"
@@ -125,11 +124,11 @@ class PaginationService @Inject() {
   }
 
   private def createPreviousLink(
-                                  currentPage: Int,
-                                  baseUrl: String,
-                                  sortBy: Option[String],
-                                  sortOrder: Option[String]
-                                )(implicit messages: Messages): Option[PaginationLinkViewModel] =
+    currentPage: Int,
+    baseUrl: String,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  )(implicit messages: Messages): Option[PaginationLinkViewModel] =
     if (currentPage > 1) {
       Some(
         PaginationLinkViewModel(buildUrlWithParams(baseUrl, currentPage - 1, sortBy, sortOrder))
@@ -141,12 +140,12 @@ class PaginationService @Inject() {
     }
 
   private def createNextLink(
-                              currentPage: Int,
-                              totalPages: Int,
-                              baseUrl: String,
-                              sortBy: Option[String],
-                              sortOrder: Option[String]
-                            )(implicit messages: Messages): Option[PaginationLinkViewModel] =
+    currentPage: Int,
+    totalPages: Int,
+    baseUrl: String,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  )(implicit messages: Messages): Option[PaginationLinkViewModel] =
     if (currentPage < totalPages) {
       Some(
         PaginationLinkViewModel(buildUrlWithParams(baseUrl, currentPage + 1, sortBy, sortOrder))
@@ -158,12 +157,12 @@ class PaginationService @Inject() {
     }
 
   private def createPageItem(
-                              page: Int,
-                              currentPage: Int,
-                              baseUrl: String,
-                              sortBy: Option[String],
-                              sortOrder: Option[String]
-                            ): PaginationItemViewModel =
+    page: Int,
+    currentPage: Int,
+    baseUrl: String,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  ): PaginationItemViewModel =
     PaginationItemViewModel(
       number = page.toString,
       href = buildUrlWithParams(
@@ -177,12 +176,12 @@ class PaginationService @Inject() {
       .withCurrent(page == currentPage)
 
   private def generatePageItems(
-                                 currentPage: Int,
-                                 totalPages: Int,
-                                 baseUrl: String,
-                                 sortBy: Option[String],
-                                 sortOrder: Option[String]
-                               ): Seq[PaginationItemViewModel] = {
+    currentPage: Int,
+    totalPages: Int,
+    baseUrl: String,
+    sortBy: Option[String],
+    sortOrder: Option[String]
+  ): Seq[PaginationItemViewModel] = {
     val pageRange = calculatePageRange(currentPage, totalPages)
     val items     = scala.collection.mutable.ListBuffer[PaginationItemViewModel]()
 

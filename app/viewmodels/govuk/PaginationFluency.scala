@@ -46,13 +46,13 @@ object PaginationFluency {
   }
 
   case class PaginationViewModel(
-                                  items: Seq[PaginationItemViewModel] = Seq.empty,
-                                  previous: Option[PaginationLinkViewModel] = None,
-                                  next: Option[PaginationLinkViewModel] = None,
-                                  landmarkLabel: String = "site.pagination.landmark",
-                                  classes: String = emptyString,
-                                  attributes: Map[String, String] = Map.empty
-                                ) {
+    items: Seq[PaginationItemViewModel] = Seq.empty,
+    previous: Option[PaginationLinkViewModel] = None,
+    next: Option[PaginationLinkViewModel] = None,
+    landmarkLabel: String = "site.pagination.landmark",
+    classes: String = emptyString,
+    attributes: Map[String, String] = Map.empty
+  ) {
 
     def withItems(items: Seq[PaginationItemViewModel]): PaginationViewModel =
       copy(items = items)
@@ -107,13 +107,13 @@ object PaginationFluency {
   }
 
   case class PaginationItemViewModel(
-                                      number: String,
-                                      href: String,
-                                      visuallyHiddenText: Option[String],
-                                      current: Boolean,
-                                      ellipsis: Boolean,
-                                      attributes: Map[String, String]
-                                    ) {
+    number: String,
+    href: String,
+    visuallyHiddenText: Option[String],
+    current: Boolean,
+    ellipsis: Boolean,
+    attributes: Map[String, String]
+  ) {
 
     def withVisuallyHiddenText(visuallyHiddenText: String): PaginationItemViewModel =
       copy(visuallyHiddenText = Some(visuallyHiddenText))
@@ -148,12 +148,12 @@ object PaginationFluency {
   }
 
   case class PaginationLinkViewModel(
-                                      href: String,
-                                      text: Option[String],
-                                      html: Option[String],
-                                      labelText: Option[String],
-                                      attributes: Map[String, String]
-                                    ) {
+    href: String,
+    text: Option[String],
+    html: Option[String],
+    labelText: Option[String],
+    attributes: Map[String, String]
+  ) {
 
     def withText(text: String): PaginationLinkViewModel =
       copy(text = Some(text))
