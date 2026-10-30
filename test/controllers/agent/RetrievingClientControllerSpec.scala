@@ -62,7 +62,7 @@ class RetrievingClientControllerSpec extends SpecBase {
     "redirects to the client list on Succeeded" in {
       val result = controller(ClientListStatus.Succeeded).start()(FakeRequest())
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.ClientListSearchController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ClientListController.onPageLoad().url
     }
 
     "redirects to failed-to-retrieve on Failed" in {
@@ -85,7 +85,7 @@ class RetrievingClientControllerSpec extends SpecBase {
   "poll" - {
     "redirects to the client list when the status succeeds" in {
       val result = controller(ClientListStatus.Succeeded, ClientListStatus.Succeeded).poll(1)(FakeRequest())
-      redirectLocation(result).value mustBe routes.ClientListSearchController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ClientListController.onPageLoad().url
     }
 
     "redirects to failed-to-retrieve when retries are exhausted" in {

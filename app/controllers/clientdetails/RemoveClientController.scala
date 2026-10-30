@@ -58,8 +58,8 @@ class RemoveClientController @Inject() (
       andThen clientListCheck
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
-      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
         case Some(client) =>
           val preparedForm =
             request.userAnswers
@@ -85,10 +85,10 @@ class RemoveClientController @Inject() (
     (authorise
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
         case Some(client) =>
           form
             .bindFromRequest()

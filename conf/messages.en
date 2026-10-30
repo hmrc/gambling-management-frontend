@@ -145,14 +145,18 @@ agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
 
-clientListSearch.title = Your clients
-clientListSearch.heading = Your clients
-clientListSearch.search.label = Search by client name
-clientListSearch.search.button = Search
-clientListSearch.noResults = No clients match your search.
-clientListSearch.th.clientName = Client name
-clientListSearch.th.regNumber = Registration number
-clientListSearch.th.clientReference = Client reference
+clientList.title = Your clients
+clientList.heading = Your clients
+clientList.search.label = Search by client name
+clientList.search.button = Search
+clientList.noResults = No clients match your search.
+clientList.th.clientName = Client name
+clientList.th.regNumber = Registration number
+clientList.th.clientReference = Client reference
+clientList.download.th.clientName = Client name
+clientList.download.th.regNumber = Machine Games Duty Registration Number
+clientList.download.th.clientReference = Your client reference
+clientList.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 
@@ -278,3 +282,12 @@ changeBusinessNameConfirmation.whatHappensNext = What happens next
 changeBusinessNameConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
+
+agentManageYourDetails.title = Manage your details
+agentManageYourDetails.heading = Manage your details
+agentManageYourDetails.clientSearch.heading = Client search
+agentManageYourDetails.clientSearch.search = Search for a client
+agentManageYourDetails.clientSearch.download = Download client list
+agentManageYourDetails.businessDetails.heading = Your business details
+agentManageYourDetails.businessDetails.check = Check your business details
+agentManageYourDetails.clientSearch.empty = You have no clients to view.
