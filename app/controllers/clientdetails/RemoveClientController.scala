@@ -17,8 +17,7 @@
 package controllers.clientdetails
 
 import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
-import forms.clientdetails.RemoveClientYesNoFormProvider
-import pages.clientdetails.RemoveClientYesNoPage
+import forms.clientdetails.RemoveClientFormProvider
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.data.Form
@@ -29,12 +28,13 @@ import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.clientdetails.RemoveClientYesNoView
+import views.html.clientdetails.RemoveClientView
+import pages.clientdetails.RemoveClientPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RemoveClientYesNoController @Inject() (
+class RemoveClientController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
@@ -42,10 +42,10 @@ class RemoveClientYesNoController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
-  formProvider: RemoveClientYesNoFormProvider,
+  formProvider: RemoveClientFormProvider,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
-  view: RemoveClientYesNoView
+  view: RemoveClientView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -61,8 +61,20 @@ class RemoveClientYesNoController @Inject() (
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
       AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
         case Some(client) =>
-          val preparedForm = request.userAnswers.get(RemoveClientYesNoPage).fold(form)(form.fill)
-          Future.successful(Ok(view(client.clientName.getOrElse(""), preparedForm, regNumber)))
+          val preparedForm =
+            request.userAnswers
+              .get(RemoveClientPage)
+              .fold(form)(form.fill)
+
+          Future.successful(
+            Ok(
+              view(
+                client.clientName.getOrElse(""),
+                preparedForm,
+                regNumber
+              )
+            )
+          )
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -84,25 +96,44 @@ class RemoveClientYesNoController @Inject() (
               formWithErrors =>
                 Future.successful(BadRequest(view(client.clientName.getOrElse(""), formWithErrors, regNumber))),
               value =>
-                if (value) removeAndConfirm(regNumber)
-                else Future.successful(Redirect(routes.ManageClientDetailsController.onPageLoad()))
+                Future
+                  .fromTry(
+                    request.userAnswers.set(RemoveClientPage, value)
+                  )
+                  .flatMap { updatedAnswers =>
+                    sessionRepository.set(updatedAnswers).flatMap { _ =>
+                      if (value) {
+                        removeAndConfirm(regNumber, updatedAnswers)
+                      } else {
+                        for {
+                          clearedAnswers <- Future.fromTry(
+                                              updatedAnswers.remove(RemoveClientPage)
+                                            )
+                          _              <- sessionRepository.set(clearedAnswers)
+                        } yield Redirect(
+                          controllers.agent.routes.ClientListController.onPageLoad()
+                        )
+                      }
+                    }
+                  }
             )
-
-        case None =>
+        case None         =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
-  private def removeAndConfirm(regNumber: String)(using
-    request: models.requests.DataRequest[?],
+  private def removeAndConfirm(regNumber: String, userAnswers: models.UserAnswers)(using
     hc: HeaderCarrier
   ): Future[play.api.mvc.Result] =
     (for {
-      _                <- manageService.removeClient(regNumber, request.userAnswers)
-      clearedClients   <- Future.fromTry(request.userAnswers.remove(AgentClientsPage))
-      clearedSelection <- Future.fromTry(clearedClients.remove(SelectedClientPage))
-      _                <- sessionRepository.set(clearedSelection)
-    } yield Redirect(routes.ClientRemovedController.onPageLoad()))
+      _                <- manageService.removeClient(regNumber, userAnswers)
+      clients           = userAnswers.get(AgentClientsPage).getOrElse(List.empty)
+      remainingClients  = clients.filterNot(_.regNumber == regNumber)
+      updatedClients   <- Future.fromTry(userAnswers.set(AgentClientsPage, remainingClients))
+      clearedSelection <- Future.fromTry(updatedClients.remove(SelectedClientPage))
+      clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientPage))
+      _                <- sessionRepository.set(clearedAnswer)
+    } yield Redirect(controllers.agent.routes.ClientListController.onPageLoad()))
       .recover { case ex =>
         logger.error(s"Failed to remove client regNumber=$regNumber", ex)
         Redirect(controllers.routes.SystemErrorController.onPageLoad())

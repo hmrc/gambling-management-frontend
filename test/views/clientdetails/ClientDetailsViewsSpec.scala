@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientYesNoFormProvider}
+import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -43,7 +43,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       hrefs must contain(
         controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
       )
-      hrefs must contain(controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad("XMM00000000123").url)
+      hrefs must contain(controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url)
     }
   }
 
@@ -65,21 +65,56 @@ class ClientDetailsViewsSpec extends SpecBase {
     }
   }
 
-  "RemoveClientYesNoView" - {
-    val view = app.injector.instanceOf[RemoveClientYesNoView]
-    val form = new RemoveClientYesNoFormProvider()()
+  "RemoveClientView" - {
+    val view = app.injector.instanceOf[RemoveClientView]
+    val form = new RemoveClientFormProvider()()
 
     "renders yes/no radios and posts to onSubmit" in {
       val doc = Jsoup.parse(view("Acme Casinos", form, "u1").body)
       doc.select("input[type=radio]").size mustBe 2
       doc.select("form").attr("action") mustBe
-        controllers.clientdetails.routes.RemoveClientYesNoController.onSubmit("u1").url
+        controllers.clientdetails.routes.RemoveClientController.onSubmit("u1").url
       doc.text must include("Acme Casinos")
     }
 
     "renders an error when nothing is selected" in {
       val doc = Jsoup.parse(view("Acme Casinos", form.bind(Map.empty[String, String]), "u1").body)
       doc.select(".govuk-error-summary").size mustBe 1
+    }
+    "renders the caption" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-caption-l").text() mustBe
+        messages("removeClient.caption")
+    }
+
+    "renders the dynamic heading" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select("h1").text() mustBe
+        messages("removeClient.heading", "Acme Casinos")
+    }
+
+    "renders the body content" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-body").text() mustBe
+        messages("removeClient.body")
+    }
+
+    "renders the Continue button" in {
+      val doc = Jsoup.parse(
+        view("Acme Casinos", form, "u1").body
+      )
+
+      doc.select(".govuk-button").text() mustBe
+        messages("site.continue")
     }
   }
 
