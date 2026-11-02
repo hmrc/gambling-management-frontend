@@ -126,13 +126,15 @@ class RemoveClientController @Inject() (
     hc: HeaderCarrier
   ): Future[play.api.mvc.Result] =
     (for {
-      _                <- manageService.removeClient(regNumber, userAnswers)
-      clients           = userAnswers.get(AgentClientsPage).getOrElse(List.empty)
-      remainingClients  = clients.filterNot(_.regNumber == regNumber)
-      updatedClients   <- Future.fromTry(userAnswers.set(AgentClientsPage, remainingClients))
-      clearedSelection <- Future.fromTry(updatedClients.remove(SelectedClientPage))
-      clearedAnswer    <- Future.fromTry(clearedSelection.remove(RemoveClientPage))
-      _                <- sessionRepository.set(clearedAnswer)
+      _               <- manageService.removeClient(regNumber, userAnswers)
+      clients          = userAnswers.get(AgentClientsPage).getOrElse(List.empty)
+      remainingClients = clients.filterNot(_.regNumber == regNumber)
+      updatedAnswers  <- Future.fromTry(for {
+                           updatedClients   <- userAnswers.set(AgentClientsPage, remainingClients)
+                           clearedSelection <- updatedClients.remove(SelectedClientPage)
+                           clearedAnswers   <- clearedSelection.remove(RemoveClientPage)
+                         } yield clearedAnswers)
+      _               <- sessionRepository.set(updatedAnswers)
     } yield Redirect(controllers.agent.routes.ClientListController.onPageLoad()))
       .recover { case ex =>
         logger.error(s"Failed to remove client regNumber=$regNumber", ex)
