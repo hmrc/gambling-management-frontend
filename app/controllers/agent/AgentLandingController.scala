@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.agent.AgentLandingView
+import pages.clientdetails.RemoveClientPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
