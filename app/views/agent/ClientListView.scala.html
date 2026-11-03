@@ -17,20 +17,31 @@
 @import views.html.components.*
 @import viewmodels.agent.ClientListViewModel
 @import viewmodels.govuk.PaginationFluency._
+@import models.PaginationParams
 
 @this(
         layout: templates.Layout,
         h1: H1,
         paragraph: Paragraph,
         link: Link,
-        pageNavigator: PageNavigator
+        pagination: components.Pagination
 )
 
-@(clients: Seq[ClientListViewModel], searchQuery: String, paginationViewModel: PaginationViewModel = PaginationViewModel())(implicit request: Request[_], messages: Messages)
+@(clients: Seq[ClientListViewModel], searchQuery: String, paginationParams: PaginationParams)(implicit request: Request[_], messages: Messages)
+
+@pageUrl(page: Int) = @{
+    val baseUrl = controllers.agent.routes.ClientListController.onPageLoad().url
+    val searchParam =
+        if (searchQuery.trim.nonEmpty)
+             s"&search=${java.net.URLEncoder.encode(searchQuery.trim, "UTF-8")}"
+        else
+            ""
+    play.api.mvc.Call("GET", s"$baseUrl?page=$page$searchParam")
+}
 
 @layout(
     pageTitle = titleNoForm(messages("clientList.title")),
-    showBackLink = false,
+    showBackLink = true,
     showSignOut = true
 ) {
     <span class="govuk-caption-l">@messages("clientList.caption")</span>
@@ -61,7 +72,7 @@
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.clientName")</th>
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.regNumber")</th>
                     <th scope="col" class="govuk-table__header">@messages("clientList.th.clientReference")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientList.th.remove")</th>
+                    <th scope="col" class="govuk-table__header">@messages("clientList.th.remove.action")</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -72,12 +83,12 @@
                         </td>
                         <td class="govuk-table__cell">@client.regNumber</td>
                         <td class="govuk-table__cell">@client.clientReference</td>
-                        <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">Remove<span class="govuk-visually-hidden">@client.clientName</span></a></td>
+                        <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">@messages("clientList.th.remove")<span class="govuk-visually-hidden">@client.clientName</span></a></td>
                     </tr>
                 }
             </tbody>
         </table>
 
-        @pageNavigator(paginationViewModel)
+        @pagination(paginationParams.pageNo, paginationParams.totalPages, pageUrl)
     }
 }

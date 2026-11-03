@@ -24,7 +24,6 @@ site.pagination.goToPage                                =  Go to page {0}
 site.pagination.landmark                                =  Pagination
 site.pagination.previous                                =  Previous
 site.pagination.next                                    =  Next
-site.pagination.pageTitle                               =  (page {0} of {1})
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -161,7 +160,8 @@ clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
 clientList.th.regNumber = Registration number
 clientList.th.clientReference = Client reference
-clientList.th.remove = Action
+clientList.th.remove.action = Action
+clientList.th.remove = Remove
 clientList.download.th.clientName = Client name
 clientList.download.th.regNumber = Machine Games Duty Registration Number
 clientList.download.th.clientReference = Your client reference

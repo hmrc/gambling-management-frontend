@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import services.{GamblingService, ManageService, PaginationService}
+import services.{GamblingService, ManageService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.agent.ClientListView
 
@@ -38,12 +38,11 @@ import scala.concurrent.Future
 
 class ClientListControllerSpec extends SpecBase {
 
-  private val app               = applicationBuilder().build()
-  private val mcc               = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
-  private val bodyParsers       = app.injector.instanceOf[PlayBodyParsers]
-  private val view              = app.injector.instanceOf[ClientListView]
-  private val clientListCheck   = new PassThroughClientListCheckAction()
-  private val paginationService = app.injector.instanceOf[PaginationService]
+  private val app             = applicationBuilder().build()
+  private val mcc             = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
+  private val bodyParsers     = app.injector.instanceOf[PlayBodyParsers]
+  private val view            = app.injector.instanceOf[ClientListView]
+  private val clientListCheck = new PassThroughClientListCheckAction()
 
   private class StubManageService(clients: List[AgentClient]) extends ManageService(null, null) {
 
@@ -60,7 +59,6 @@ class ClientListControllerSpec extends SpecBase {
       new FakeDataRetrievalAction(userAnswers),
       new DataRequiredActionImpl(),
       new StubManageService(clients),
-      paginationService,
       mcc,
       view
     )
@@ -259,6 +257,32 @@ class ClientListControllerSpec extends SpecBase {
       val body = contentAsString(result)
       body must include("Test Client 01")
       body must not include "Test Client 11"
+    }
+
+    "redirects to system error when manage service fails" in {
+      val failingService = new ManageService(null, null) {
+        override def resolveAndStoreAgentClients(ua: UserAnswers)(using
+          HeaderCarrier
+        ): Future[(List[AgentClient], UserAnswers)] =
+          Future.failed(new RuntimeException("Service unavailable"))
+      }
+
+      val controller = new ClientListController(
+        mcc.messagesApi,
+        new FakeAgentIdentifierAction(bodyParsers),
+        clientListCheck,
+        new FakeDataRetrievalAction(Some(emptyUserAnswers)),
+        new DataRequiredActionImpl(),
+        failingService,
+        mcc,
+        view
+      )
+
+      val result = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.routes.SystemErrorController.onPageLoad().url
     }
 
     "handle a page number greater than the total pages" in {
