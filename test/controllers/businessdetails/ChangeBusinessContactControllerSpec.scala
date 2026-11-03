@@ -74,7 +74,7 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must clear the submitted contact details, keep other answers and redirect when submitted" in {
+    "must apply the submitted contact details to the stored business details, clear the change pages and redirect when submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -146,7 +146,181 @@ class ChangeBusinessContactControllerSpec extends SpecBase with MockitoSugar {
         saved.get(ChangeEmailAddressPage) mustBe None
         saved.get(RemoveEmailAddressPage) mustBe None
         saved.get(ChangeContactNumbersPage) mustBe None
-        saved.get(BusinessDetailsPage) mustBe Some(businessDetails)
+        saved.get(BusinessDetailsPage) mustBe Some(
+          businessDetails.copy(
+            phoneNumber = Some("02071234567"),
+            mobileNumber = None,
+            faxNumber = Some("01881123456"),
+            emailAddress = Some("someone@someone.com")
+          )
+        )
+      }
+    }
+
+    "must clear the fax and email on the stored business details when they are removed" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val mockGamblingConnector = mock[GamblingConnector]
+      when(
+        mockGamblingConnector.updateBusinessDetails(any[BusinessContactDetailSubmission])(using any[HeaderCarrier])
+      ).thenReturn(
+        Future.successful(
+          ChrisSubmissionResponse(acknowledgementReference = "ABC123", submissionTimestamp = "2026-10-12T12:00:00")
+        )
+      )
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(ChangeContactNumbersPage, ContactNumbers(Some("02071234567"), None))
+          .success
+          .value
+          .set(RemoveFaxNumberPage, true)
+          .success
+          .value
+          .set(RemoveEmailAddressPage, true)
+          .success
+          .value
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[GamblingConnector].toInstance(mockGamblingConnector)
+          )
+          .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(POST, changeBusinessContactRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(captor.capture())
+        captor.getValue.get(BusinessDetailsPage) mustBe Some(
+          businessDetails.copy(
+            phoneNumber = Some("02071234567"),
+            mobileNumber = None,
+            faxNumber = None,
+            emailAddress = None
+          )
+        )
+      }
+    }
+
+    "must submit faxNumber and email as None to CHRIS when they are removed, even though the change pages still hold the old values" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val mockGamblingConnector = mock[GamblingConnector]
+      when(
+        mockGamblingConnector.updateBusinessDetails(any[BusinessContactDetailSubmission])(using any[HeaderCarrier])
+      ).thenReturn(
+        Future.successful(
+          ChrisSubmissionResponse(acknowledgementReference = "ABC123", submissionTimestamp = "2026-10-12T12:00:00")
+        )
+      )
+
+      // Mirrors the real post-removal state: the remove flow sets the Remove*Page flag but leaves the
+      // Change*Page holding the previous value.
+      val userAnswers =
+        emptyUserAnswers
+          .set(ChangeContactNumbersPage, ContactNumbers(Some("02071234567"), None))
+          .success
+          .value
+          .set(ChangeFaxNumberPage, "0800 202 2500")
+          .success
+          .value
+          .set(RemoveFaxNumberPage, true)
+          .success
+          .value
+          .set(ChangeEmailAddressPage, "sarah.phillips@example.com")
+          .success
+          .value
+          .set(RemoveEmailAddressPage, true)
+          .success
+          .value
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[GamblingConnector].toInstance(mockGamblingConnector)
+          )
+          .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(POST, changeBusinessContactRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val captor = ArgumentCaptor.forClass(classOf[BusinessContactDetailSubmission])
+        verify(mockGamblingConnector).updateBusinessDetails(captor.capture())(using any[HeaderCarrier])
+
+        val submission = captor.getValue
+        submission.faxNumber mustBe None
+        submission.email mustBe None
+        submission.phoneNumber mustBe Some("02071234567")
+        submission.mobileNumber mustBe None
+      }
+    }
+
+    "must submit the changed faxNumber and email to CHRIS when they are updated rather than removed" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val mockGamblingConnector = mock[GamblingConnector]
+      when(
+        mockGamblingConnector.updateBusinessDetails(any[BusinessContactDetailSubmission])(using any[HeaderCarrier])
+      ).thenReturn(
+        Future.successful(
+          ChrisSubmissionResponse(acknowledgementReference = "ABC123", submissionTimestamp = "2026-10-12T12:00:00")
+        )
+      )
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(ChangeContactNumbersPage, ContactNumbers(Some("02071234567"), None))
+          .success
+          .value
+          .set(ChangeFaxNumberPage, "01881123456")
+          .success
+          .value
+          .set(ChangeEmailAddressPage, "someone@someone.com")
+          .success
+          .value
+          .set(BusinessDetailsPage, businessDetails)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[GamblingConnector].toInstance(mockGamblingConnector)
+          )
+          .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(POST, changeBusinessContactRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val captor = ArgumentCaptor.forClass(classOf[BusinessContactDetailSubmission])
+        verify(mockGamblingConnector).updateBusinessDetails(captor.capture())(using any[HeaderCarrier])
+
+        val submission = captor.getValue
+        submission.faxNumber mustBe Some("01881123456")
+        submission.email mustBe Some("someone@someone.com")
       }
     }
 

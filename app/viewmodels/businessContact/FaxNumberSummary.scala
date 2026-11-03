@@ -17,15 +17,17 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
-import pages.BusinessDetailsPage
-import pages.businessdetails.ChangeFaxNumberPage
+import pages.businessdetails.{ChangeFaxNumberPage, RemoveFaxNumberPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 object FaxNumberSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeFaxNumberPage)
+    // A pending removal is signalled by RemoveFaxNumberPage, not by clearing ChangeFaxNumberPage, so treat a
+    // removed fax as absent here too - otherwise the review row would still show the value being removed.
+    val removed = answers.get(RemoveFaxNumberPage).contains(true)
+    val answer  = if (removed) None else answers.get(ChangeFaxNumberPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(
