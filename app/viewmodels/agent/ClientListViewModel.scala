@@ -33,7 +33,7 @@ object ClientListViewModel {
         clientName = client.clientName.getOrElse(""),
         regNumber = client.regNumber,
         clientReference = client.agentOwnRef.getOrElse(""),
-        removeLink = controllers.clientdetails.routes.RemoveClientYesNoController.onPageLoad(client.regNumber).url
+        removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad(client.regNumber).url
       )
     }
 

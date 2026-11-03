@@ -17,8 +17,8 @@
 package models
 
 case class PaginationParams(totalRecords: Int, pageSize: Int, pageNo: Int) {
-  val totalPages: Int = if (totalRecords == 0) 0 else Math.ceil(totalRecords.toDouble / pageSize).toInt
-  val firstRecord: Int = if (totalRecords == 0) 0 else (pageNo - 1) * pageSize + 1
-  val lastRecord: Int = if (totalRecords == 0) 0 else Math.min(pageNo * pageSize, totalRecords)
+  val totalPages: Int       = if (totalRecords == 0) 0 else Math.ceil(totalRecords.toDouble / pageSize).toInt
+  val firstRecord: Int      = if (totalRecords == 0) 0 else (pageNo - 1) * pageSize + 1
+  val lastRecord: Int       = if (totalRecords == 0) 0 else Math.min(pageNo * pageSize, totalRecords)
   val isOutOfRange: Boolean = totalPages > 0 && pageNo > totalPages
 }
