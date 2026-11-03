@@ -80,6 +80,35 @@
     padding: 0 15px;
 }
 
+// Cards as direct children of .flex-container (from the prototype)
+.flex-container > .card {
+  height: auto;
+  flex-grow: 0;
+  flex-basis: 100%;
+}
+
+@media screen and (min-width: 600px) and (max-width: 900px) {
+  .flex-container > .card {
+    flex-basis: 45.99%;
+  }
+  .flex-container > .card:nth-child(2n-1) {
+    margin-right: 3%;
+  }
+  .flex-container > .card:nth-child(2n-2) {
+    margin-left: 3%;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .flex-container > .card {
+    flex-basis: 30.5%;
+  }
+  .flex-container > .card:nth-child(3n-1) {
+    margin-left: 3%;
+    margin-right: 3%;
+  }
+}
+
 .govuk-summary-list__actions {
   width: 33%;
 }
