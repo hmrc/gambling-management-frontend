@@ -1,0 +1,153 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.clientdetails
+
+import base.SpecBase
+import controllers.businessdetails.routes
+import models.agent.{AgentDetails, ContactNumbers}
+import models.{BusinessDetails, GamblingError, UserAnswers}
+import org.jsoup.Jsoup
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import pages.BusinessDetailsPage
+import pages.businessdetails.{BusinessNamePage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
+import play.api.inject.bind
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.GamblingService
+
+import scala.concurrent.Future
+
+class ManageYourClientDetailsControllerSpec extends SpecBase {
+
+  private val businessDetails = BusinessDetails(
+    businessName = Some("Agent 1"),
+    addressLine1 = Some("123 Business road"),
+    addressLine2 = Some("Business"),
+    addressLine3 = Some("London"),
+    phoneNumber = Some("0191 202 2500"),
+    mobileNumber = Some("07890 123 456"),
+    faxNumber = Some("0800 202 2500"),
+    emailAddress = Some("sarah.phillips@example.com")
+  )
+
+  "Check Business Details Controller" - {
+
+    "must fetch details from the backend and store them when none are in the user's answers" in {
+      val mockService     = org.mockito.Mockito.mock(classOf[GamblingService])
+      val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])
+      when(mockService.getAgentDetails(using any())).thenReturn(
+        Future.successful(
+          Right(
+            AgentDetails(
+              businessName = Some("Agent 1"),
+              addressLine1 = Some("123 Business road"),
+              addressLine2 = Some("Business"),
+              addressLine3 = Some("London"),
+              addressLine4 = Some("Greater London"),
+              postcode = Some("AB1 2CD"),
+              country = Some("GB"),
+              abroadSignal = Some("N"),
+              phoneNumber = Some("0191 202 2500"),
+              mobilePhoneNumber = Some("07890 123 456"),
+              faxNumber = Some("0800 202 2500"),
+              email = Some("sarah.phillips@example.com")
+            )
+          )
+        )
+      )
+      when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService), bind[SessionRepository].toInstance(mockSessionRepo))
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual OK
+        val text = Jsoup.parse(contentAsString(result)).text()
+        List(
+          "Agent 1",
+          "123 Business road",
+          "Business",
+          "London",
+          "0191 202 2500",
+          "07890 123 456",
+          "0800 202 2500",
+          "sarah.phillips@example.com"
+        ).foreach(value => text must include(value))
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepo).set(captor.capture())
+        captor.getValue.get(BusinessDetailsPage).value mustEqual businessDetails.copy(businessName = Some("Agent 1"))
+        captor.getValue.get(BusinessNamePage).value mustEqual "Agent 1"
+        captor.getValue.get(ChangeContactNumbersPage).value mustEqual ContactNumbers(
+          Some("0191 202 2500"),
+          Some("07890 123 456")
+        )
+        captor.getValue.get(ChangeFaxNumberPage).value mustEqual "0800 202 2500"
+        captor.getValue.get(ChangeEmailAddressPage).value mustEqual "sarah.phillips@example.com"
+      }
+    }
+
+    "must redirect to the page not found page when agent details are not found" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.successful(Left(GamblingError.NotFound)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.PageNotFoundController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the system error page when fetching agent details fails upstream" in {
+      val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
+      when(mockService.getAgentDetails(using any()))
+        .thenReturn(Future.successful(Left(GamblingError.UpstreamError)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[GamblingService].toInstance(mockService))
+        .build()
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.SystemErrorController.onPageLoad().url
+      }
+    }
+
+    "must redirect an organisation to the access denied page" in {
+      val application = organisationDeniedApplicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.AccessDeniedController.onPageLoad().url
+      }
+    }
+  }
+}
