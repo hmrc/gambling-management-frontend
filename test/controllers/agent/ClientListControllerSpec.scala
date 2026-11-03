@@ -81,7 +81,7 @@ class ClientListControllerSpec extends SpecBase {
       contentAsString(result) must include("ABC Ltd")
     }
 
-    "redirects to no-authorised-clients when the list is empty" in {
+    "redirects to no-authorised-clients when the list is Nil" in {
       val result = controller(Nil, Some(emptyUserAnswers)).onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.agent.routes.NoAuthorisedClientsController.onPageLoad().url
@@ -368,6 +368,12 @@ class ClientListControllerSpec extends SpecBase {
       ).mkString("\n")
 
       contentAsString(result) mustBe expectedBody
+    }
+
+    "redirects to no-authorised-clients when the list is Nil" in {
+      val result = controller(Nil, Some(emptyUserAnswers)).downloadClientList()(FakeRequest())
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.agent.routes.NoAuthorisedClientsController.onPageLoad().url
     }
   }
 

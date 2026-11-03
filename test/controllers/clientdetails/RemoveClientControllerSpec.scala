@@ -18,7 +18,7 @@ package controllers.clientdetails
 
 import base.SpecBase
 import controllers.actions.*
-import forms.clientdetails.RemoveClientYesNoFormProvider
+import forms.clientdetails.RemoveClientFormProvider
 import models.UserAnswers
 import models.agent.AgentClient
 import org.mockito.ArgumentMatchers.any
@@ -35,12 +35,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RemoveClientYesNoControllerSpec extends SpecBase {
+class RemoveClientControllerSpec extends SpecBase {
 
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[views.html.clientdetails.RemoveClientYesNoView]
+  private val view        = app.injector.instanceOf[views.html.clientdetails.RemoveClientView]
 
   private val client          = AgentClient("mgd", "RN1", Some("Acme Casinos"), Some("ref"))
   private val ua: UserAnswers =
@@ -53,7 +53,7 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
   private def controller = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
     when(repo.set(any)).thenReturn(Future.successful(true))
-    new RemoveClientYesNoController(
+    new RemoveClientController(
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
@@ -61,7 +61,7 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
       new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
-      new RemoveClientYesNoFormProvider(),
+      new RemoveClientFormProvider(),
       new StubManageService(),
       mcc,
       view
@@ -82,16 +82,16 @@ class RemoveClientYesNoControllerSpec extends SpecBase {
   }
 
   "onSubmit" - {
-    "removes the client and redirects to client-removed when Yes" in {
+    "removes the client and redirects to search-for-a-client when Yes" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "true")
       val result  = controller.onSubmit("RN1")(request)
-      redirectLocation(result).value mustBe routes.ClientRemovedController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.agent.routes.ClientListController.onPageLoad().url
     }
 
-    "redirects back to manage-client-details when No" in {
+    "redirects back to search-for-a-client when No" in {
       val request = FakeRequest().withFormUrlEncodedBody("value" -> "false")
       val result  = controller.onSubmit("RN1")(request)
-      redirectLocation(result).value mustBe routes.ManageClientDetailsController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.agent.routes.ClientListController.onPageLoad().url
     }
 
     "returns BadRequest when nothing is selected" in {

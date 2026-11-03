@@ -47,7 +47,7 @@ class PassThroughHasClientGuard(
     override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
   }
 
-  override def forInstanceId(instanceId: String): ActionFilter[DataRequest] = pass
-  override def currentClient: ActionFilter[DataRequest]                     = pass
-  override def currentClientAuthorised: ActionFilter[AuthorisedRequest]     = passAuthorised
+  override def forRegNumber(instanceId: String): ActionFilter[DataRequest] = pass
+  override def currentClient: ActionFilter[DataRequest]                    = pass
+  override def currentClientAuthorised: ActionFilter[AuthorisedRequest]    = passAuthorised
 }

@@ -56,7 +56,7 @@ class ChangeClientReferenceController @Inject() (
       andThen clientListCheck
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
       val preparedForm = request.userAnswers.get(ChangeClientReferencePage).fold(form)(form.fill)
       Future.successful(Ok(view(preparedForm, regNumber)))
     }
@@ -66,7 +66,7 @@ class ChangeClientReferenceController @Inject() (
       andThen clientListCheck
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       form

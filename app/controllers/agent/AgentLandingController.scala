@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.agent.AgentLandingView
+import pages.clientdetails.RemoveClientPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,11 +55,11 @@ class AgentLandingController @Inject() (
     (authorise
       andThen getData
       andThen requireData
-      andThen hasClientGuard.forInstanceId(regNumber)).async { implicit request =>
+      andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
 
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      AgentClientsPage.findClient(request.userAnswers, regNumber) match {
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
         case Some(client) =>
           loadLandingPage(regNumber, client)
 

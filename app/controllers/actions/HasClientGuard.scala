@@ -56,14 +56,14 @@ class HasClientGuard @Inject() (
               logger.warn("selected client missing in UserAnswers")
               Future.successful(Some(systemError))
 
-            case Some(instanceId) =>
-              AgentClientsPage.findClient(userAnswers, instanceId) match {
+            case Some(regNumber) =>
+              AgentClientsPage.findInClientList(userAnswers, regNumber) match {
                 case None =>
-                  logger.warn(s"client not found for instanceId: $instanceId")
+                  logger.warn(s"Client not found in Client List for regNumber: $regNumber")
                   Future.successful(Some(systemError))
 
                 case Some(client) =>
-                  checkClient(client.regime, client.regNumber, instanceId)
+                  checkClient(client.regime, client.regNumber, regNumber)
               }
           }
       }
@@ -73,13 +73,13 @@ class HasClientGuard @Inject() (
       }
   }
 
-  def forInstanceId(instanceId: String): ActionFilter[DataRequest] =
+  def forRegNumber(regNumber: String): ActionFilter[DataRequest] =
     new ActionFilter[DataRequest] {
 
       override protected def executionContext: ExecutionContext = ec
 
       override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
-        checkForInstanceId(request, instanceId)
+        checkForRegNumber(request, regNumber)
     }
 
   def currentClient: ActionFilter[DataRequest] =
@@ -98,19 +98,19 @@ class HasClientGuard @Inject() (
         if !request.isAgent then Future.successful(None) else check(request)
     }
 
-  private[actions] def checkForInstanceId[A](request: DataRequest[A], instanceId: String): Future[Option[Result]] =
+  private[actions] def checkForRegNumber[A](request: DataRequest[A], regNumber: String): Future[Option[Result]] =
     if !request.isAgent then Future.successful(None)
     else {
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       given Request[?]    = request
 
-      AgentClientsPage.findClient(request.userAnswers, instanceId) match {
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
 
         case Some(client) =>
-          checkClient(client.regime, client.regNumber, instanceId)
+          checkClient(client.regime, client.regNumber, regNumber)
 
         case None =>
-          logger.warn(s"client not found for instanceId: $instanceId")
+          logger.warn(s"Client not found in Client List for regNumber: $regNumber")
           Future.successful(Some(systemError))
       }
     }
@@ -119,30 +119,30 @@ class HasClientGuard @Inject() (
     if !request.isAgent then Future.successful(None)
     else
       request.userAnswers.get(SelectedClientPage) match {
-        case Some(instanceId) =>
-          checkForInstanceId(request, instanceId)
-        case None             =>
+        case Some(regNumber) =>
+          checkForRegNumber(request, regNumber)
+        case None            =>
           logger.warn("selected client missing in UserAnswers")
           Future.successful(Some(systemError))
       }
 
   private def checkClient(
-    regime: String,
-    regNumber: String,
-    instanceId: String
+    regimeFromClientList: String,
+    regNumberFromClientList: String,
+    regNumber: String
   )(using HeaderCarrier, Request[?]): Future[Option[Result]] =
-    if regime.isEmpty || regNumber.isEmpty then {
-      logger.warn(s"regime/regNumber is empty for instanceId: $instanceId")
+    if regimeFromClientList.isEmpty || regNumberFromClientList.isEmpty then {
+      logger.warn(s"regime or regNumber is empty in Client List for regNumber: $regNumber")
       Future.successful(Some(systemError))
     } else
       gamblingService
-        .hasClient(regime, regNumber)
+        .hasClient(regimeFromClientList, regNumberFromClientList)
         .flatMap {
           case true =>
             Future.successful(None)
 
           case false =>
-            logger.warn(s"Agent no longer authorised for instanceId: $instanceId")
+            logger.warn(s"Agent no longer authorised for regNumber: $regNumber")
             auditService
               .sendEvent(AuthFailureAuditEventModel())
               .map(_ => Some(agentLostAccess))
@@ -152,7 +152,7 @@ class HasClientGuard @Inject() (
               }
         }
         .recover { case NonFatal(ex) =>
-          logger.error(s"hasClient check failed for instanceId: $instanceId", ex)
+          logger.error(s"hasClient check failed for regNumber: $regNumber", ex)
           Some(systemError)
         }
 }

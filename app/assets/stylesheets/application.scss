@@ -36,6 +36,10 @@
   background-color: #f0f0f0;
 }
 
+.card .card-body--compact {
+  min-height: 88px;
+}
+
 // Sub-heading styles
 .card .card-body .card-sub-heading span {
   display: block;
@@ -50,6 +54,10 @@
 .card .card-action {
   padding: 12px;
   background-color: #ffffff;
+}
+
+.card .card-action--grow {
+  flex-grow: 1;
 }
 
 .card .card-action ul {

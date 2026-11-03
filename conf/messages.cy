@@ -184,9 +184,12 @@ clientRefUpdateConfirmation.heading = Client reference updated
 clientRefUpdateConfirmation.p1 = The client reference has been updated.
 clientRefUpdateConfirmation.link.backToClientList = Back to your client list
 
-removeClientYesNo.title = Remove client
-removeClientYesNo.heading = Are you sure you want to remove {0}?
-removeClientYesNo.error.required = Select yes if you want to remove this client
+removeClient.title = Are you sure you want to remove {0}?
+removeClient.heading = Are you sure you want to remove {0}?
+removeClient.caption=Manage your client details
+removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
+removeClient.error.required = Select yes if you want to remove this client
+
 
 clientRemoved.title = Client removed
 clientRemoved.heading = Client removed
@@ -285,3 +288,12 @@ changeBusinessNameConfirmation.whatHappensNext = What happens next
 changeBusinessNameConfirmation.reviewing = We are reviewing your changes and will notify you if there are any issues.
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
+
+agentManageYourDetails.title = Manage your details
+agentManageYourDetails.heading = Manage your details
+agentManageYourDetails.clientSearch.heading = Client search
+agentManageYourDetails.clientSearch.search = Search for a client
+agentManageYourDetails.clientSearch.download = Download client list
+agentManageYourDetails.businessDetails.heading = Your business details
+agentManageYourDetails.businessDetails.check = Check your business details
+agentManageYourDetails.clientSearch.empty = You have no clients to view.
