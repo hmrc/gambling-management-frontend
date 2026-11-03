@@ -46,15 +46,15 @@
 ) {
     <span class="govuk-caption-l">@messages("clientList.caption")</span>
 
-    @h1("clientList.heading", classes = "govuk-heading-l")
+    @h1("clientList.heading", classes = "govuk-heading-l govuk-!-margin-bottom-4")
 
-    <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-6">
-        <div class="govuk-form-group">
-            <label class="govuk-label" for="search">@messages("clientList.search.label")</label>
+    <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-1">
+        <div class="govuk-form-group govuk-!-margin-bottom-6">
+            <label class="govuk-label govuk-!-margin-bottom-3" for="search">@messages("clientList.search.label")</label>
             <input class="govuk-input govuk-input--width-30" id="search" name="search" type="text" value="@searchQuery">
         </div>
         <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button">@messages("clientList.search.button")</button>
+                <button class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button govuk-!-margin-bottom-4">@messages("clientList.search.button")</button>
                 @link(
                     "clientList.clearSearch",
                      controllers.agent.routes.ClientListController.onPageLoad().url,
