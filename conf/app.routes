@@ -32,7 +32,7 @@ GET         /agent/cannot-access-service                             controllers
 
 # Client details management
 GET         /agent/manage-your-details                               controllers.agent.ManageYourDetailsController.onPageLoad()
-GET         /agent/manage-client                                     controllers.clientdetails.ManageClientDetailsController.onPageLoad()
+GET         /agent/manage-your-details/manage-your-client-details    controllers.clientdetails.ManageClientDetailsController.onPageLoad()
 GET         /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/change-client-reference/:regNumber                controllers.clientdetails.ChangeClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()

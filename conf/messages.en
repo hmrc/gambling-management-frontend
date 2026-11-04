@@ -160,13 +160,13 @@ clientList.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 
-manageClientDetails.title = Manage client details
-manageClientDetails.heading = {0}
+manageClientDetails.title = Manage your client details
+manageClientDetails.heading = Manage your client details
 manageClientDetails.clientName = Client name
-manageClientDetails.regNumber = Registration number
+manageClientDetails.regNumber = MGD registration details
 manageClientDetails.clientReference = Client reference
-manageClientDetails.change = Change
-manageClientDetails.remove = Remove this client
+manageClientDetails.notProvided = Not provided
+manageClientDetails.remove.client = Remove client
 
 changeClientReference.title = Change client reference
 changeClientReference.heading = Enter a client reference

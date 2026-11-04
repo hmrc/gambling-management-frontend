@@ -22,7 +22,7 @@
         link: Link
 )
 
-@(clientName: String, regNumber: String, clientReference: String)(implicit request: Request[_], messages: Messages)
+@(clientName: String, regNumber: String, clientReference: SummaryListRow)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("manageClientDetails.title")),
@@ -42,12 +42,21 @@
             <dd class="govuk-summary-list__value">@regNumber</dd>
         </div>
         <div class="govuk-summary-list__row">
+            @clientReference
+        </div>
+
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("manageClientDetails.clientReference")</dt>
             <dd class="govuk-summary-list__value">@clientReference</dd>
             <dd class="govuk-summary-list__actions">
                 @link(
-                    linkTextKey = "manageClientDetails.change",
+                    linkTextKey = "site.change",
                     linkUrl = controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
+                )
+
+                @link(
+                linkTextKey = "site.remove",
+                linkUrl = controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
                 )
             </dd>
         </div>
@@ -55,7 +64,7 @@
 
     <p class="govuk-body">
         @link(
-            linkTextKey = "manageClientDetails.remove",
+            linkTextKey = "manageClientDetails.remove.client",
             linkUrl = controllers.clientdetails.routes.RemoveClientController.onPageLoad(regNumber).url
         )
     </p>

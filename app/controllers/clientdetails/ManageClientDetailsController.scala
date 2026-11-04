@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.clientdetails.ManageClientDetailsView
+import viewmodels.agent.client.ClientReferenceSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -62,7 +63,7 @@ class ManageClientDetailsController @Inject() (
             view(
               clientName = client.clientName.getOrElse(""),
               regNumber = client.regNumber,
-              clientReference = clientReference
+              clientReference = ClientReferenceSummary.rows(clientReference, client.regNumber)
             )
           )
 
