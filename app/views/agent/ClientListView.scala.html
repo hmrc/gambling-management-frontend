@@ -46,20 +46,28 @@
 ) {
     <span class="govuk-caption-l">@messages("clientList.caption")</span>
 
-    @h1("clientList.heading", classes = "govuk-heading-l govuk-!-margin-bottom-4")
+    @h1("clientList.heading", classes = "govuk-heading-l govuk-!-margin-bottom-3")
 
-    <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-1">
+    <form method="get" action="@controllers.agent.routes.ClientListController.onPageLoad().url" class="govuk-!-margin-bottom-0">
         <div class="govuk-form-group govuk-!-margin-bottom-6">
-            <label class="govuk-label govuk-!-margin-bottom-3" for="search">@messages("clientList.search.label")</label>
-            <input class="govuk-input govuk-input--width-30" id="search" name="search" type="text" value="@searchQuery">
+            <div id="search-hint" class="govuk-hint govuk-!-margin-bottom-3"> @messages("clientList.search.label")</div>
+
+            <input class="govuk-input govuk-input--width-30" id="search" name="search" type="text"
+               aria-label="@messages("clientList.heading")" aria-describedby="search-hint" value="@searchQuery">
         </div>
-        <div class="govuk-button-group">
-                <button class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button govuk-!-margin-bottom-4">@messages("clientList.search.button")</button>
-                @link(
-                    "clientList.clearSearch",
-                     controllers.agent.routes.ClientListController.onPageLoad().url,
-                     extraClasses = "govuk-link"
-                )
+
+        <div class="govuk-button-group govuk-!-margin-bottom-0">
+            <button class="govuk-button govuk-!-margin-bottom-0"
+                type="submit"
+                data-module="govuk-button">
+                @messages("clientList.search.button")
+            </button>
+
+            @link(
+                "clientList.clearSearch",
+                controllers.agent.routes.ClientListController.onPageLoad().url,
+                extraClasses = "govuk-link"
+            )
         </div>
     </form>
 
