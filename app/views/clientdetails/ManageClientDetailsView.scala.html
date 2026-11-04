@@ -18,6 +18,7 @@
 
 @this(
         layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
         h1: H1,
         link: Link
 )
@@ -31,6 +32,12 @@
 ) {
 
     @h1(msg = "manageClientDetails.heading", args = Seq(clientName), classes = "govuk-heading-l")
+
+    @govukSummaryList(SummaryList(rows = Seq(
+        SummaryListRow(
+            key = Key(Text(messages("viewRegistrationCertificate.groupMember", i + 1))),
+            value = Value(Text(m.namesOfGroupMems))
+        )
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
