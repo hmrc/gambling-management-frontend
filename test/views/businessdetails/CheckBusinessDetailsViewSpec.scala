@@ -123,7 +123,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       )
     }
 
-    "must render a Return to at a glance link to the index page instead of a form" in {
+    "must render a Return to manage your details link to the index page instead of a form" in {
       val app           = applicationBuilder().build()
       val view          = app.injector.instanceOf[CheckBusinessDetailsView]
       val request       = FakeRequest()
@@ -132,7 +132,11 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       val doc = Jsoup.parse(view(details)(request, msgs).body)
 
       val link =
-        doc.select("a.govuk-link").asScala.find(_.text() == msgs("checkBusinessDetails.returnToAtAGlance")).value
+        doc
+          .select("a.govuk-link")
+          .asScala
+          .find(_.text() == msgs("checkBusinessDetails.returnToManageYourDetails"))
+          .value
       link.attr("href") mustEqual controllers.routes.IndexController.onPageLoad().url
 
       doc.select("form").size() mustEqual 0
