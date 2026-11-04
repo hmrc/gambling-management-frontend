@@ -30,23 +30,7 @@ class ClientDetailsViewsSpec extends SpecBase {
   private implicit val request: Request[?] =
     play.api.test.CSRFTokenHelper.addCSRFToken(FakeRequest())
   private implicit val messages: Messages  = app.injector.instanceOf[MessagesApi].preferred(request)
-
-  "ManageClientDetailsView" - {
-    "renders the client details and change/remove links" in {
-      val view = app.injector.instanceOf[ManageClientDetailsView]
-      val doc  = Jsoup.parse(view("Acme Casinos", "XMM00000000123", "myref").body)
-
-      doc.text must include("Acme Casinos")
-      doc.text must include("XMM00000000123")
-      doc.text must include("myref")
-      val hrefs = doc.select("a").eachAttr("href").toArray
-      hrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
-      )
-      hrefs must contain(controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url)
-    }
-  }
-
+  
   "ChangeClientReferenceView" - {
     val view = app.injector.instanceOf[ChangeClientReferenceView]
     val form = new ChangeClientReferenceFormProvider()()

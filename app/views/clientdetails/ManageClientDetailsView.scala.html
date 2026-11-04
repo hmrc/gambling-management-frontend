@@ -15,6 +15,8 @@
  *@
 
 @import views.html.components.*
+@import viewmodels.govuk.summarylist.FluentSummaryList
+
 
 @this(
         layout: templates.Layout,
@@ -23,7 +25,7 @@
         link: Link
 )
 
-@(clientName: String, regNumber: String, clientReference: SummaryListRow)(implicit request: Request[_], messages: Messages)
+@(regNumber: String, summaryList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("manageClientDetails.title")),
@@ -31,43 +33,9 @@
     showSignOut = true
 ) {
 
-    @h1(msg = "manageClientDetails.heading", args = Seq(clientName), classes = "govuk-heading-l")
+    @h1(msg = "manageClientDetails.heading", classes = "govuk-heading-l")
 
-    @govukSummaryList(SummaryList(rows = Seq(
-        SummaryListRow(
-            key = Key(Text(messages("viewRegistrationCertificate.groupMember", i + 1))),
-            value = Value(Text(m.namesOfGroupMems))
-        )
-
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.clientName")</dt>
-            <dd class="govuk-summary-list__value">@clientName</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.regNumber")</dt>
-            <dd class="govuk-summary-list__value">@regNumber</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            @clientReference
-        </div>
-
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.clientReference")</dt>
-            <dd class="govuk-summary-list__value">@clientReference</dd>
-            <dd class="govuk-summary-list__actions">
-                @link(
-                    linkTextKey = "site.change",
-                    linkUrl = controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
-                )
-
-                @link(
-                linkTextKey = "site.remove",
-                linkUrl = controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
-                )
-            </dd>
-        </div>
-    </dl>
+    @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-6"))
 
     <p class="govuk-body">
         @link(
