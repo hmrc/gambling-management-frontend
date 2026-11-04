@@ -16,7 +16,7 @@
 
 package viewmodels.businessContact
 
-import models.UserAnswers
+import models.{BusinessDetails, UserAnswers}
 import pages.businessdetails.*
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
@@ -33,6 +33,22 @@ object BusinessContactHelpers {
       answers.get(ChangeEmailAddressPage).isDefined ||
       answers.get(RemoveEmailAddressPage).contains(true) ||
       answers.get(ChangeContactNumbersPage).isDefined
+
+  /** Applies the user's confirmed contact-detail changes onto the stored business details, so the Check business
+    * details screen reflects them even while the backend read-model catches up.
+    */
+  def applyContactChanges(details: BusinessDetails, answers: UserAnswers): BusinessDetails = {
+    val withNumbers = answers.get(ChangeContactNumbersPage).fold(details) { numbers =>
+      details.copy(phoneNumber = numbers.phoneNumber, mobileNumber = numbers.mobileNumber)
+    }
+
+    val withFax =
+      if (answers.get(RemoveFaxNumberPage).contains(true)) withNumbers.copy(faxNumber = None)
+      else answers.get(ChangeFaxNumberPage).fold(withNumbers)(fax => withNumbers.copy(faxNumber = Some(fax)))
+
+    if (answers.get(RemoveEmailAddressPage).contains(true)) withFax.copy(emailAddress = None)
+    else answers.get(ChangeEmailAddressPage).fold(withFax)(email => withFax.copy(emailAddress = Some(email)))
+  }
 
   /** Clears the contact-detail changes once they have been submitted to CHRIS, leaving the rest of the answers intact.
     */

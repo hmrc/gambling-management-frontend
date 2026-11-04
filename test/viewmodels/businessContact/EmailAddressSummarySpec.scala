@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.{BusinessDetails, CheckMode}
 import pages.BusinessDetailsPage
-import pages.businessdetails.ChangeEmailAddressPage
+import pages.businessdetails.{ChangeEmailAddressPage, RemoveEmailAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
@@ -60,6 +60,27 @@ class EmailAddressSummarySpec extends SpecBase {
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
       row.actions.value.items(1).href mustBe removeEmailAddressSummaryUrl
+    }
+
+    "must show 'Not provided' with only a 'Change' link when the email has been removed, even though the change page still holds the old value" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val answers =
+        emptyUserAnswers
+          .set(ChangeEmailAddressPage, "someone@example.com")
+          .success
+          .value
+          .set(RemoveEmailAddressPage, true)
+          .success
+          .value
+
+      val rows = EmailAddressSummary.rows(answers)
+      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
+
+      row.value.content mustBe Text(msgs("changeBusinessContact.notProvided"))
+      row.actions.value.items.size mustBe 1
+      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
+      row.actions.value.items.head.href mustBe changeEmailAddressSummaryUrl
     }
   }
 }

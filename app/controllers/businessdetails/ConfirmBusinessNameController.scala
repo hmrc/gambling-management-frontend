@@ -18,8 +18,9 @@ package controllers.businessdetails
 
 import com.google.inject.Inject
 import controllers.actions.{AgentOnlyAction, DataRequiredAction, DataRetrievalAction}
-import models.Mode
+import models.{Mode, UserAnswers}
 import models.businessdetails.BusinessNameSubmission
+import pages.BusinessDetailsPage
 import pages.businessdetails.{BusinessNameConfirmationPage, BusinessNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.businessdetails.ConfirmBusinessNameView
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 class ConfirmBusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
@@ -62,9 +64,18 @@ class ConfirmBusinessNameController @Inject() (
 
           for {
             submissionResponse <- gamblingService.updateBusinessName(submission)
-            updatedAnswers     <- Future.fromTry(request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse))
-            clearedAnswers     <- Future.fromTry(updatedAnswers.remove(BusinessNamePage))
-            _                  <- sessionRepository.set(clearedAnswers)
+            withConfirmation   <-
+              Future.fromTry(request.userAnswers.set(BusinessNameConfirmationPage, submissionResponse))
+            // Reflect the confirmed name onto the stored business details so the Check business details
+            // screen shows it, rather than the stale backend read-model value.
+            updatedAnswers     <- Future.fromTry(
+                                    withConfirmation
+                                      .get(BusinessDetailsPage)
+                                      .fold(Success(withConfirmation): Try[UserAnswers])(details =>
+                                        withConfirmation.set(BusinessDetailsPage, details.copy(businessName = Some(name)))
+                                      )
+                                  )
+            _                  <- sessionRepository.set(updatedAnswers)
           } yield Redirect(routes.ChangeBusinessNameConfirmationController.onPageLoad())
         )
     }
