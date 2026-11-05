@@ -43,7 +43,7 @@ class ManageYourDetailsController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] = (agentOnly andThen clientListCheck andThen getData).async { implicit request =>
-    val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.userId))
+    val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.sessionId))
 
     (for {
       (clients, _) <- manageService.resolveAndStoreAgentClients(userAnswers)

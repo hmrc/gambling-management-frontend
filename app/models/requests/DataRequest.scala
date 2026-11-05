@@ -24,7 +24,8 @@ case class OptionalDataRequest[A](
   mgdRegNum: String,
   userAnswers: Option[UserAnswers],
   userId: String = "",
-  isAgent: Boolean = false
+  isAgent: Boolean = false,
+  sessionId: String = ""
 ) extends WrappedRequest[A](request)
 
 case class DataRequest[A](

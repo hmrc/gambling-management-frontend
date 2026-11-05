@@ -45,9 +45,7 @@ class IndexController @Inject() (
 
     given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val sessionKey = if request.isAgent then request.userId else request.mgdRegNum
-
-    initialiseUserAnswers(sessionKey).flatMap { _ =>
+    initialiseUserAnswers(request.sessionId).flatMap { _ =>
       loadReturnSummary(request.mgdRegNum)
     }
   }
