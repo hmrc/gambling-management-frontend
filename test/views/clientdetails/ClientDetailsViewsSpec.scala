@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
+import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider,RemoveClientReferenceFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -115,6 +115,118 @@ class ClientDetailsViewsSpec extends SpecBase {
 
       doc.select(".govuk-button").text() mustBe
         messages("site.continue")
+    }
+  }
+
+  "RemoveClientReferenceView" - {
+
+    val view =
+      app.injector.instanceOf[RemoveClientReferenceView]
+
+    val form =
+      new RemoveClientReferenceFormProvider()()
+
+     val regNumber = "XMM00000000123"
+     val clientReference = "my-client-reference"
+
+    "renders yes/no radios and posts to onSubmit" in {
+
+      val doc = Jsoup.parse(
+        view(
+          form,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.select("input[type=radio]").size mustBe 2
+
+      doc.select("form").attr("action") mustBe
+        controllers.clientdetails.routes
+          .RemoveClientReferenceController
+          .onSubmit(regNumber)
+          .url
+    }
+
+    "renders the client reference in the heading" in {
+
+      val doc = Jsoup.parse(
+        view(
+          form,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.select("h1").text() mustBe
+        messages(
+          "removeClientReference.heading",
+          clientReference
+        )
+    }
+
+    "renders the client reference in the page title" in {
+
+      val doc = Jsoup.parse(
+        view(
+          form,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.title() must include(
+        messages(
+          "removeClientReference.title",
+          clientReference
+        )
+      )
+    }
+
+    "renders the caption" in {
+
+      val doc = Jsoup.parse(
+        view(
+          form,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.select(".govuk-caption-l").text() mustBe
+        messages("removeClientReference.caption")
+    }
+
+    "renders the Continue button" in {
+
+      val doc = Jsoup.parse(
+        view(
+          form,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.select(".govuk-button").text() mustBe
+        messages("site.continue")
+    }
+
+    "renders an error when nothing is selected" in {
+
+      val formWithErrors =
+        form.bind(Map.empty[String, String])
+
+      val doc = Jsoup.parse(
+        view(
+          formWithErrors,
+          regNumber,
+          clientReference
+        ).body
+      )
+
+      doc.select(".govuk-error-summary").size mustBe 1
+
+      doc.select(".govuk-form-group--error").size mustBe 1
     }
   }
 

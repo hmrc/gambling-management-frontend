@@ -21,10 +21,10 @@
     layout: templates.Layout
 )
 
-@(form: Form[Boolean], regNumber: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], regNumber: String, clientReference: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = title(form, messages("removeClientReference.title", regNumber)),
+    pageTitle = title(form, messages("removeClientReference.title", clientReference)),
     showBackLink = true,
     showSignOut = true
 ) {
@@ -65,7 +65,7 @@
                     </span>
 
                     <h1 class="govuk-fieldset__heading">
-                        @messages("removeClientReference.heading", regNumber)
+                        @messages("removeClientReference.heading", clientReference)
                     </h1>
 
                 </legend>

@@ -35,18 +35,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveClientReferenceController @Inject() (
-                                                  override val messagesApi: MessagesApi,
-                                                  sessionRepository: SessionRepository,
-                                                  authorise: AuthorisedAction,
-                                                  clientListCheck: ClientListCheckAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  hasClientGuard: HasClientGuard,
-                                                  formProvider: RemoveClientReferenceFormProvider,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view: RemoveClientReferenceView
-                                                )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  authorise: AuthorisedAction,
+  clientListCheck: ClientListCheckAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  hasClientGuard: HasClientGuard,
+  formProvider: RemoveClientReferenceFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: RemoveClientReferenceView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
@@ -57,10 +57,9 @@ class RemoveClientReferenceController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
-
       AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
 
-        case Some(_) =>
+        case Some(client) =>
           val preparedForm =
             request.userAnswers
               .get(RemoveClientReferencePage)
@@ -70,7 +69,8 @@ class RemoveClientReferenceController @Inject() (
             Ok(
               view(
                 preparedForm,
-                regNumber
+                regNumber,
+                client.agentOwnRef.getOrElse("")
               )
             )
           )
@@ -90,41 +90,41 @@ class RemoveClientReferenceController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
-
       AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
 
-        case Some(_) =>
-  form
-    .bindFromRequest()
-    .fold(
-      formWithErrors =>
-        Future.successful(
-          BadRequest(
-            view(
-              formWithErrors,
-              regNumber
+        case Some(client) =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      regNumber,
+                      client.agentOwnRef.getOrElse("")
+                    )
+                  )
+                ),
+              value =>
+                Future
+                  .fromTry(
+                    request.userAnswers.set(
+                      RemoveClientReferencePage,
+                      value
+                    )
+                  )
+                  .flatMap { updatedAnswers =>
+                    sessionRepository.set(updatedAnswers).flatMap { _ =>
+                      if (value) {
+                        // TODO: integration ticket
+                        clearAndRedirect(updatedAnswers)
+                      } else {
+                        clearAndRedirect(updatedAnswers)
+                      }
+                    }
+                  }
             )
-          )
-        ),
-      value =>
-        Future
-          .fromTry(
-            request.userAnswers.set(
-              RemoveClientReferencePage,
-              value
-            )
-          )
-          .flatMap { updatedAnswers =>
-            sessionRepository.set(updatedAnswers).flatMap { _ =>
-              if (value) {
-                // TODO: integration ticket
-                clearAndRedirect(updatedAnswers)
-              } else {
-                clearAndRedirect(updatedAnswers)
-              }
-            }
-          }
-    )
 
         case None =>
           Future.successful(
@@ -136,12 +136,12 @@ class RemoveClientReferenceController @Inject() (
     }
 
   private def clearAndRedirect(
-                                userAnswers: models.UserAnswers
-                              ): Future[play.api.mvc.Result] =
+    userAnswers: models.UserAnswers
+  ): Future[play.api.mvc.Result] =
     for {
       clearedAnswers <- Future.fromTry(
-        userAnswers.remove(RemoveClientReferencePage)
-      )
+                          userAnswers.remove(RemoveClientReferencePage)
+                        )
 
       _ <- sessionRepository.set(clearedAnswers)
 
