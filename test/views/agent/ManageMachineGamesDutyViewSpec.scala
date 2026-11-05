@@ -29,7 +29,16 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
       val view          = app.injector.instanceOf[ManageMachineGamesDutyView]
       implicit val msgs = messages(app)
       val doc           = Jsoup.parse(
-        view("Agent 1", "Client Business", "XWM00000001770", 4, "27 January 2025", BigDecimal("700.19"), "debit")(
+        view(
+          true,
+          "Agent 1",
+          "Client Business",
+          "XWM00000001770",
+          4,
+          "27 January 2025",
+          BigDecimal("700.19"),
+          "debit"
+        )(
           FakeRequest(),
           msgs
         ).body
@@ -54,7 +63,16 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
       val view          = app.injector.instanceOf[ManageMachineGamesDutyView]
       implicit val msgs = messages(app)
       val doc           = Jsoup.parse(
-        view("Agent 1", "Client Business", "XWM00000001770", 4, "27 January 2025", BigDecimal("700.19"), "debit")(
+        view(
+          true,
+          "Agent 1",
+          "Client Business",
+          "XWM00000001770",
+          4,
+          "27 January 2025",
+          BigDecimal("700.19"),
+          "debit"
+        )(
           FakeRequest(),
           msgs
         ).body
@@ -67,6 +85,24 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         controllers.routes.ViewRegistrationCertificateController.onPageLoad().url
       doc.select("a:contains(Manage your client details)").attr("href") mustBe
         controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url
+    }
+  }
+
+  "ManageMachineGamesDutyView (organisation)" - {
+    "must not show the acting-on-behalf-of line or the Client details card" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[ManageMachineGamesDutyView]
+      implicit val msgs = messages(app)
+      val doc           = Jsoup.parse(
+        view(false, "", "", "XWM00000001770", 4, "27 January 2025", BigDecimal("700.19"), "debit")(
+          FakeRequest(),
+          msgs
+        ).body
+      )
+
+      doc.select(".govuk-grid-column-full p.govuk-body").eachText().toArray mustBe
+        Array("MGD registration number: XWM00000001770")
+      doc.select(".card-heading").eachText().toArray mustBe Array("Statement", "Returns", "Registration")
     }
   }
 }

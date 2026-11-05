@@ -26,7 +26,7 @@
         linkCard: LinkCard
 )
 
-@(agentName: String, clientName: String, regNumber: String, overdueReturns: Int, balanceDate: String, balance: BigDecimal, balanceType: String)(implicit request: Request[_], messages: Messages)
+@(isAgent: Boolean, agentName: String, clientName: String, regNumber: String, overdueReturns: Int, balanceDate: String, balance: BigDecimal, balanceType: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("agentManageMgdLanding.title")),
@@ -36,7 +36,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l govuk-!-margin-bottom-2">@messages("agentManageMgdLanding.heading")</h1>
-            <p class="govuk-body govuk-!-margin-bottom-2">@messages("agentManageMgdLanding.actingOnBehalfOf", agentName, clientName)</p>
+            @if(isAgent) {
+                <p class="govuk-body govuk-!-margin-bottom-2">@messages("agentManageMgdLanding.actingOnBehalfOf", agentName, clientName)</p>
+            }
             <p class="govuk-body govuk-!-margin-bottom-6">@messages("mgd.registration.number"): @regNumber</p>
         </div>
     </div>
@@ -66,9 +68,11 @@
                 CardLink("agentManageMgdLanding.registration.cancel", "#")
             )
         )
-        @linkCard(
-            "agentManageMgdLanding.clientDetails.heading",
-            Seq(CardLink("agentManageMgdLanding.clientDetails.manage", controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url))
-        )
+        @if(isAgent) {
+            @linkCard(
+                "agentManageMgdLanding.clientDetails.heading",
+                Seq(CardLink("agentManageMgdLanding.clientDetails.manage", controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url))
+            )
+        }
     </div>
 }

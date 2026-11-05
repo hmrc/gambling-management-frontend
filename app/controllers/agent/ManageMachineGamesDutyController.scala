@@ -21,7 +21,8 @@ import models.BusinessDetails
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import models.requests.DataRequest
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.agent.ManageMachineGamesDutyView
@@ -50,37 +51,71 @@ class ManageMachineGamesDutyController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.currentClient).async { implicit request =>
-      request.userAnswers
-        .get(SelectedClientPage)
-        .flatMap(AgentClientsPage.findInClientList(request.userAnswers, _)) match {
-        case None         =>
-          logger.warn("no selected client in userAnswers")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        case Some(client) =>
-          (for {
-            agentDetails  <- gamblingService.getAgentDetails
-            returnSummary <- gamblingService.getReturnSummary(client.regNumber)
-          } yield (agentDetails, returnSummary) match {
-            case (Right(details), Right(summary)) =>
-              Ok(
-                view(
-                  agentName = BusinessDetails.fromAgentDetails(details).businessName.getOrElse(""),
-                  clientName = client.clientName.getOrElse(""),
-                  regNumber = client.regNumber,
-                  overdueReturns = summary.returnsOverdue,
-                  // TODO: placeholder until the statement balance is available from the backend
-                  balanceDate = "27 January 2025",
-                  balance = BigDecimal("700.19"),
-                  balanceType = "debit"
-                )
-              )
-            case (agent, summary)                 =>
-              logger.error(s"failed to load agent landing data: agentDetails=$agent returnSummary=$summary")
-              Redirect(controllers.routes.SystemErrorController.onPageLoad())
-          }).recover { case e =>
-            logger.error("failed to load manage your machine games duty", e)
-            Redirect(controllers.routes.SystemErrorController.onPageLoad())
-          }
-      }
+      if request.isAgent then agentPage else organisationPage
     }
+
+  private def agentPage(using request: DataRequest[AnyContent]): Future[Result] =
+    request.userAnswers
+      .get(SelectedClientPage)
+      .flatMap(AgentClientsPage.findInClientList(request.userAnswers, _)) match {
+      case None         =>
+        logger.warn("no selected client in userAnswers")
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case Some(client) =>
+        (for {
+          agentDetails  <- gamblingService.getAgentDetails
+          returnSummary <- gamblingService.getReturnSummary(client.regNumber)
+        } yield (agentDetails, returnSummary) match {
+          case (Right(details), Right(summary)) =>
+            buildResult(
+              isAgent = true,
+              agentName = BusinessDetails.fromAgentDetails(details).businessName.getOrElse(""),
+              clientName = client.clientName.getOrElse(""),
+              regNumber = client.regNumber,
+              overdueReturns = summary.returnsOverdue
+            )
+          case (agent, summary)                 =>
+            logger.error(s"failed to load agent landing data: agentDetails=$agent returnSummary=$summary")
+            Redirect(controllers.routes.SystemErrorController.onPageLoad())
+        }).recover(systemError)
+    }
+
+  private def organisationPage(using request: DataRequest[AnyContent]): Future[Result] =
+    gamblingService
+      .getReturnSummary(request.mgdRegNum)
+      .map {
+        case Right(summary) => buildResult(isAgent = false, "", "", request.mgdRegNum, summary.returnsOverdue)
+        case Left(error)    =>
+          logger.error(s"failed to load return summary for organisation: $error")
+          Redirect(controllers.routes.SystemErrorController.onPageLoad())
+      }
+      .recover(systemError)
+
+  private def buildResult(
+    isAgent: Boolean,
+    agentName: String,
+    clientName: String,
+    regNumber: String,
+    overdueReturns: Int
+  )(using
+    request: DataRequest[AnyContent]
+  ): Result =
+    Ok(
+      view(
+        isAgent = isAgent,
+        agentName = agentName,
+        clientName = clientName,
+        regNumber = regNumber,
+        overdueReturns = overdueReturns,
+        // TODO: placeholder until the statement balance is available from the backend
+        balanceDate = "27 January 2025",
+        balance = BigDecimal("700.19"),
+        balanceType = "debit"
+      )
+    )
+
+  private val systemError: PartialFunction[Throwable, Result] = { case e =>
+    logger.error("failed to load manage your machine games duty", e)
+    Redirect(controllers.routes.SystemErrorController.onPageLoad())
+  }
 }

@@ -50,6 +50,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
 
   private def controller(
     ua: UserAnswers,
+    identify: AuthorisedAction = new FakeAgentIdentifierAction(bodyParsers),
     agentDetails: Either[GamblingError, AgentDetails] = Right(details),
     summary: Either[ReturnSummaryError, ReturnSummary] = Right(ReturnSummary(client.regNumber, 1, 4))
   ) = {
@@ -58,7 +59,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
     when(service.getReturnSummary(any())(using any())).thenReturn(Future.successful(summary))
     new ManageMachineGamesDutyController(
       mcc.messagesApi,
-      new FakeAgentIdentifierAction(bodyParsers),
+      identify,
       new PassThroughClientListCheckAction(),
       new FakeDataRetrievalAction(Some(ua)),
       new DataRequiredActionImpl(),
@@ -79,6 +80,15 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
         .first()
         .text() mustBe "Agent 1 acting on behalf of Client Business"
       doc.select(".card-body p").last().text() mustBe "You have 4 overdue returns."
+    }
+
+    "renders the page without the agent line or Client details card for an organisation" in {
+      val result =
+        controller(UserAnswers("id"), identify = new FakeIdentifierAction(bodyParsers)).onPageLoad()(FakeRequest())
+      status(result) mustBe OK
+      val doc    = Jsoup.parse(contentAsString(result))
+      doc.select(".card-heading").eachText().toArray mustBe Array("Statement", "Returns", "Registration")
+      doc.text must not include "acting on behalf of"
     }
 
     "redirects to JourneyRecovery when no client is selected" in {
