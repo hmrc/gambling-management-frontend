@@ -53,7 +53,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
                   ).withVisuallyHiddenText(messages("")),
                   ActionItemViewModel(
                     Text("RemoveLink"),
-                    "/manage-gambling-tax/agent/manage-your-details/remove-client/XMM00000000123"
+                    "/manage-gambling-tax/agent/manage-your-details/remove-client/XMM00000000123" //TODO: use correct url
                   ).withVisuallyHiddenText(messages(""))
                 )
               )

@@ -30,7 +30,7 @@ class ClientDetailsViewsSpec extends SpecBase {
   private implicit val request: Request[?] =
     play.api.test.CSRFTokenHelper.addCSRFToken(FakeRequest())
   private implicit val messages: Messages  = app.injector.instanceOf[MessagesApi].preferred(request)
-  
+
   "ChangeClientReferenceView" - {
     val view = app.injector.instanceOf[ChangeClientReferenceView]
     val form = new ChangeClientReferenceFormProvider()()

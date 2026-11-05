@@ -35,9 +35,9 @@ object ClientListViewModel {
       )
     }
 
-  def filterByName(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
-    val trimmed = query.trim.toLowerCase
-    if (trimmed.isEmpty) clients
-    else clients.filter(_.clientName.toLowerCase.contains(trimmed))
+  def filterByName(nameQuery: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
+    val nameQuerySanitised = nameQuery.trim.toLowerCase
+    if (nameQuerySanitised.isEmpty) clients
+    else clients.filter(_.clientName.toLowerCase.contains(nameQuerySanitised))
   }
 }
