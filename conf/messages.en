@@ -291,3 +291,8 @@ agentManageYourDetails.clientSearch.download = Download client list
 agentManageYourDetails.businessDetails.heading = Your business details
 agentManageYourDetails.businessDetails.check = Check your business details
 agentManageYourDetails.clientSearch.empty = You have no clients to view.
+
+removeClientReference.title=Are you sure you want to remove {0}?
+removeClientReference.heading=Are you sure you want to remove {0}?
+removeClientReference.caption=Manage your client details
+removeClientReference.error.required=Select Select if you want to remove {0}
