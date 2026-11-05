@@ -29,62 +29,62 @@ class ClientDetailsSummarySpec extends SpecBase {
   private def changeClientReferenceUrl(regNumber: String) =
     controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
 
-  private def removeClientReferenceUrl =
-    controllers.businessdetails.routes.RemoveEmailAddressController.onPageLoad().url //TODO :use correct url
-    
-  private val clientName = "ABC Ltd"
-  private val regNumber = "XVM00000001001"
+//  private def removeClientReferenceUrl =
+//    controllers.businessdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url //TODO :uncomment to use correct url
+
+  private val clientName      = "ABC Ltd"
+  private val regNumber       = "XVM00000001001"
   private val clientReference = "EZ00100"
 
   "ClientDetailsSummary" - {
 
-    "must show a 'Change' link with no remove action when empty" in {
+    "must show a clientName row with an empty Action" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference)
-      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
+      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
+      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientName"))).value
 
-      row.value.content mustBe Text(msgs("changeBusinessContact.notProvided"))
-      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeClientReferenceUrl
+      row.value.content mustBe Text(msgs("ABC Ltd"))
+      row.actions.value.items.head.content mustBe Text(msgs(""))
+      row.actions.value.items.head.href mustBe "#"
+      row.actions.value.classes mustBe "govuk-!-width-one-third"
     }
 
-    "must show the normal value with a change & remove action when value is entered" in {
+    "must show a regNumber row with NO Action" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
-      val answers =
-        emptyUserAnswers.set(ChangeEmailAddressPage, "01234567890123456789@01234567890123456789.co.uk").success.value
+      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
+      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.regNumber"))).value
 
-      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference)
-      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
+      row.value.content mustBe Text(msgs("XVM00000001001"))
+      row.actions mustBe None
+    }
 
-      row.value.content mustBe Text("01234567890123456789@01234567890123456789.co.uk")
+    "must show a clientReference row with a 'Change' Action with no remove action when clientReference is SPACES" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val rows = ClientDetailsSummary.rows(clientName, regNumber, "      ").rows
+      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientReference"))).value
+
+      row.value.content mustBe Text(msgs("manageClientDetails.notProvided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeClientReferenceUrl
+      row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
+      row.actions.value.items.size mustBe 1
+    }
+
+    "must show a clientReference row with with a change & remove action when value is entered" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
+      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientReference"))).value
+
+      row.value.content mustBe Text("EZ00100")
+      row.actions.value.items.size mustBe 2
+      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
+      row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
-      row.actions.value.items(1).href mustBe removeClientReferenceUrl
-    }
-
-    "must show 'Not provided' with only a 'Change' link when the email has been removed, even though the change page still holds the old value" in {
-      implicit val msgs: Messages = messages(applicationBuilder().build())
-
-      val answers =
-        emptyUserAnswers
-          .set(ChangeEmailAddressPage, "someone@example.com")
-          .success
-          .value
-          .set(RemoveEmailAddressPage, true)
-          .success
-          .value
-
-      val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference)
-      val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.emailAddress"))).value
-
-      row.value.content mustBe Text(msgs("changeBusinessContact.notProvided"))
-      row.actions.value.items.size mustBe 1
-      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeClientReferenceUrl
+      row.actions.value.items(1).href mustBe "#"
     }
   }
 }

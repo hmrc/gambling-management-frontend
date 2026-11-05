@@ -26,6 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import viewmodels.govuk.summarylist.{ActionItemViewModel, FluentActionItem}
 import views.html.clientdetails.*
+import ManageClientDetailsViewUtil.*
 
 class ManageClientDetailsViewSpec extends SpecBase {
 
@@ -35,45 +36,105 @@ class ManageClientDetailsViewSpec extends SpecBase {
   private implicit val messages: Messages  = app.injector.instanceOf[MessagesApi].preferred(request)
 
   "ManageClientDetailsView" - {
-    "renders the client details and change/remove links" in {
-      val summaryList = SummaryList(
-        rows = Seq(
-          SummaryListRow(key = Key(Text("Row 1")), value = Value(Text("Acme Casinos"))),
-          SummaryListRow(key = Key(Text("Row 2")), value = Value(Text("XMM00000000123"))),
-          SummaryListRow(
-            key = Key(Text("Row 3")),
-            value = Value(Text("clientRef123")),
-            actions = Some(
-              Actions(
-                classes = "govuk-!-width-one-third",
-                items = Seq(
-                  ActionItemViewModel(
-                    Text("ChangeLink"),
-                    "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
-                  ).withVisuallyHiddenText(messages("")),
-                  ActionItemViewModel(
-                    Text("RemoveLink"),
-                    "/manage-gambling-tax/agent/manage-your-details/remove-client/XMM00000000123" //TODO: use correct url
-                  ).withVisuallyHiddenText(messages(""))
-                )
-              )
-            )
-          )
-        )
-      )
+
+    "renders the client details and change/remove links when clientReference is populated" in {
 
       val view = app.injector.instanceOf[ManageClientDetailsView]
-      val doc  = Jsoup.parse(view("Acme Casinos", summaryList).body)
+      val doc  = Jsoup.parse(view("XMM00000000123", summaryListWithChangeAndRemove(messages)).body)
 
       doc.text must include("Acme Casinos")
       doc.text must include("XMM00000000123")
       doc.text must include("clientRef123")
 
-      val hrefs = doc.select("a").eachAttr("href").toArray
-      hrefs must contain(
+      val ddActions = doc.select("dd").toArray
+      ddActions(3).toString must include("<dd class=\"govuk-summary-list__actions govuk-!-width-one-third\">")
+
+      val ddHrefs = doc.select("dd>ul a").eachAttr("href").toArray
+      ddHrefs must contain(
         controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
       )
-      hrefs must contain(controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url)
+      //ddHrefs must contain(controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url) TODO : uncomment
+      ddHrefs must have size 2
+
+      val pHrefs = doc.select("p.govuk-body a").eachAttr("href").toArray
+      pHrefs must contain(
+        controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url
+      )
+    }
+
+    "renders the client details and change link ONLY when clientReference is EMPTY" in {
+
+      val view = app.injector.instanceOf[ManageClientDetailsView]
+      val doc = Jsoup.parse(view("XMM00000000123", summaryListWithChangeOnly(messages)).body)
+
+      doc.text must include("Acme Casinos")
+      doc.text must include("XMM00000000123")
+      doc.text must include("Not provided")
+
+      val ddActions = doc.select("dd").toArray
+      ddActions(3).toString must include("<dd class=\"govuk-summary-list__actions govuk-!-width-one-third\">")
+
+      val ddHrefs = doc.select("dd a").eachAttr("href").toArray
+      ddHrefs must contain(
+        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+      )
+      ddHrefs must have size 1
+
+      val pHrefs = doc.select("p.govuk-body a").eachAttr("href").toArray
+      pHrefs must contain(
+        controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url
+      )
     }
   }
+}
+
+object ManageClientDetailsViewUtil {
+  def summaryListWithChangeAndRemove(messages: Messages) = SummaryList(
+    rows = Seq(
+      SummaryListRow(key = Key(Text("Row 1")), value = Value(Text("Acme Casinos"))),
+      SummaryListRow(key = Key(Text("Row 2")), value = Value(Text("XMM00000000123"))),
+      SummaryListRow(
+        key = Key(Text("Row 3")),
+        value = Value(Text("clientRef123")),
+        actions = Some(
+          Actions(
+            classes = "govuk-!-width-one-third",
+            items = Seq(
+              ActionItemViewModel(
+                Text("ChangeLink"),
+                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+              ).withVisuallyHiddenText(messages("")),
+              ActionItemViewModel(
+                Text("RemoveLink"),
+                "/manage-gambling-tax/agent/remove-client-reference/XMM00000000123" // TODO: use correct url
+              ).withVisuallyHiddenText(messages(""))
+            )
+          )
+        )
+      )
+    )
+  )
+
+  def summaryListWithChangeOnly(messages: Messages) = SummaryList(
+    rows = Seq(
+      SummaryListRow(key = Key(Text("Row 1")), value = Value(Text("Acme Casinos"))),
+      SummaryListRow(key = Key(Text("Row 2")), value = Value(Text("XMM00000000123"))),
+      SummaryListRow(
+        key = Key(Text("Row 3")),
+        value = Value(Text("Not provided")),
+        actions = Some(
+          Actions(
+            classes = "govuk-!-width-one-third",
+            items = Seq(
+              ActionItemViewModel(
+                Text("ChangeLink"),
+                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+              ).withVisuallyHiddenText(messages(""))
+            )
+          )
+        )
+      )
+    )
+  )
+
 }

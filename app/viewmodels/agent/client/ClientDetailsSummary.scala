@@ -52,7 +52,7 @@ object ClientDetailsSummary {
     )
 
     val clientReferenceRow =
-      if (clientReference.isEmpty)
+      if (clientReference.trim.isEmpty)
         SummaryListRow(
           key = KeyViewModel(Text(messages("manageClientDetails.clientReference"))),
           value = ValueViewModel(Text(messages("manageClientDetails.notProvided"))),
@@ -81,7 +81,7 @@ object ClientDetailsSummary {
                 ).withVisuallyHiddenText(messages("manageClientDetails.clientReference")),
                 ActionItemViewModel(
                   Text(messages("site.remove")),
-                  "#"
+                  "#" // controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url  TODO: uncomment
                 ).withVisuallyHiddenText(messages("manageClientDetails.clientReference"))
               )
             )
