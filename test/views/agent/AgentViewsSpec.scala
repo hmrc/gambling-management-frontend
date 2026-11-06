@@ -23,6 +23,7 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import viewmodels.agent.ClientListViewModel
 import views.html.agent.*
+import models.PaginationParams
 
 class AgentViewsSpec extends SpecBase {
 
@@ -78,11 +79,12 @@ class AgentViewsSpec extends SpecBase {
     val view = app.injector.instanceOf[ClientListView]
 
     "renders a row with a select link per client" in {
-      val clients = Seq(
-        ClientListViewModel("Acme Casinos", "RN1", "ref1"),
-        ClientListViewModel("Bingo Ltd", "RN2", "ref2")
+      val clients    = Seq(
+        ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"),
+        ClientListViewModel("Bingo Ltd", "RN2", "ref2", "remove2")
       )
-      val doc     = Jsoup.parse(view(clients, "").body)
+      val pagination = PaginationParams(clients.size, 10, 1)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
 
       doc.select("tbody tr").size mustBe 2
       doc.text                                 must include("Acme Casinos")
@@ -92,9 +94,66 @@ class AgentViewsSpec extends SpecBase {
     }
 
     "renders the no-results message when the list is empty" in {
-      val doc = Jsoup.parse(view(Seq.empty, "abc").body)
+      val pagination = PaginationParams(0, 10, 1)
+      val doc        = Jsoup.parse(view(Seq.empty, "abc", pagination).body)
+
       doc.text must include(messages("clientList.noResults"))
     }
+
+    "renders pagination when more than 10 clients exist" in {
+      val clients    = Seq(ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"))
+      val pagination = PaginationParams(15, 10, 1)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.select(".govuk-pagination").size mustBe 1
+      doc.select(".govuk-pagination__next a").attr("href") mustBe
+        controllers.agent.routes.ClientListController.onPageLoad().url + "?page=2"
+    }
+
+    "renders the remove link for each client" in {
+      val clients    = Seq(
+        ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"),
+        ClientListViewModel("Bingo Ltd", "RN2", "ref2", "remove2")
+      )
+      val pagination = PaginationParams(clients.size, 10, 1)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.select("a[href='remove1']").size mustBe 1
+      doc.select("a[href='remove2']").size mustBe 1
+    }
+
+    "renders previous and next links on the middle page" in {
+      val clients    = Seq(ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"))
+      val pagination = PaginationParams(30, 10, 2)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.select(".govuk-pagination__prev a").attr("href") mustBe
+        controllers.agent.routes.ClientListController.onPageLoad().url + "?page=1"
+
+      doc.select(".govuk-pagination__next a").attr("href") mustBe
+        controllers.agent.routes.ClientListController.onPageLoad().url + "?page=3"
+
+      doc.select(".govuk-pagination__item--current a").text mustBe "2"
+    }
+
+    "renders previous link but no next link on the last page" in {
+      val clients    = Seq(ClientListViewModel("Bingo Ltd", "RN2", "ref2", "remove2"))
+      val pagination = PaginationParams(25, 10, 3)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.select(".govuk-pagination__prev").size mustBe 1
+      doc.select(".govuk-pagination__next").size mustBe 0
+    }
+
+    "preserves and encodes search query in pagination links" in {
+      val clients     = Seq(ClientListViewModel("Smith Limited", "RN1", "ref1", "remove1"))
+      val pagination  = PaginationParams(25, 10, 1)
+      val doc         = Jsoup.parse(view(clients, "Smith Limited", pagination).body)
+      val nextPageUrl = controllers.agent.routes.ClientListController.onPageLoad().url + "?page=2&search=Smith+Limited"
+
+      doc.select(".govuk-pagination__next a").attr("href") mustBe nextPageUrl
+    }
+
   }
 
   "SecurityCheckView" - {

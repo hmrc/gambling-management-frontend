@@ -45,10 +45,10 @@ class ClientListControllerSpec extends SpecBase {
   private val clientListCheck = new PassThroughClientListCheckAction()
 
   private class StubManageService(clients: List[AgentClient]) extends ManageService(null, null) {
+
     override def resolveAndStoreAgentClients(ua: UserAnswers)(using
       HeaderCarrier
-    ): Future[(List[AgentClient], UserAnswers)] =
-      Future.successful((clients, ua))
+    ): Future[(List[AgentClient], UserAnswers)] = Future.successful((clients, ua))
   }
 
   private def controller(clients: List[AgentClient], userAnswers: Option[UserAnswers]) =
@@ -63,6 +63,16 @@ class ClientListControllerSpec extends SpecBase {
       view
     )
 
+  private def createClients(count: Int): List[AgentClient] =
+    (1 to count).map { i =>
+      AgentClient(
+        regime = "MGD",
+        regNumber = f"XVM$i%011d",
+        clientName = Some(f"Test Client $i%02d"),
+        agentOwnRef = Some(s"REF$i")
+      )
+    }.toList
+
   "onPageLoad" - {
 
     "renders the client list when clients are returned" in {
@@ -75,6 +85,225 @@ class ClientListControllerSpec extends SpecBase {
       val result = controller(Nil, Some(emptyUserAnswers)).onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.agent.routes.NoAuthorisedClientsController.onPageLoad().url
+    }
+
+    "display only 10 clients on the first page" in {
+      val result = controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?page=1")
+      )
+
+      status(result) mustBe OK
+
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 10")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
+    }
+
+    "display remaining clients on the second page" in {
+      val result = controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?page=2")
+      )
+
+      status(result) mustBe OK
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 5
+      doc.select("tbody").text must include("Test Client 05")
+      doc.select("tbody").text must include("Test Client 09")
+      doc.select("tbody").text must not include "Test Client 01"
+      doc.select("tbody").text must not include "Test Client 11"
+    }
+
+    "display all clients when fewer than 10 exist" in {
+      val result =
+        controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(FakeRequest("GET", "/agent/client-list"))
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+
+      body must include("ABC Ltd")
+      body must include("XYZ Builders")
+      body must include("Betelgeuse Construction 3")
+      body must include("Heritage Contractors 4")
+    }
+
+    "filter clients by partial client name" in {
+      val result = controller(clientsList, Some(emptyUserAnswers))
+        .onPageLoad()(FakeRequest("GET", "/agent/client-list?search=ABC"))
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+
+      body must include("ABC Ltd")
+      body must not include "XYZ Builders"
+    }
+
+    "filter clients by partial agent own reference" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=UP3")
+      )
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include("Betelgeuse Construction 3")
+      body must not include "ABC Ltd"
+    }
+
+    "filter clients using a full registration number" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=XVM00000001001")
+      )
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include("ABC Ltd")
+      body must not include "XYZ Builders"
+    }
+
+    "not match a partial registration number" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=XVM000")
+      )
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must not include "ABC Ltd"
+      body must not include "XYZ Builders"
+    }
+
+    "search clients case insensitively" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=abc")
+      )
+
+      status(result) mustBe OK
+      contentAsString(result) must include("ABC Ltd")
+    }
+
+    "display all clients when the search is cleared" in {
+      val result =
+        controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(FakeRequest("GET", "/agent/client-list"))
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include("ABC Ltd")
+      body must include("XYZ Builders")
+      body must include("Betelgeuse Construction 3")
+      body must include("Heritage Contractors 4")
+    }
+
+    "display the clear search link" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=ABC")
+      )
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include(controllers.agent.routes.ClientListController.onPageLoad().url)
+    }
+
+    "display a remove link for each client" in {
+      val result =
+        controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(FakeRequest("GET", "/agent/client-list"))
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include("Remove")
+      body must include("ABC Ltd")
+      body must include("XYZ Builders")
+    }
+
+    "preserve the search query when navigating between pages" in {
+      val testClients = createClients(15).map(client => client.copy(clientName = Some("Smith Limited")))
+      val result      = controller(testClients, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=Smith")
+      )
+
+      status(result) mustBe OK
+
+      val body = contentAsString(result)
+      body must include("search=Smith")
+      body must include("page=2")
+    }
+
+    "return to the first page when no page parameter is provided" in {
+      val result =
+        controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+          FakeRequest("GET", "/agent/client-list")
+        )
+
+      status(result) mustBe OK
+
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
+    }
+
+    "handle invalid page parameters by showing the first page" in {
+      val result = controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?page=invalid")
+      )
+
+      status(result) mustBe OK
+
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
+    }
+
+    "redirects to system error when manage service fails" in {
+      val failingService = new ManageService(null, null) {
+        override def resolveAndStoreAgentClients(ua: UserAnswers)(using
+          HeaderCarrier
+        ): Future[(List[AgentClient], UserAnswers)] =
+          Future.failed(new RuntimeException("Service unavailable"))
+      }
+
+      val controller = new ClientListController(
+        mcc.messagesApi,
+        new FakeAgentIdentifierAction(bodyParsers),
+        clientListCheck,
+        new FakeDataRetrievalAction(Some(emptyUserAnswers)),
+        new DataRequiredActionImpl(),
+        failingService,
+        mcc,
+        view
+      )
+
+      val result = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.routes.SystemErrorController.onPageLoad().url
+    }
+
+    "handle a page number greater than the total pages" in {
+      val result = controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?page=100")
+      )
+
+      status(result) mustBe OK
+
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 5
+      doc.select("tbody").text must include("Test Client 05")
+      doc.select("tbody").text must include("Test Client 09")
+      doc.select("tbody").text must not include "Test Client 01"
+      doc.select("tbody").text must not include "Test Client 15"
     }
   }
 

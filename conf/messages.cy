@@ -19,6 +19,11 @@ date.error.day = day
 date.error.month = month
 date.error.year = year
 
+site.pagination.goToPage                                =  Go to page {0}
+site.pagination.landmark                                =  Pagination
+site.pagination.previous                                =  Previous
+site.pagination.next                                    =  Next
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -150,8 +155,11 @@ clientList.search.label = Search by client name
 clientList.search.button = Search
 clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
-clientList.th.regNumber = Registration number
+clientList.th.regNumber = MGD registration number
 clientList.th.clientReference = Client reference
+clientList.th.remove.action = Action
+clientList.th.remove = Remove
+clientList.pagination.displaying = Displaying {0} to {1} of {2} records
 clientList.download.th.clientName = Enw’r cleient
 clientList.download.th.regNumber = Cyfeirnod Toll Peiriannau Hapchwarae
 clientList.download.th.clientReference = Eich cyfeirnod cleient

@@ -18,10 +18,13 @@ package viewmodels.agent
 
 import models.agent.AgentClient
 
+private val mgdRegistrationNumberRegex = "^X[A-Z]M[0-9]{11}$"
+
 case class ClientListViewModel(
   clientName: String,
   regNumber: String,
-  clientReference: String
+  clientReference: String,
+  removeLink: String
 )
 
 object ClientListViewModel {
@@ -31,13 +34,30 @@ object ClientListViewModel {
       ClientListViewModel(
         clientName = client.clientName.getOrElse(""),
         regNumber = client.regNumber,
-        clientReference = client.agentOwnRef.getOrElse("")
+        clientReference = client.agentOwnRef.getOrElse(""),
+        removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad(client.regNumber).url
       )
     }
 
-  def filterByName(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
-    val trimmed = query.trim.toLowerCase
-    if (trimmed.isEmpty) clients
-    else clients.filter(_.clientName.toLowerCase.contains(trimmed))
+  def filterByField(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
+    val search      = query.trim
+    val searchLower = search.toLowerCase
+
+    if (search.matches(mgdRegistrationNumberRegex)) {
+      clients.filter(_.regNumber.equalsIgnoreCase(search))
+    } else {
+      clients
+        .filter(c =>
+          search.isEmpty || c.clientReference.toLowerCase.contains(searchLower) || c.clientName.toLowerCase
+            .contains(searchLower)
+        )
+        .sortBy(c =>
+          (
+            if (c.clientReference.toLowerCase.contains(searchLower)) 0 else 1,
+            c.clientReference.toLowerCase,
+            c.clientName.toLowerCase
+          )
+        )
+    }
   }
 }
