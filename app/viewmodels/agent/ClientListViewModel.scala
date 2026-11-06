@@ -18,6 +18,8 @@ package viewmodels.agent
 
 import models.agent.AgentClient
 
+private val mgdRegistrationNumberRegex = "^X[A-Z]M[0-9]{11}$"
+
 case class ClientListViewModel(
   clientName: String,
   regNumber: String,
@@ -38,15 +40,23 @@ object ClientListViewModel {
     }
 
   def filterByField(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
-    val search = query.trim.toLowerCase
-    if (search.isEmpty) clients
-    else {
-      clients.find(_.regNumber.equalsIgnoreCase(search)) match {
-        case Some(client) => Seq(client)
-        case None         =>
-          val (refMatches, name) = clients.partition(_.clientReference.toLowerCase.contains(search))
-          refMatches ++ name.filter(_.clientName.toLowerCase.contains(search))
-      }
+    val search      = query.trim
+    val searchLower = search.toLowerCase
+
+    if (search.matches(mgdRegistrationNumberRegex)) {
+      clients.filter(_.regNumber.equalsIgnoreCase(search))
+    } else {
+      clients
+        .filter(c =>
+          search.isEmpty || c.clientReference.toLowerCase.contains(searchLower) || c.clientName.toLowerCase.contains(searchLower)
+        )
+        .sortBy(c =>
+          (
+            if (c.clientReference.toLowerCase.contains(searchLower)) 0 else 1,
+            c.clientReference.toLowerCase,
+            c.clientName.toLowerCase
+          )
+        )
     }
   }
 }

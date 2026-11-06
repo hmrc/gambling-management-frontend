@@ -94,11 +94,12 @@ class ClientListControllerSpec extends SpecBase {
 
       status(result) mustBe OK
 
-      val body = contentAsString(result)
-      body must include("Test Client 01")
-      body must include("Test Client 10")
-      body must not include "Test Client 11"
-      body must not include "Test Client 15"
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 10")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
     }
 
     "display remaining clients on the second page" in {
@@ -107,13 +108,12 @@ class ClientListControllerSpec extends SpecBase {
       )
 
       status(result) mustBe OK
-
-      val body = contentAsString(result)
-
-      body must include("Test Client 11")
-      body must include("Test Client 15")
-      body must not include "Test Client 01"
-      body must not include "Test Client 10"
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 5
+      doc.select("tbody").text must include("Test Client 05")
+      doc.select("tbody").text must include("Test Client 09")
+      doc.select("tbody").text must not include "Test Client 01"
+      doc.select("tbody").text must not include "Test Client 11"
     }
 
     "display all clients when fewer than 10 exist" in {
@@ -238,13 +238,17 @@ class ClientListControllerSpec extends SpecBase {
 
     "return to the first page when no page parameter is provided" in {
       val result =
-        controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(FakeRequest("GET", "/agent/client-list"))
+        controller(createClients(15), Some(emptyUserAnswers)).onPageLoad()(
+          FakeRequest("GET", "/agent/client-list")
+        )
 
       status(result) mustBe OK
 
-      val body = contentAsString(result)
-      body must include("Test Client 01")
-      body must not include "Test Client 11"
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
     }
 
     "handle invalid page parameters by showing the first page" in {
@@ -254,9 +258,11 @@ class ClientListControllerSpec extends SpecBase {
 
       status(result) mustBe OK
 
-      val body = contentAsString(result)
-      body must include("Test Client 01")
-      body must not include "Test Client 11"
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 10
+      doc.select("tbody").text must include("Test Client 01")
+      doc.select("tbody").text must include("Test Client 11")
+      doc.select("tbody").text must not include "Test Client 05"
     }
 
     "redirects to system error when manage service fails" in {
@@ -292,10 +298,12 @@ class ClientListControllerSpec extends SpecBase {
 
       status(result) mustBe OK
 
-      val body = contentAsString(result)
-      body must include("Test Client 11")
-      body must include("Test Client 15")
-      body must not include "Test Client 01"
+      val doc = org.jsoup.Jsoup.parse(contentAsString(result))
+      doc.select("tbody tr").size mustBe 5
+      doc.select("tbody").text must include("Test Client 05")
+      doc.select("tbody").text must include("Test Client 09")
+      doc.select("tbody").text must not include "Test Client 01"
+      doc.select("tbody").text must not include "Test Client 15"
     }
   }
 
