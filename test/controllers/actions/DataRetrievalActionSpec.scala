@@ -45,7 +45,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val action            = new Harness(sessionRepository)
 
         val result =
-          action.callTransform(AuthorisedRequest(FakeRequest(), AffinityGroup.Organisation, "id")).futureValue
+          action
+            .callTransform(AuthorisedRequest(FakeRequest(), AffinityGroup.Organisation, "mgd", sessionId = "id"))
+            .futureValue
 
         result.userAnswers must not be defined
       }
@@ -60,7 +62,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val action            = new Harness(sessionRepository)
 
         val result =
-          action.callTransform(new AuthorisedRequest(FakeRequest(), AffinityGroup.Organisation, "id")).futureValue
+          action
+            .callTransform(new AuthorisedRequest(FakeRequest(), AffinityGroup.Organisation, "mgd", sessionId = "id"))
+            .futureValue
 
         result.userAnswers mustBe defined
       }

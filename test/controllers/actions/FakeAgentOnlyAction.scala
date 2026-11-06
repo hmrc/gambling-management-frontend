@@ -33,7 +33,8 @@ class FakeAgentOnlyAction @Inject() (bodyParsers: PlayBodyParsers) extends Agent
         mgdRegNum = "",
         userId = "internal-id",
         isAgent = true,
-        agentReference = Some("agent-ref")
+        agentReference = Some("agent-ref"),
+        sessionId = "internal-id"
       )
     )
 

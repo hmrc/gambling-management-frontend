@@ -28,14 +28,17 @@ class DataRetrievalActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends DataRetrievalAction {
 
-  override protected def transform[A](request: AuthorisedRequest[A]): Future[OptionalDataRequest[A]] = {
-    // Agents key their session on the stable internalId; organisations key on their mgdRegNum.
-    val sessionKey = if request.isAgent then request.userId else request.mgdRegNum
-
-    sessionRepository.get(sessionKey).map { userAnswers =>
-      OptionalDataRequest(request.request, request.mgdRegNum, userAnswers, request.userId, request.isAgent)
+  override protected def transform[A](request: AuthorisedRequest[A]): Future[OptionalDataRequest[A]] =
+    sessionRepository.get(request.sessionId).map { userAnswers =>
+      OptionalDataRequest(
+        request.request,
+        request.mgdRegNum,
+        userAnswers,
+        request.userId,
+        request.isAgent,
+        request.sessionId
+      )
     }
-  }
 }
 
 trait DataRetrievalAction extends ActionTransformer[AuthorisedRequest, OptionalDataRequest]
