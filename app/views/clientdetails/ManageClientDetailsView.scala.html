@@ -15,14 +15,17 @@
  *@
 
 @import views.html.components.*
+@import viewmodels.govuk.summarylist.FluentSummaryList
+
 
 @this(
         layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
         h1: H1,
         link: Link
 )
 
-@(clientName: String, regNumber: String, clientReference: String)(implicit request: Request[_], messages: Messages)
+@(regNumber: String, summaryList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("manageClientDetails.title")),
@@ -30,32 +33,13 @@
     showSignOut = true
 ) {
 
-    @h1(msg = "manageClientDetails.heading", args = Seq(clientName), classes = "govuk-heading-l")
+    @h1(msg = "manageClientDetails.heading", classes = "govuk-heading-l")
 
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.clientName")</dt>
-            <dd class="govuk-summary-list__value">@clientName</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.regNumber")</dt>
-            <dd class="govuk-summary-list__value">@regNumber</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("manageClientDetails.clientReference")</dt>
-            <dd class="govuk-summary-list__value">@clientReference</dd>
-            <dd class="govuk-summary-list__actions">
-                @link(
-                    linkTextKey = "manageClientDetails.change",
-                    linkUrl = controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
-                )
-            </dd>
-        </div>
-    </dl>
+    @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-6"))
 
     <p class="govuk-body">
         @link(
-            linkTextKey = "manageClientDetails.remove",
+            linkTextKey = "manageClientDetails.remove.client",
             linkUrl = controllers.clientdetails.routes.RemoveClientController.onPageLoad(regNumber).url
         )
     </p>

@@ -16,7 +16,7 @@
 
 package controllers.clientdetails
 
-import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.*
 import pages.clientdetails.ChangeClientReferencePage
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
@@ -24,6 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.agent.client.ClientDetailsSummary
 import views.html.clientdetails.ManageClientDetailsView
 
 import javax.inject.Inject
@@ -52,7 +53,7 @@ class ManageClientDetailsController @Inject() (
       andThen hasClientGuard.currentClient).async { implicit request =>
       request.userAnswers
         .get(SelectedClientPage)
-        .flatMap(id => AgentClientsPage.findInClientList(request.userAnswers, id)) match {
+        .flatMap(regNum => AgentClientsPage.findInClientList(request.userAnswers, regNum)) match {
         case Some(client) =>
           val clientReference = client.agentOwnRef.getOrElse("")
           for {
@@ -60,9 +61,9 @@ class ManageClientDetailsController @Inject() (
             _              <- sessionRepository.set(updatedAnswers)
           } yield Ok(
             view(
-              clientName = client.clientName.getOrElse(""),
               regNumber = client.regNumber,
-              clientReference = clientReference
+              summaryList =
+                ClientDetailsSummary.rows(client.clientName.getOrElse(""), client.regNumber, clientReference)
             )
           )
 
