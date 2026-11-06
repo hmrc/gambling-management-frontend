@@ -65,7 +65,7 @@ class ClientListViewModelSpec extends SpecBase {
       )
     }
 
-    "must filter a Seq[ClientListViewModel] when provided name is NOT FOUND" in {
+    "must return an empty Seq[ClientListViewModel] when provided name is NOT FOUND" in {
       val result = ClientListViewModel.filterByName("NOT_FOUND", AgentClientUtil.clientsListAsViewModel)
       result mustBe List.empty
     }
