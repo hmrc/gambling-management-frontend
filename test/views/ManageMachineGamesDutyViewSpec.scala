@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.agent
+package views
 
 import base.SpecBase
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
-import views.html.agent.ManageMachineGamesDutyView
+import views.html.ManageMachineGamesDutyView
 
 class ManageMachineGamesDutyViewSpec extends SpecBase {
 
@@ -78,8 +78,16 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         ).body
       )
 
-      val payment = doc.select("a:contains(Make a payment)").first()
-      payment.attr("href") mustBe "https://www.tax.service.gov.uk/pay/enter-machine-games-duty-reference"
+      val appConfig = app.injector.instanceOf[config.AppConfig]
+      val payment   = doc.select("a:contains(Make a payment)").first()
+      payment.attr("href") mustBe appConfig.makePaymentUrl
+      doc
+        .select("a:contains(File a return)")
+        .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-return"
+      doc.select("a:contains(Cancel registration)").attr("href") mustBe
+        s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling"
+      doc.select("a:contains(View account statement)").attr("href") mustBe s"${appConfig.landpFrontend}/statement"
+      doc.select("a:contains(View filed returns)").attr("href") mustBe s"${appConfig.landpFrontend}/statement/returns"
       payment.attr("target") mustBe "_blank"
       doc.select("a:contains(View registration certificate)").attr("href") mustBe
         controllers.routes.ViewRegistrationCertificateController.onPageLoad().url

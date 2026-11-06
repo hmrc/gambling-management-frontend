@@ -1,0 +1,78 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import viewmodels.CardLink
+@import views.html.components._
+@import views.CurrencyFormatter
+@import views.ViewUtils.titleNoForm
+
+@this(
+        layout: templates.Layout,
+        appConfig: AppConfig,
+        linkCard: LinkCard
+)
+
+@(isAgent: Boolean, agentName: String, clientName: String, regNumber: String, overdueReturns: Int, balanceDate: String, balance: BigDecimal, balanceType: String)(implicit request: Request[_], messages: Messages)
+
+@layout(
+    pageTitle = titleNoForm(messages("manageYourMgdLanding.title")),
+    includeCustomCss = true,
+    fullWidth = true
+) {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">@messages("manageYourMgdLanding.heading")</h1>
+            @if(isAgent) {
+                <p class="govuk-body govuk-!-margin-bottom-2">@messages("manageYourMgdLanding.actingOnBehalfOf", agentName, clientName)</p>
+            }
+            <p class="govuk-body govuk-!-margin-bottom-6">@messages("mgd.registration.number"): @regNumber</p>
+        </div>
+    </div>
+
+    <div class="flex-container govuk-grid-row">
+        @linkCard(
+            "manageYourMgdLanding.statement.heading",
+            Seq(
+                CardLink("manageYourMgdLanding.statement.viewAccountStatement", s"${appConfig.landpFrontend}/statement"),
+                CardLink("manageYourMgdLanding.statement.makePayment", appConfig.makePaymentUrl, newTab = true)
+            ),
+            description = Some(messages("manageYourMgdLanding.statement.balance", balanceDate, CurrencyFormatter.currencyFormat(balance), balanceType))
+        )
+        @linkCard(
+            "manageYourMgdLanding.returns.heading",
+            Seq(
+                CardLink("manageYourMgdLanding.returns.fileReturn", s"${appConfig.filingFrontend}/$regNumber/select-return"),
+                CardLink("manageYourMgdLanding.returns.viewFiledReturns", s"${appConfig.landpFrontend}/statement/returns")
+            ),
+            description = Some(messages("manageYourMgdLanding.returns.overdue", overdueReturns))
+        )
+        @linkCard(
+            "manageYourMgdLanding.registration.heading",
+            Seq(
+                CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad().url),
+                CardLink("manageYourMgdLanding.registration.changeDetails", s"${appConfig.variationsFrontend}/change-registration-details"),
+                CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling")
+            )
+        )
+        @if(isAgent) {
+            @linkCard(
+                "manageYourMgdLanding.clientDetails.heading",
+                Seq(CardLink("manageYourMgdLanding.clientDetails.manage", controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url))
+            )
+        }
+    </div>
+}

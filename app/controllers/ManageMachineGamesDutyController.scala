@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package controllers
 
 import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
 import models.BusinessDetails
@@ -25,7 +25,7 @@ import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.agent.ManageMachineGamesDutyView
+import views.html.ManageMachineGamesDutyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,9 +75,11 @@ class ManageMachineGamesDutyController @Inject() (
               overdueReturns = summary.returnsOverdue
             )
           case (agent, summary)                 =>
-            logger.error(s"failed to load agent landing data: agentDetails=$agent returnSummary=$summary")
+            logger.error(
+              s"failed to load manage your MGD data for regNumber=${client.regNumber}: agentDetails=$agent returnSummary=$summary"
+            )
             Redirect(controllers.routes.SystemErrorController.onPageLoad())
-        }).recover(systemError)
+        }).recover(systemError(client.regNumber))
     }
 
   private def organisationPage(using request: DataRequest[AnyContent]): Future[Result] =
@@ -86,10 +88,10 @@ class ManageMachineGamesDutyController @Inject() (
       .map {
         case Right(summary) => buildResult(isAgent = false, "", "", request.mgdRegNum, summary.returnsOverdue)
         case Left(error)    =>
-          logger.error(s"failed to load return summary for organisation: $error")
+          logger.error(s"failed to load return summary for regNumber=${request.mgdRegNum}: $error")
           Redirect(controllers.routes.SystemErrorController.onPageLoad())
       }
-      .recover(systemError)
+      .recover(systemError(request.mgdRegNum))
 
   private def buildResult(
     isAgent: Boolean,
@@ -114,8 +116,8 @@ class ManageMachineGamesDutyController @Inject() (
       )
     )
 
-  private val systemError: PartialFunction[Throwable, Result] = { case e =>
-    logger.error("failed to load manage your machine games duty", e)
+  private def systemError(regNumber: String): PartialFunction[Throwable, Result] = { case e =>
+    logger.error(s"failed to load manage your machine games duty for regNumber=$regNumber", e)
     Redirect(controllers.routes.SystemErrorController.onPageLoad())
   }
 }

@@ -27,6 +27,9 @@ class AppConfig @Inject() (config: Configuration):
     config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
   val variationsFrontend: String         = config.get[String]("urls.variationsFrontend")
+  val landpFrontend: String              = config.get[String]("urls.landpFrontend")
+  val filingFrontend: String             = config.get[String]("urls.filingFrontend")
+  val makePaymentUrl: String             = config.get[String]("urls.makePayment")
   val loginUrl: String                   = config.get[String]("urls.login")
   val loginContinueUrl: String           = config.get[String]("urls.loginContinue")
   val signOutUrl: String                 = config.get[String]("urls.signOut")

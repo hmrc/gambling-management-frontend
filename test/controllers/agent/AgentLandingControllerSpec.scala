@@ -64,7 +64,7 @@ class AgentLandingControllerSpec extends SpecBase {
     "selects the client and redirects to the MGD landing page" in {
       val ua     = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
       val result = controller(ua).onPageLoad("XMM00000000123")(FakeRequest())
-      redirectLocation(result).value mustBe controllers.agent.routes.ManageMachineGamesDutyController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.routes.ManageMachineGamesDutyController.onPageLoad().url
     }
 
     "redirects to JourneyRecovery for an unknown client" in {

@@ -75,7 +75,7 @@ class AgentLandingController @Inject() (
       _                  <- auditClientDetailsRetrieved(client, regNumber)
       updatedUserAnswers <- Future.fromTry(request.userAnswers.set(SelectedClientPage, regNumber))
       _                  <- sessionRepository.set(updatedUserAnswers)
-    } yield Redirect(routes.ManageMachineGamesDutyController.onPageLoad())).recover { case NonFatal(ex) =>
+    } yield Redirect(controllers.routes.ManageMachineGamesDutyController.onPageLoad())).recover { case NonFatal(ex) =>
       logger.error(s"failed to load agent landing page for regNumber=$regNumber", ex)
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }

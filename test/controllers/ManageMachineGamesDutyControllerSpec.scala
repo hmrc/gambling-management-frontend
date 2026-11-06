@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package controllers
 
 import base.SpecBase
 import controllers.actions.*
@@ -37,7 +37,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[views.html.agent.ManageMachineGamesDutyView]
+  private val view        = app.injector.instanceOf[views.html.ManageMachineGamesDutyView]
 
   private val client  = AgentClient("mgd", "XWM00000001770", Some("Client Business"), None)
   private val details = AgentDetails(Some("Agent 1"), None, None, None, None, None, None, None, None, None, None, None)
