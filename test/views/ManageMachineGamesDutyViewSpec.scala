@@ -86,8 +86,12 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-return"
       doc.select("a:contains(Cancel registration)").attr("href") mustBe
         s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling"
-      doc.select("a:contains(View account statement)").attr("href") mustBe s"${appConfig.landpFrontend}/statement"
-      doc.select("a:contains(View filed returns)").attr("href") mustBe s"${appConfig.landpFrontend}/statement/returns"
+      doc
+        .select("a:contains(View account statement)")
+        .attr("href") mustBe s"${appConfig.landpFrontend}/statement/mgd/XWM00000001770/current"
+      doc
+        .select("a:contains(View filed returns)")
+        .attr("href") mustBe "#"
       payment.attr("target") mustBe "_blank"
       doc.select("a:contains(View registration certificate)").attr("href") mustBe
         controllers.routes.ViewRegistrationCertificateController.onPageLoad().url

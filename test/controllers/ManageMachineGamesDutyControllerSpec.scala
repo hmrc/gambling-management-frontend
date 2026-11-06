@@ -49,7 +49,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
       .get
 
   private def controller(
-    ua: UserAnswers,
+    ua: Option[UserAnswers],
     identify: AuthorisedAction = new FakeAgentIdentifierAction(bodyParsers),
     agentDetails: Either[GamblingError, AgentDetails] = Right(details),
     summary: Either[ReturnSummaryError, ReturnSummary] = Right(ReturnSummary(client.regNumber, 1, 4))
@@ -61,8 +61,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
       mcc.messagesApi,
       identify,
       new PassThroughClientListCheckAction(),
-      new FakeDataRetrievalAction(Some(ua)),
-      new DataRequiredActionImpl(),
+      new FakeDataRetrievalAction(ua),
       new PassThroughHasClientGuard(service, null, null),
       service,
       mcc,
@@ -72,7 +71,7 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
 
   "onPageLoad" - {
     "renders the agent, the selected client and the overdue returns" in {
-      val result = controller(withClient).onPageLoad()(FakeRequest())
+      val result = controller(Some(withClient)).onPageLoad()(FakeRequest())
       status(result) mustBe OK
       val doc    = Jsoup.parse(contentAsString(result))
       doc
@@ -84,27 +83,41 @@ class ManageMachineGamesDutyControllerSpec extends SpecBase {
 
     "renders the page without the agent line or Client details card for an organisation" in {
       val result =
-        controller(UserAnswers("id"), identify = new FakeIdentifierAction(bodyParsers)).onPageLoad()(FakeRequest())
+        controller(None, identify = new FakeIdentifierAction(bodyParsers)).onPageLoad()(FakeRequest())
       status(result) mustBe OK
       val doc    = Jsoup.parse(contentAsString(result))
       doc.select(".card-heading").eachText().toArray mustBe Array("Statement", "Returns", "Registration")
       doc.text must not include "acting on behalf of"
     }
 
+    "still renders the page when the client name is missing" in {
+      val unnamed = UserAnswers("internal-id")
+        .set(AgentClientsPage, List(client.copy(clientName = None)))
+        .flatMap(_.set(SelectedClientPage, client.regNumber))
+        .get
+      status(controller(Some(unnamed)).onPageLoad()(FakeRequest())) mustBe OK
+    }
+
+    "redirects an agent to JourneyRecovery when there are no user answers" in {
+      val result = controller(None).onPageLoad()(FakeRequest())
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+    }
+
     "redirects to JourneyRecovery when no client is selected" in {
       val ua     = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
-      val result = controller(ua).onPageLoad()(FakeRequest())
+      val result = controller(Some(ua)).onPageLoad()(FakeRequest())
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
     "redirects to SystemError when the agent details cannot be retrieved" in {
-      val result = controller(withClient, agentDetails = Left(GamblingError.UpstreamError)).onPageLoad()(FakeRequest())
+      val result =
+        controller(Some(withClient), agentDetails = Left(GamblingError.UpstreamError)).onPageLoad()(FakeRequest())
       redirectLocation(result).value mustBe controllers.routes.SystemErrorController.onPageLoad().url
     }
 
     "redirects to SystemError when the return summary cannot be retrieved" in {
       val result =
-        controller(withClient, summary = Left(ReturnSummaryError.UpstreamError)).onPageLoad()(FakeRequest())
+        controller(Some(withClient), summary = Left(ReturnSummaryError.UpstreamError)).onPageLoad()(FakeRequest())
       redirectLocation(result).value mustBe controllers.routes.SystemErrorController.onPageLoad().url
     }
   }

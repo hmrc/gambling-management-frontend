@@ -47,7 +47,7 @@
         @linkCard(
             "manageYourMgdLanding.statement.heading",
             Seq(
-                CardLink("manageYourMgdLanding.statement.viewAccountStatement", s"${appConfig.landpFrontend}/statement"),
+                CardLink("manageYourMgdLanding.statement.viewAccountStatement", s"${appConfig.landpFrontend}/statement/mgd/$regNumber/current"),
                 CardLink("manageYourMgdLanding.statement.makePayment", appConfig.makePaymentUrl, newTab = true)
             ),
             description = Some(messages("manageYourMgdLanding.statement.balance", balanceDate, CurrencyFormatter.currencyFormat(balance), balanceType))
@@ -56,7 +56,7 @@
             "manageYourMgdLanding.returns.heading",
             Seq(
                 CardLink("manageYourMgdLanding.returns.fileReturn", s"${appConfig.filingFrontend}/$regNumber/select-return"),
-                CardLink("manageYourMgdLanding.returns.viewFiledReturns", s"${appConfig.landpFrontend}/statement/returns")
+                CardLink("manageYourMgdLanding.returns.viewFiledReturns", "#")
             ),
             description = Some(messages("manageYourMgdLanding.returns.overdue", overdueReturns))
         )
@@ -64,7 +64,7 @@
             "manageYourMgdLanding.registration.heading",
             Seq(
                 CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad().url),
-                CardLink("manageYourMgdLanding.registration.changeDetails", s"${appConfig.variationsFrontend}/change-registration-details"),
+                CardLink("manageYourMgdLanding.registration.changeDetails", "#"),
                 CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling")
             )
         )

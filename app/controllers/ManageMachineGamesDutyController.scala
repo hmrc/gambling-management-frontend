@@ -16,12 +16,12 @@
 
 package controllers
 
-import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRetrievalAction, HasClientGuard}
 import models.BusinessDetails
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import models.requests.DataRequest
+import models.requests.OptionalDataRequest
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,7 +35,6 @@ class ManageMachineGamesDutyController @Inject() (
   authorise: AuthorisedAction,
   clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
   gamblingService: GamblingService,
   val controllerComponents: MessagesControllerComponents,
@@ -48,16 +47,16 @@ class ManageMachineGamesDutyController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (authorise
       andThen clientListCheck
-      andThen getData
-      andThen requireData
-      andThen hasClientGuard.currentClient).async { implicit request =>
+      andThen hasClientGuard.currentClientAuthorised
+      andThen getData).async { implicit request =>
       if request.isAgent then agentPage else organisationPage
     }
 
-  private def agentPage(using request: DataRequest[AnyContent]): Future[Result] =
+  private def agentPage(using request: OptionalDataRequest[AnyContent]): Future[Result] =
     request.userAnswers
-      .get(SelectedClientPage)
-      .flatMap(AgentClientsPage.findInClientList(request.userAnswers, _)) match {
+      .flatMap(answers =>
+        answers.get(SelectedClientPage).flatMap(AgentClientsPage.findInClientList(answers, _))
+      ) match {
       case None         =>
         logger.warn("no selected client in userAnswers")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -69,8 +68,9 @@ class ManageMachineGamesDutyController @Inject() (
           case (Right(details), Right(summary)) =>
             buildResult(
               isAgent = true,
-              agentName = BusinessDetails.fromAgentDetails(details).businessName.getOrElse(""),
-              clientName = client.clientName.getOrElse(""),
+              agentName =
+                nameOrBlank(BusinessDetails.fromAgentDetails(details).businessName, "agent name", client.regNumber),
+              clientName = nameOrBlank(client.clientName, "client name", client.regNumber),
               regNumber = client.regNumber,
               overdueReturns = summary.returnsOverdue
             )
@@ -82,7 +82,13 @@ class ManageMachineGamesDutyController @Inject() (
         }).recover(systemError(client.regNumber))
     }
 
-  private def organisationPage(using request: DataRequest[AnyContent]): Future[Result] =
+  private def nameOrBlank(name: Option[String], label: String, regNumber: String): String =
+    name.getOrElse {
+      logger.warn(s"$label not found for regNumber=$regNumber")
+      ""
+    }
+
+  private def organisationPage(using request: OptionalDataRequest[AnyContent]): Future[Result] =
     gamblingService
       .getReturnSummary(request.mgdRegNum)
       .map {
@@ -100,7 +106,7 @@ class ManageMachineGamesDutyController @Inject() (
     regNumber: String,
     overdueReturns: Int
   )(using
-    request: DataRequest[AnyContent]
+    request: OptionalDataRequest[AnyContent]
   ): Result =
     Ok(
       view(
