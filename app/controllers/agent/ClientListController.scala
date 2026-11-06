@@ -52,7 +52,7 @@ class ClientListController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (authorise andThen clientListCheck andThen getData).async { implicit request =>
 
-      val userAnswers   = request.userAnswers.getOrElse(UserAnswers(request.userId))
+      val userAnswers   = request.userAnswers.getOrElse(UserAnswers(request.sessionId))
       val searchQuery   = request.getQueryString("search").getOrElse("")
       val requestedPage = request.getQueryString("page").flatMap(_.toIntOption).getOrElse(1)
       val pageSize      = 10

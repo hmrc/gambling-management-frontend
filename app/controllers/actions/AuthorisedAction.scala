@@ -55,16 +55,19 @@ class DefaultAuthorisedAction @Inject() (
         case internalIdOpt ~ Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
               agentReference
             ) =>
-          block(
-            AuthorisedRequest(
-              request,
-              affinityGroup,
-              mgdRegNum = "",
-              userId = internalIdOpt.getOrElse(""),
-              isAgent = true,
-              agentReference = Some(agentReference)
+          AuthorisedAction.requireSessionId.flatMap { sessionId =>
+            block(
+              AuthorisedRequest(
+                request,
+                affinityGroup,
+                mgdRegNum = "",
+                userId = internalIdOpt.getOrElse(""),
+                isAgent = true,
+                agentReference = Some(agentReference),
+                sessionId = sessionId
+              )
             )
-          )
+          }
         case _ ~ Some(AffinityGroup.Agent) ~ _ =>
           logger.warn(s"Agent auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Agent enrolment missing or not activated"))
@@ -73,7 +76,17 @@ class DefaultAuthorisedAction @Inject() (
               .HasActiveOrganisationEnrolment(
                 mgdRegNum
               ) =>
-          block(AuthorisedRequest(request, affinityGroup, mgdRegNum, userId = internalIdOpt.getOrElse("")))
+          AuthorisedAction.requireSessionId.flatMap { sessionId =>
+            block(
+              AuthorisedRequest(
+                request,
+                affinityGroup,
+                mgdRegNum,
+                userId = internalIdOpt.getOrElse(""),
+                sessionId = sessionId
+              )
+            )
+          }
         case _ ~ Some(AffinityGroup.Organisation) ~ _ =>
           logger.warn(s"Organisation auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Organisation enrolment missing or not activated"))
@@ -99,6 +112,12 @@ object AuthorisedAction {
   val organisationIdentifierName = "HMRCMGDRN"
   val agentEnrolmentKey          = "HMRC-MGD-AGNT"
   val agentIdentifierName        = "HMRCMGDAGENTREF"
+
+  // UserAnswers are keyed on the platform session id, so a request without one is treated as unauthenticated.
+  def requireSessionId(using hc: HeaderCarrier): Future[String] =
+    hc.sessionId
+      .map(id => Future.successful(id.value))
+      .getOrElse(Future.failed(SessionRecordNotFound("Session id missing from request")))
 
   def getEnrolmentIdentifier(
     enrolments: Enrolments,

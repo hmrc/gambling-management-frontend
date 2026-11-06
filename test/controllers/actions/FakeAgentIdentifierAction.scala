@@ -35,7 +35,8 @@ class FakeAgentIdentifierAction(bodyParsers: PlayBodyParsers, userId: String = "
         mgdRegNum = "",
         userId = userId,
         isAgent = true,
-        agentReference = Some("agent-ref")
+        agentReference = Some("agent-ref"),
+        sessionId = userId
       )
     )
 

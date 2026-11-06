@@ -48,7 +48,8 @@ object ClientListViewModel {
     } else {
       clients
         .filter(c =>
-          search.isEmpty || c.clientReference.toLowerCase.contains(searchLower) || c.clientName.toLowerCase.contains(searchLower)
+          search.isEmpty || c.clientReference.toLowerCase.contains(searchLower) || c.clientName.toLowerCase
+            .contains(searchLower)
         )
         .sortBy(c =>
           (
