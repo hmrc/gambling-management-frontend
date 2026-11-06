@@ -50,22 +50,26 @@ object AgentClientUtil {
     ClientListViewModel(
       regNumber = "XVM00000001001",
       clientName = "ABC Ltd",
-      clientReference = "EZ00100"
+      clientReference = "EZ00100",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XVM00000001001").url
     ),
     ClientListViewModel(
       regNumber = "XAM00000001002",
       clientName = "XYZ Builders",
-      clientReference = "CD002"
+      clientReference = "CD002",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XAM00000001002").url
     ),
     ClientListViewModel(
       regNumber = "XCM00000001003",
       clientName = "Betelgeuse Construction 3",
-      clientReference = "UP374"
+      clientReference = "UP374",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XCM00000001003").url
     ),
     ClientListViewModel(
       regNumber = "XEM00000001004",
       clientName = "Heritage Contractors 4",
-      clientReference = "WY080"
+      clientReference = "WY080",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XEM00000001004").url
     )
   )
 }

@@ -34,45 +34,55 @@ class ClientListViewModelSpec extends SpecBase {
     }
 
     "must filter a Seq[ClientListViewModel] when provided name is ALL CAPS" in {
-      val result = ClientListViewModel.filterByName("CON", AgentClientUtil.clientsListAsViewModel)
+      val result = ClientListViewModel.filterByField("CON", AgentClientUtil.clientsListAsViewModel)
       result mustBe List(
         ClientListViewModel(
           regNumber = "XCM00000001003",
           clientName = "Betelgeuse Construction 3",
-          clientReference = "UP374"
+          clientReference = "UP374",
+          removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XCM00000001003").url
         ),
         ClientListViewModel(
           regNumber = "XEM00000001004",
           clientName = "Heritage Contractors 4",
-          clientReference = "WY080"
+          clientReference = "WY080",
+          removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XEM00000001004").url
         )
       )
     }
 
     "must filter a Seq[ClientListViewModel] when provided name has SPACES before and after" in {
-      val result = ClientListViewModel.filterByName("  CON  ", AgentClientUtil.clientsListAsViewModel)
+      val result = ClientListViewModel.filterByField("  CON  ", AgentClientUtil.clientsListAsViewModel)
       result mustBe List(
         ClientListViewModel(
           regNumber = "XCM00000001003",
           clientName = "Betelgeuse Construction 3",
-          clientReference = "UP374"
+          clientReference = "UP374",
+          removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XCM00000001003").url
         ),
         ClientListViewModel(
           regNumber = "XEM00000001004",
           clientName = "Heritage Contractors 4",
-          clientReference = "WY080"
+          clientReference = "WY080",
+          removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XEM00000001004").url
         )
       )
     }
 
     "must return an empty Seq[ClientListViewModel] when provided name is NOT FOUND" in {
-      val result = ClientListViewModel.filterByName("NOT_FOUND", AgentClientUtil.clientsListAsViewModel)
+      val result = ClientListViewModel.filterByField("NOT_FOUND", AgentClientUtil.clientsListAsViewModel)
       result mustBe List.empty
     }
 
     "must return the original Seq[ClientListViewModel] when provided nameQuery is EMPTY" in {
-      val result = ClientListViewModel.filterByName("", AgentClientUtil.clientsListAsViewModel)
-      result mustBe AgentClientUtil.clientsListAsViewModel
+      val result = ClientListViewModel.filterByField("", AgentClientUtil.clientsListAsViewModel)
+      result mustBe AgentClientUtil.clientsListAsViewModel.sortBy(c =>
+        (
+          1,
+          c.clientReference.toLowerCase,
+          c.clientName.toLowerCase
+        )
+      )
     }
   }
 }
