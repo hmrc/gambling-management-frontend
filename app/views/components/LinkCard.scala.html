@@ -14,20 +14,30 @@
  * limitations under the License.
  *@
 
+@import viewmodels.CardLink
+
 @this(link: Link)
-@(headingKey: String, links: Seq[(String, String)], emptyMessageKey: Option[String] = None)(implicit messages: Messages)
+@(
+    headingKey: String,
+    links: Seq[CardLink],
+    emptyMessageKey: Option[String] = None,
+    description: Option[String] = None
+)(implicit messages: Messages)
 
 <div class="card">
     <div class="card-body card-body--compact">
         <h2 class="card-heading govuk-heading-m govuk-!-margin-bottom-2">@messages(headingKey)</h2>
+        @description.map { text =>
+            <p class="govuk-body govuk-!-margin-bottom-2">@text</p>
+        }
     </div>
     <div class="card-action card-action--grow">
         @emptyMessageKey.map { key =>
             <p class="govuk-body">@messages(key)</p>
         }.getOrElse {
             <ul class="govuk-list">
-                @for((textKey, url) <- links) {
-                    <li>@link(textKey, url, paragraphWrapped = false)</li>
+                @for(l <- links) {
+                    <li>@link(l.textKey, l.url, isNewTab = l.newTab, paragraphWrapped = false)</li>
                 }
             </ul>
         }
