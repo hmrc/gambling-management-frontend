@@ -23,7 +23,7 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,11 +32,13 @@ class AgentOnlyActionSpec extends SpecBase {
 
   class Harness(agentOnlyAction: AgentOnlyAction) {
     def onPageLoad: Action[AnyContent] = agentOnlyAction { request =>
-      Results.Ok(s"${request.isAgent}|${request.agentReference.getOrElse("")}")
+      Results.Ok(s"${request.isAgent}|${request.agentReference.getOrElse("")}|${request.sessionId}")
     }
   }
 
   val bodyParser: BodyParsers.Default = BodyParsers.Default(Helpers.stubPlayBodyParsers)
+
+  private val requestWithSession = FakeRequest("GET", "/test").withSession(SessionKeys.sessionId -> "session-123")
 
   private type Retrievals = Option[String] ~ Option[AffinityGroup] ~ Enrolments
 
@@ -71,9 +73,9 @@ class AgentOnlyActionSpec extends SpecBase {
         mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), agentEnrolment)))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe OK
-      contentAsString(result) mustBe "true|1234567890"
+      contentAsString(result) mustBe "true|1234567890|session-123"
     }
 
     "deny an organisation (with org enrolment) and redirect to access denied" in {
@@ -81,7 +83,7 @@ class AgentOnlyActionSpec extends SpecBase {
         mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), orgEnrolment)))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(accessDenied)
     }
@@ -91,7 +93,7 @@ class AgentOnlyActionSpec extends SpecBase {
         mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Organisation), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(accessDenied)
     }
@@ -101,7 +103,7 @@ class AgentOnlyActionSpec extends SpecBase {
         mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Individual), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(accessDenied)
     }
@@ -111,7 +113,7 @@ class AgentOnlyActionSpec extends SpecBase {
         mockConnectorReturning(Future.successful(retrievalResult(Some(AffinityGroup.Agent), Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(accessDenied)
     }
@@ -120,7 +122,7 @@ class AgentOnlyActionSpec extends SpecBase {
       val connector = mockConnectorReturning(Future.successful(retrievalResult(None, Enrolments(Set()))))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(accessDenied)
     }
@@ -129,7 +131,7 @@ class AgentOnlyActionSpec extends SpecBase {
       val connector = mockConnectorReturning(Future.failed(new NoActiveSession("No session") {}))
       val action    = new DefaultAgentOnlyAction(connector, testAppConfig, bodyParser)
 
-      val result = new Harness(action).onPageLoad(FakeRequest("GET", "/test"))
+      val result = new Harness(action).onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value must startWith(testAppConfig.loginUrl)
     }

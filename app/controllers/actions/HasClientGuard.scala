@@ -44,7 +44,7 @@ class HasClientGuard @Inject() (
     given Request[?]    = request
 
     sessionRepository
-      .get(request.userId)
+      .get(request.sessionId)
       .flatMap {
         case None =>
           logger.warn("UserAnswers missing")

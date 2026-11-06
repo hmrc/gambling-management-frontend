@@ -55,16 +55,19 @@ class DefaultAgentOnlyAction @Inject() (
         case internalIdOpt ~ Some(affinityGroup @ AffinityGroup.Agent) ~ AuthorisedAction.HasActiveAgentEnrolment(
               agentReference
             ) =>
-          block(
-            AuthorisedRequest(
-              request,
-              affinityGroup,
-              mgdRegNum = "",
-              userId = internalIdOpt.getOrElse(""),
-              isAgent = true,
-              agentReference = Some(agentReference)
+          AuthorisedAction.requireSessionId.flatMap { sessionId =>
+            block(
+              AuthorisedRequest(
+                request,
+                affinityGroup,
+                mgdRegNum = "",
+                userId = internalIdOpt.getOrElse(""),
+                isAgent = true,
+                agentReference = Some(agentReference),
+                sessionId = sessionId
+              )
             )
-          )
+          }
         case _ ~ Some(AffinityGroup.Agent) ~ _ =>
           logger.warn(s"Agent auth failed: enrolment missing or not activated for ${request.path}")
           Future.failed(InsufficientEnrolments("Agent enrolment missing or not activated"))

@@ -23,7 +23,7 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +37,8 @@ class AuthorisedActionSpec extends SpecBase {
   }
 
   val bodyParser: BodyParsers.Default = BodyParsers.Default(Helpers.stubPlayBodyParsers)
+
+  private val requestWithSession = FakeRequest("GET", "/test").withSession(SessionKeys.sessionId -> "session-123")
 
   private type Retrievals = Option[String] ~ Option[AffinityGroup] ~ Enrolments
 
@@ -69,9 +71,44 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe OK
       contentAsString(result) mustBe "1234567890"
+    }
+
+    "populate sessionId on the AuthorisedRequest from the platform session id" in {
+      val mockAuthConnector = mockConnectorReturning(
+        Future.successful(
+          retrievalResult(
+            Some(AffinityGroup.Organisation),
+            Enrolments(Set(Enrolment("HMRC-MGD-ORG", Seq(EnrolmentIdentifier("HMRCMGDRN", "1234567890")), "Activated")))
+          )
+        )
+      )
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
+
+      val action = authorisedAction { (request: models.requests.AuthorisedRequest[AnyContent]) =>
+        Results.Ok(request.sessionId)
+      }
+      val result = action(requestWithSession)
+      status(result) mustBe OK
+      contentAsString(result) mustBe "session-123"
+    }
+
+    "redirect to login when the request has no platform session id" in {
+      val mockAuthConnector = mockConnectorReturning(
+        Future.successful(
+          retrievalResult(
+            Some(AffinityGroup.Organisation),
+            Enrolments(Set(Enrolment("HMRC-MGD-ORG", Seq(EnrolmentIdentifier("HMRCMGDRN", "1234567890")), "Activated")))
+          )
+        )
+      )
+      val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
+
+      val result = new Harness(authorisedAction).onPageLoad(FakeRequest("GET", "/test"))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value must startWith(testAppConfig.loginUrl)
     }
 
     "create AuthorisedRequest with agent context when user has an Agent affinity group" in {
@@ -91,7 +128,7 @@ class AuthorisedActionSpec extends SpecBase {
       val action = authorisedAction { (request: models.requests.AuthorisedRequest[AnyContent]) =>
         Results.Ok(s"${request.isAgent}|${request.mgdRegNum}|${request.agentReference.getOrElse("")}")
       }
-      val result = action(FakeRequest("GET", "/test"))
+      val result = action(requestWithSession)
       status(result) mustBe OK
       contentAsString(result) mustBe "true||1234567890"
     }
@@ -103,7 +140,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -115,7 +152,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -127,7 +164,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -144,7 +181,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -163,7 +200,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -182,7 +219,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -201,7 +238,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.AccessDeniedController.onPageLoad().url)
     }
@@ -211,7 +248,7 @@ class AuthorisedActionSpec extends SpecBase {
       val authorisedAction  = new DefaultAuthorisedAction(mockAuthConnector, testAppConfig, bodyParser)
 
       val controller = new Harness(authorisedAction)
-      val result     = controller.onPageLoad(FakeRequest("GET", "/test"))
+      val result     = controller.onPageLoad(requestWithSession)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value must startWith(testAppConfig.loginUrl)
