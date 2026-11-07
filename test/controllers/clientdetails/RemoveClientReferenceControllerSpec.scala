@@ -83,8 +83,8 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
       .get
 
   private def controller(
-                          userAnswers: UserAnswers = ua
-                        ) = {
+    userAnswers: UserAnswers = ua
+  ) = {
 
     val repo =
       org.mockito.Mockito.mock(

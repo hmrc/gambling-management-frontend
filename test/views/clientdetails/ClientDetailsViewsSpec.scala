@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider,RemoveClientReferenceFormProvider}
+import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider, RemoveClientReferenceFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -126,8 +126,8 @@ class ClientDetailsViewsSpec extends SpecBase {
     val form =
       new RemoveClientReferenceFormProvider()()
 
-     val regNumber = "XMM00000000123"
-     val clientReference = "my-client-reference"
+    val regNumber       = "XMM00000000123"
+    val clientReference = "my-client-reference"
 
     "renders yes/no radios and posts to onSubmit" in {
 
@@ -142,8 +142,7 @@ class ClientDetailsViewsSpec extends SpecBase {
       doc.select("input[type=radio]").size mustBe 2
 
       doc.select("form").attr("action") mustBe
-        controllers.clientdetails.routes
-          .RemoveClientReferenceController
+        controllers.clientdetails.routes.RemoveClientReferenceController
           .onSubmit(regNumber)
           .url
     }
