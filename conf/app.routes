@@ -34,10 +34,9 @@ GET         /agent/cannot-access-service                             controllers
 
 # Client details management
 GET         /agent/manage-your-details                               controllers.agent.ManageYourDetailsController.onPageLoad()
-GET         /agent/manage-client                                     controllers.clientdetails.ManageClientDetailsController.onPageLoad()
+GET         /agent/manage-your-details/manage-your-client-details    controllers.clientdetails.ManageClientDetailsController.onPageLoad()
 GET         /agent/manage-your-details/create-client-reference/:regNumber                controllers.clientdetails.CreateClientReferenceController.onPageLoad(regNumber: String)
-POST        /agent/manage-your-details/create-client-reference/:regNumber                controllers.clientdetails.CreateClientReferenceController.onSubmit(regNumber: String)
-GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
+POST        /agent/manage-your-details/create-client-reference/:regNumber                controllers.clientdetails.CreateClientReferenceController.onSubmit(regNumber: String)GET         /agent/client-reference-updated                          controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
 GET         /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onPageLoad(regNumber: String)
 POST        /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onSubmit(regNumber: String)
 GET         /agent/client-removed                                    controllers.clientdetails.ClientRemovedController.onPageLoad()
