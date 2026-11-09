@@ -172,7 +172,7 @@ clientList.download.filename = MgdAgentClientList.csv
 error.summary.title = There is a problem
 
 agent.manageClientDetails.title = Manage your client details
-agent.agentManageClientDetails.heading = Manage your client details
+agent.manageClientDetails.heading = Manage your client details
 agent.manageClientDetails.clientName = Client name
 agent.manageClientDetails.regNumber = MGD registration number
 agent.manageClientDetails.clientReference = Client reference
