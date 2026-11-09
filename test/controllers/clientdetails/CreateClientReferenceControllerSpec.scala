@@ -18,7 +18,7 @@ package controllers.clientdetails
 
 import base.SpecBase
 import controllers.actions.*
-import forms.clientdetails.ChangeClientReferenceFormProvider
+import forms.clientdetails.CreateClientReferenceFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,17 +29,17 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{GamblingService, ManageService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.clientdetails.ChangeClientReferenceView
+import views.html.clientdetails.CreateClientReferenceView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ChangeClientReferenceControllerSpec extends SpecBase {
+class CreateClientReferenceControllerSpec extends SpecBase {
 
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[ChangeClientReferenceView]
+  private val view        = app.injector.instanceOf[CreateClientReferenceView]
 
   private class StubManageService extends ManageService(null, null) {
     override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
@@ -51,7 +51,7 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
   private def controller = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
     when(repo.set(any)).thenReturn(Future.successful(true))
-    new ChangeClientReferenceController(
+    new CreateClientReferenceController(
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
@@ -59,7 +59,7 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
       new FakeDataRetrievalAction(Some(emptyUserAnswers)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
-      new ChangeClientReferenceFormProvider(),
+      new CreateClientReferenceFormProvider(),
       new StubManageService(),
       mcc,
       view
@@ -70,7 +70,7 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
     "renders the change-reference form" in {
       val result = controller.onPageLoad("u1")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
-      contentAsString(result) must include(messages(app)("changeClientReference.heading"))
+      contentAsString(result) must include(messages(app)("agent.createClientReference.heading"))
     }
   }
 
@@ -85,7 +85,7 @@ class ChangeClientReferenceControllerSpec extends SpecBase {
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> ""))
       val result  = controller.onSubmit("u1")(request)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("changeClientReference.error.required"))
+      contentAsString(result) must include(messages(app)("agent.createClientReference.error.required"))
     }
   }
 }

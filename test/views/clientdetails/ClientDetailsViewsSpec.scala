@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
+import forms.clientdetails.{CreateClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -41,27 +41,27 @@ class ClientDetailsViewsSpec extends SpecBase {
       doc.text must include("myref")
       val hrefs = doc.select("a").eachAttr("href").toArray
       hrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad("XMM00000000123").url
       )
       hrefs must contain(controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url)
     }
   }
 
-  "ChangeClientReferenceView" - {
-    val view = app.injector.instanceOf[ChangeClientReferenceView]
-    val form = new ChangeClientReferenceFormProvider()()
+  "CreateClientReferenceView" - {
+    val view = app.injector.instanceOf[CreateClientReferenceView]
+    val form = new CreateClientReferenceFormProvider()()
 
     "renders the input pre-filled and posts to onSubmit" in {
       val doc = Jsoup.parse(view(form.fill("existing"), "u1").body)
       doc.select("input[name=value]").attr("value") mustBe "existing"
       doc.select("form").attr("action") mustBe
-        controllers.clientdetails.routes.ChangeClientReferenceController.onSubmit("u1").url
+        controllers.clientdetails.routes.CreateClientReferenceController.onSubmit("u1").url
     }
 
     "renders an error summary when the form has errors" in {
       val doc = Jsoup.parse(view(form.bind(Map("value" -> "")), "u1").body)
       doc.select(".govuk-error-summary").size mustBe 1
-      doc.text must include(messages("changeClientReference.error.required"))
+      doc.text must include(messages("agent.createClientReference.error.required"))
     }
   }
 

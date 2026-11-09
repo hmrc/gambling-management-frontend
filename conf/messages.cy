@@ -175,10 +175,10 @@ manageClientDetails.clientReference = Client reference
 manageClientDetails.change = Change
 manageClientDetails.remove = Remove this client
 
-changeClientReference.title = Change client reference
-changeClientReference.heading = Enter a client reference
-changeClientReference.error.required = Enter a client reference
-changeClientReference.error.length = Client reference must be 20 characters or fewer
+agent.createClientReference.title = Change client reference
+agent.createClientReference.heading = Enter a client reference
+agent.createClientReference.error.required = Enter a client reference
+agent.createClientReference.error.length = Client reference must be 20 characters or fewer
 
 clientRefUpdateConfirmation.title = Client reference updated
 clientRefUpdateConfirmation.heading = Client reference updated

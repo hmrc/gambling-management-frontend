@@ -21,7 +21,7 @@ import play.api.data.Forms.{single, text}
 
 import javax.inject.Inject
 
-class ChangeClientReferenceFormProvider @Inject() () {
+class CreateClientReferenceFormProvider @Inject() () {
 
   private val maxLength = 20
 
@@ -29,8 +29,8 @@ class ChangeClientReferenceFormProvider @Inject() () {
     Form(
       single(
         "value" -> text
-          .verifying("changeClientReference.error.required", _.trim.nonEmpty)
-          .verifying("changeClientReference.error.length", _.trim.length <= maxLength)
+          .verifying("agent.createClientReference.error.required", _.trim.nonEmpty)
+          .verifying("agent.createClientReference.error.length", _.trim.length <= maxLength)
       )
     )
 }
