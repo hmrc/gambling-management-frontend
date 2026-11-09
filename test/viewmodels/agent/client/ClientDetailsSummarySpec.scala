@@ -27,7 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 class ClientDetailsSummarySpec extends SpecBase {
 
   private def changeClientReferenceUrl(regNumber: String) =
-    controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
+    controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad(regNumber).url
 
 //  private def removeClientReferenceUrl(regNumber: String) =
 //    controllers.businessdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url //TODO :uncomment to use correct url

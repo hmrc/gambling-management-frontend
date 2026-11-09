@@ -63,7 +63,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd>ul a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad("XMM00000000123").url
       )
       // ddHrefs must contain(controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url) TODO : uncomment
       ddHrefs must have size 2
@@ -88,7 +88,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad("XMM00000000123").url
       )
       ddHrefs must have size 1
 
@@ -103,8 +103,14 @@ class ManageClientDetailsViewSpec extends SpecBase {
 object ManageClientDetailsViewUtil {
   def summaryListWithChangeAndRemove(messages: Messages) = SummaryList(
     rows = Seq(
-      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.clientName"))), value = Value(Text("Acme Casinos"))),
-      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.regNumber"))), value = Value(Text("XMM00000000123"))),
+      SummaryListRow(
+        key = Key(Text(messages("agent.manageClientDetails.clientName"))),
+        value = Value(Text("Acme Casinos"))
+      ),
+      SummaryListRow(
+        key = Key(Text(messages("agent.manageClientDetails.regNumber"))),
+        value = Value(Text("XMM00000000123"))
+      ),
       SummaryListRow(
         key = Key(Text(messages("agent.manageClientDetails.clientReference"))),
         value = Value(Text("clientRef123")),

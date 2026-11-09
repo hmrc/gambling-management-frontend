@@ -16,16 +16,20 @@
 
 @import viewmodels.LegendSize
 @import viewmodels.govuk.errorsummary._
-@import viewmodels.govuk.radios._
 @import viewmodels.govuk.fieldset._
+@import views.html.components.*
+@import viewmodels.govuk.input._
+@import viewmodels.govuk.label._
+
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton,
-    caption: components.Caption
+    caption: components.Caption,
+    h1: H1
 )
 
 @(form: Form[_], regNumber: String)(implicit request: Request[_], messages: Messages)
@@ -37,13 +41,15 @@
         }
 
         @caption(messages("agent.createClientReference.caption"))
+        @h1("agent.createClientReference.heading", classes = "govuk-heading-l")
 
-        <p class="govuk-body">@messages("journeyRecovery.continue.guidance")</p>
+        <p class="govuk-body">@messages("agent.createClientReference.guidance1")</p>
+        <p class="govuk-body">@messages("agent.createClientReference.guidance2")</p>
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("removeEmailAddress.heading", emailAddress)).asPageHeading(LegendSize.Large)
+                label = LabelViewModel(messages("agent.createClientReference.clientReference.label")).withCssClass("govuk-fieldset__legend--m")
             )
         )
 
@@ -51,55 +57,4 @@
             ButtonViewModel(messages("site.continue"))
         )
     }
-}
-
-
-
-@import views.html.components.*
-@import play.api.data.Form
-
-@this(
-        layout: templates.Layout
-)
-
-@(form: Form[String], regNumber: String)(implicit request: Request[_], messages: Messages)
-
-@layout(
-    pageTitle = title(form, messages("agent.createClientReference.title")),
-    showBackLink = true,
-    showSignOut = true
-) {
-
-    @if(form.hasErrors) {
-        <div class="govuk-error-summary" data-module="govuk-error-summary">
-            <div role="alert">
-                <h2 class="govuk-error-summary__title">@messages("error.summary.title")</h2>
-                <div class="govuk-error-summary__body">
-                    <ul class="govuk-list govuk-error-summary__list">
-                        @for(error <- form.errors) {
-                            <li><a href="#value">@messages(error.message, error.args*)</a></li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-    }
-
-    <form method="post" action="@controllers.clientdetails.routes.CreateClientReferenceController.onSubmit(regNumber).url">
-        @helper.CSRF.formField
-
-        <div class="govuk-form-group @if(form.hasErrors){govuk-form-group--error}">
-            <h1 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l" for="value">@messages("agent.createClientReference.heading")</label>
-            </h1>
-            @for(error <- form.errors) {
-                <p id="value-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">@messages("error.prefix")</span> @messages(error.message, error.args*)
-                </p>
-            }
-            <input class="govuk-input govuk-input--width-20 @if(form.hasErrors){govuk-input--error}" id="value" name="value" type="text" value="@form.data.getOrElse("value", "")">
-        </div>
-
-        <button class="govuk-button" data-module="govuk-button">@messages("site.continue")</button>
-    </form>
 }
