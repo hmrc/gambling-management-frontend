@@ -29,7 +29,6 @@ import services.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.agent.AgentLandingView
 import pages.clientdetails.RemoveClientPage
 
 import javax.inject.Inject
@@ -44,8 +43,7 @@ class AgentLandingController @Inject() (
   hasClientGuard: HasClientGuard,
   auditService: AuditService,
   sessionRepository: SessionRepository,
-  val controllerComponents: MessagesControllerComponents,
-  view: AgentLandingView
+  val controllerComponents: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -77,12 +75,7 @@ class AgentLandingController @Inject() (
       _                  <- auditClientDetailsRetrieved(client, regNumber)
       updatedUserAnswers <- Future.fromTry(request.userAnswers.set(SelectedClientPage, regNumber))
       _                  <- sessionRepository.set(updatedUserAnswers)
-    } yield Ok(
-      view(
-        clientName = client.clientName.getOrElse(""),
-        regNumber = client.regNumber
-      )
-    )).recover { case NonFatal(ex) =>
+    } yield Redirect(controllers.routes.ManageMachineGamesDutyController.onPageLoad())).recover { case NonFatal(ex) =>
       logger.error(s"failed to load agent landing page for regNumber=$regNumber", ex)
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }

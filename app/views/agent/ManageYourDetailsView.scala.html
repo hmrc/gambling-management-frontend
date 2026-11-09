@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import views.ViewUtils.titleNoForm
+@import viewmodels.CardLink
 
 @this(
         layout: templates.Layout,
@@ -35,15 +36,15 @@
             @linkCard(
                 "agentManageYourDetails.clientSearch.heading",
                 Seq(
-                    "agentManageYourDetails.clientSearch.search" -> controllers.agent.routes.ClientListController.onPageLoad().url,
-                    "agentManageYourDetails.clientSearch.download" -> controllers.agent.routes.ClientListController.downloadClientList().url
+                    CardLink("agentManageYourDetails.clientSearch.search", controllers.agent.routes.ClientListController.onPageLoad().url),
+                    CardLink("agentManageYourDetails.clientSearch.download", controllers.agent.routes.ClientListController.downloadClientList().url)
                 ),
                 Option.when(isClientListEmpty)("agentManageYourDetails.clientSearch.empty")
             )
         </div>
         <div class="govuk-grid-column-one-half">
             @linkCard("agentManageYourDetails.businessDetails.heading", Seq(
-                "agentManageYourDetails.businessDetails.check" -> controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
+                CardLink("agentManageYourDetails.businessDetails.check", controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url)
             ))
         </div>
     </div>
