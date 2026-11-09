@@ -149,6 +149,7 @@ agentLanding.heading = {0}
 agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
+agentLanding.link.manageClientDetails = Manage client details
 
 clientList.title = Search for a client
 clientList.heading = Search for a client
@@ -198,7 +199,6 @@ clientRemoved.title = Client removed
 clientRemoved.heading = Client removed
 clientRemoved.p1 = You are no longer authorised to act for this client.
 clientRemoved.link.backToClientList = Back to your client list
-agentLanding.link.manageClientDetails = Manage client details
 
 securityCheck.title = Checking your authorisation
 securityCheck.heading = Checking your authorisation
@@ -293,14 +293,14 @@ changeBusinessNameConfirmation.reviewing = We are reviewing your changes and wil
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
 
-agentManageYourDetails.title = Manage your details
-agentManageYourDetails.heading = Manage your details
-agentManageYourDetails.clientSearch.heading = Client search
-agentManageYourDetails.clientSearch.search = Search for a client
-agentManageYourDetails.clientSearch.download = Download client list
-agentManageYourDetails.businessDetails.heading = Your business details
-agentManageYourDetails.businessDetails.check = Check your business details
-agentManageYourDetails.clientSearch.empty = You have no clients to view.
+agent.ManageYourDetails.title = Manage your details
+agent.ManageYourDetails.heading = Manage your details
+agent.ManageYourDetails.clientSearch.heading = Client search
+agent.ManageYourDetails.clientSearch.search = Search for a client
+agent.ManageYourDetails.clientSearch.download = Download client list
+agent.ManageYourDetails.businessDetails.heading = Your business details
+agent.ManageYourDetails.businessDetails.check = Check your business details
+agent.ManageYourDetails.clientSearch.empty = You have no clients to view.
 
 manageYourMgdLanding.title = Manage your Machine Games Duty
 manageYourMgdLanding.heading = Manage your Machine Games Duty
