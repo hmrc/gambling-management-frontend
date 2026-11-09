@@ -14,6 +14,47 @@
  * limitations under the License.
  *@
 
+@import viewmodels.LegendSize
+@import viewmodels.govuk.errorsummary._
+@import viewmodels.govuk.radios._
+@import viewmodels.govuk.fieldset._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    caption: components.Caption
+)
+
+@(form: Form[_], regNumber: String)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("agent.createClientReference.title"))) {
+    @formHelper(action = controllers.clientdetails.routes.CreateClientReferenceController.onSubmit(regNumber), Symbol("autoComplete") -> "off") {
+        @if(form.hasErrors) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @caption(messages("agent.createClientReference.caption"))
+
+        <p class="govuk-body">@messages("journeyRecovery.continue.guidance")</p>
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("removeEmailAddress.heading", emailAddress)).asPageHeading(LegendSize.Large)
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}
+
+
+
 @import views.html.components.*
 @import play.api.data.Form
 
