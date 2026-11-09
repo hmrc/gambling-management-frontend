@@ -71,14 +71,16 @@
         </div>
     </form>
 
-    <p class="govuk-body">
-        @messages(
-            "clientList.pagination.displaying",
-            paginationParams.firstRecord,
-            paginationParams.lastRecord,
-            paginationParams.totalRecords
-        )
-    </p>
+    @if(paginationParams.totalRecords > 10) {
+        <p class="govuk-body">
+            @messages(
+                "clientList.pagination.displaying",
+                 paginationParams.firstRecord,
+                 paginationParams.lastRecord,
+                 paginationParams.totalRecords
+            )
+        </p>
+    }
 
     @if(clients.isEmpty) {
         @paragraph(message = "clientList.noResults")
