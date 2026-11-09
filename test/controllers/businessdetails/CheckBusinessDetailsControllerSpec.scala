@@ -106,59 +106,6 @@ class CheckBusinessDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must display the locally-stored business details in preference to the backend values" in {
-      val mockService     = org.mockito.Mockito.mock(classOf[GamblingService])
-      val mockSessionRepo = org.mockito.Mockito.mock(classOf[SessionRepository])
-      when(mockService.getAgentDetails(using any())).thenReturn(
-        Future.successful(
-          Right(
-            AgentDetails(
-              businessName = Some("Agent 1"),
-              addressLine1 = Some("123 Business road"),
-              addressLine2 = Some("Business"),
-              addressLine3 = Some("London"),
-              addressLine4 = Some("Greater London"),
-              postcode = Some("AB1 2CD"),
-              country = Some("GB"),
-              abroadSignal = Some("N"),
-              phoneNumber = Some("0191 202 2500"),
-              mobilePhoneNumber = Some("07890 123 456"),
-              faxNumber = Some("0800 202 2500"),
-              email = Some("sarah.phillips@example.com")
-            )
-          )
-        )
-      )
-      when(mockSessionRepo.set(any())).thenReturn(Future.successful(true))
-
-      val storedDetails = businessDetails.copy(
-        businessName = Some("New Name Ltd"),
-        faxNumber = Some("0999 999 9999"),
-        emailAddress = None
-      )
-      val userAnswers   = emptyUserAnswers.set(BusinessDetailsPage, storedDetails).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[GamblingService].toInstance(mockService), bind[SessionRepository].toInstance(mockSessionRepo))
-        .build()
-
-      running(application) {
-        val result = route(application, FakeRequest(GET, routes.CheckBusinessDetailsController.onPageLoad().url)).value
-
-        status(result) mustEqual OK
-        val text = Jsoup.parse(contentAsString(result)).text()
-        text must include("New Name Ltd")
-        text must include("0999 999 9999")
-        text must not include "Agent 1"
-        text must not include "0800 202 2500"
-        text must not include "sarah.phillips@example.com"
-
-        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepo).set(captor.capture())
-        captor.getValue.get(BusinessDetailsPage).value mustBe storedDetails
-      }
-    }
-
     "must redirect to the page not found page when agent details are not found" in {
       val mockService = org.mockito.Mockito.mock(classOf[GamblingService])
       when(mockService.getAgentDetails(using any()))

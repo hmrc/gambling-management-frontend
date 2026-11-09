@@ -17,17 +17,15 @@
 package viewmodels.businessContact
 
 import models.UserAnswers
-import pages.businessdetails.{ChangeEmailAddressPage, RemoveEmailAddressPage}
+import pages.BusinessDetailsPage
+import pages.businessdetails.ChangeEmailAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 object EmailAddressSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    // A pending removal is signalled by RemoveEmailAddressPage, not by clearing ChangeEmailAddressPage, so treat a
-    // removed email as absent here too - otherwise the review row would still show the value being removed.
-    val removed = answers.get(RemoveEmailAddressPage).contains(true)
-    val answer  = if (removed) None else answers.get(ChangeEmailAddressPage)
+    val answer = answers.get(ChangeEmailAddressPage)
 
     Seq(
       BusinessContactHelpers.textOrActionWithRemoveLinkRow(
