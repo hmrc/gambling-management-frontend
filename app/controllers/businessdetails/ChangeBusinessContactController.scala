@@ -20,9 +20,8 @@ import connectors.GamblingConnector
 import controllers.actions.*
 import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.BusinessDetailsPage
-import pages.businessdetails.{BusinessContactDetailConfirmationPage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage, RemoveEmailAddressPage, RemoveFaxNumberPage}
+import models.{CheckMode, Mode, NormalMode}
+import pages.businessdetails.{BusinessContactDetailConfirmationPage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -33,7 +32,6 @@ import views.html.businessdetails.ChangeBusinessContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
 
 class ChangeBusinessContactController @Inject() (
   override val messagesApi: MessagesApi,
@@ -65,37 +63,20 @@ class ChangeBusinessContactController @Inject() (
       request.userAnswers.get(ChangeContactNumbersPage) match {
 
         case Some(ContactNumbers(phoneNumber, mobileNumber)) =>
-          val faxNumber =
-            if (request.userAnswers.get(RemoveFaxNumberPage).contains(true)) None
-            else request.userAnswers.get(ChangeFaxNumberPage)
-          val email     =
-            if (request.userAnswers.get(RemoveEmailAddressPage).contains(true)) None
-            else request.userAnswers.get(ChangeEmailAddressPage)
 
           val submission =
             BusinessContactDetailSubmission(
               submitterEmail = None,
               phoneNumber = phoneNumber,
               mobileNumber = mobileNumber,
-              faxNumber = faxNumber,
-              email = email
+              faxNumber = request.userAnswers.get(ChangeFaxNumberPage),
+              email = request.userAnswers.get(ChangeEmailAddressPage)
             )
 
           for {
             submissionResponse <- gamblingConnector.updateBusinessDetails(submission)
-            withDetails        <- Future.fromTry(
-                                    request.userAnswers
-                                      .get(BusinessDetailsPage)
-                                      .fold(Success(request.userAnswers): Try[UserAnswers])(details =>
-                                        request.userAnswers
-                                          .set(
-                                            BusinessDetailsPage,
-                                            BusinessContactHelpers.applyContactChanges(details, request.userAnswers)
-                                          )
-                                      )
-                                  )
             clearedAnswers     <- Future.fromTry(
-                                    BusinessContactHelpers.clearChanges(withDetails)
+                                    BusinessContactHelpers.clearChanges(request.userAnswers)
                                   )
 
             updatedAnswers <- Future.fromTry(

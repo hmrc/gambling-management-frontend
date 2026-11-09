@@ -161,6 +161,7 @@ clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
 clientList.th.regNumber = MGD registration number
 clientList.th.clientReference = Client reference
+clientList.clientReference.empty = Not provided
 clientList.th.remove.action = Action
 clientList.th.remove = Remove
 clientList.pagination.displaying = Displaying {0} to {1} of {2} records

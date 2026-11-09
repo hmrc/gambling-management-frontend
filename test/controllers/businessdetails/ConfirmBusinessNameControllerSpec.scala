@@ -18,14 +18,13 @@ package controllers.businessdetails
 
 import base.SpecBase
 import controllers.businessdetails.ConfirmBusinessNameController
-import models.{BusinessDetails, UserAnswers}
+import models.UserAnswers
 import models.businessdetails.{BusinessNameSubmission, ChrisSubmissionResponse}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.BusinessDetailsPage
 import pages.businessdetails.BusinessNamePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -93,23 +92,7 @@ class ConfirmBusinessNameControllerSpec extends SpecBase with MockitoSugar {
         )
       )
 
-      val storedDetails = BusinessDetails(
-        businessName = Some("Old Name Ltd"),
-        addressLine1 = None,
-        addressLine2 = None,
-        addressLine3 = None,
-        phoneNumber = None,
-        mobileNumber = None,
-        faxNumber = None,
-        emailAddress = None
-      )
-      val userAnswers   = UserAnswers(userAnswersId)
-        .set(BusinessNamePage, "Test Ltd")
-        .success
-        .value
-        .set(BusinessDetailsPage, storedDetails)
-        .success
-        .value
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessNamePage, "Test Ltd").success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -132,8 +115,7 @@ class ConfirmBusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
         val captorUa = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(captorUa.capture())
-        captorUa.getValue.get(BusinessNamePage) mustBe Some("Test Ltd")
-        captorUa.getValue.get(BusinessDetailsPage).value.businessName mustBe Some("Test Ltd")
+        captorUa.getValue.get(BusinessNamePage) mustBe None
       }
     }
 

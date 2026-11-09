@@ -60,11 +60,8 @@ class CheckBusinessDetailsController @Inject() (
       case Left(_)                      =>
         Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
       case Right(agentDetails)          =>
-        val backendDetails = BusinessDetails.fromAgentDetails(agentDetails)
-        // Prefer the locally-stored details, which carry any changes the user has confirmed; the backend
-        // read-model can lag behind recent updates.
-        val bd             = request.userAnswers.get(BusinessDetailsPage).getOrElse(backendDetails)
-        updateUserAnswersFromBusinessDetails(bd, request).map(details => Ok(view(details)))
+        val bd = BusinessDetails.fromAgentDetails(agentDetails)
+        updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd)))
     }
 
   }
@@ -72,7 +69,7 @@ class CheckBusinessDetailsController @Inject() (
   private def updateUserAnswersFromBusinessDetails(
     bd: BusinessDetails,
     request: DataRequest[_]
-  ): Future[BusinessDetails] = {
+  ): Future[UserAnswers] = {
     val prefilled =
       for {
         withDetails <- request.userAnswers.set(BusinessDetailsPage, bd)
@@ -85,7 +82,7 @@ class CheckBusinessDetailsController @Inject() (
     for {
       answers <- Future.fromTry(prefilled)
       _       <- sessionRepository.set(answers)
-    } yield bd
+    } yield answers
   }
 
   private def setIfAbsent[A](answers: UserAnswers, page: QuestionPage[A], value: Option[A])(implicit

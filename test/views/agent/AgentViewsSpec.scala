@@ -154,6 +154,31 @@ class AgentViewsSpec extends SpecBase {
       doc.select(".govuk-pagination__next a").attr("href") mustBe nextPageUrl
     }
 
+    "does not display record count when there are 10 or fewer clients" in {
+      val clients = Seq(
+        ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"),
+        ClientListViewModel("Bingo Ltd", "RN2", "ref2", "remove2")
+      )
+
+      val pagination = PaginationParams(clients.size, 10, 1)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.text must not include "Displaying 1 to 2 of 2 records"
+      doc.select(".govuk-pagination").size mustBe 0
+    }
+
+    "displays Not provided when client reference is empty" in {
+      val clients = Seq(
+        ClientListViewModel("Acme Casinos", "RN1", "", "remove1")
+      )
+
+      val pagination = PaginationParams(clients.size, 10, 1)
+      val doc        = Jsoup.parse(view(clients, "", pagination).body)
+
+      doc.select("tbody tr td").get(2).text mustBe
+        messages("clientList.clientReference.empty")
+    }
+
   }
 
   "SecurityCheckView" - {
