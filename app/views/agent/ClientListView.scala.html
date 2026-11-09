@@ -101,7 +101,13 @@
                             <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.regNumber).url">@client.clientName</a>
                         </td>
                         <td class="govuk-table__cell">@client.regNumber</td>
-                        <td class="govuk-table__cell">@client.clientReference</td>
+                        <td class="govuk-table__cell">
+                            @if(client.clientReference.trim.isEmpty){
+                                @messages("clientList.clientReference.empty")
+                            } else {
+                                @client.clientReference
+                            }
+                        </td>
                         <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">@messages("clientList.th.remove")<span class="govuk-visually-hidden">@client.clientName</span></a></td>
                     </tr>
                 }
