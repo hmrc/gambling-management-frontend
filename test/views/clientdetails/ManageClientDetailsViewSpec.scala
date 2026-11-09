@@ -37,6 +37,18 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
   "ManageClientDetailsView" - {
 
+    "renders the headers and title correctly" in {
+
+      val view = app.injector.instanceOf[ManageClientDetailsView]
+      val doc  = Jsoup.parse(view("XMM00000000123", summaryListWithChangeAndRemove(messages)).body)
+
+      doc.text must include("Manage your client details")
+      doc.text must include("Client name")
+      doc.text must include("MGD registration number")
+      doc.text must include("Client reference")
+      doc.text must include("Remove client")
+    }
+
     "renders the client details and change/remove links when clientReference is populated" in {
 
       val view = app.injector.instanceOf[ManageClientDetailsView]
@@ -91,10 +103,10 @@ class ManageClientDetailsViewSpec extends SpecBase {
 object ManageClientDetailsViewUtil {
   def summaryListWithChangeAndRemove(messages: Messages) = SummaryList(
     rows = Seq(
-      SummaryListRow(key = Key(Text("Row 1")), value = Value(Text("Acme Casinos"))),
-      SummaryListRow(key = Key(Text("Row 2")), value = Value(Text("XMM00000000123"))),
+      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.clientName"))), value = Value(Text("Acme Casinos"))),
+      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.regNumber"))), value = Value(Text("XMM00000000123"))),
       SummaryListRow(
-        key = Key(Text("Row 3")),
+        key = Key(Text(messages("agent.manageClientDetails.clientReference"))),
         value = Value(Text("clientRef123")),
         actions = Some(
           Actions(
