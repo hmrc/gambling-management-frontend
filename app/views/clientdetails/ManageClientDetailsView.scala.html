@@ -28,18 +28,18 @@
 @(regNumber: String, summaryList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("manageClientDetails.title")),
+    pageTitle = titleNoForm(messages("agent.manageClientDetails.title")),
     showBackLink = true,
     showSignOut = true
 ) {
 
-    @h1(msg = "manageClientDetails.heading", classes = "govuk-heading-l")
+    @h1(msg = "agent.manageClientDetails.heading", classes = "govuk-heading-l")
 
     @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-6"))
 
     <p class="govuk-body">
         @link(
-            linkTextKey = "manageClientDetails.remove.client",
+            linkTextKey = "agent.manageClientDetails.remove.client",
             linkUrl = controllers.clientdetails.routes.RemoveClientController.onPageLoad(regNumber).url
         )
     </p>

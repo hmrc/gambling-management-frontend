@@ -33,7 +33,7 @@ object ClientDetailsSummary {
   ): SummaryList =
 
     val clientNameRow = SummaryListRow(
-      key = KeyViewModel(Text(messages("manageClientDetails.clientName"))),
+      key = KeyViewModel(Text(messages("agent.manageClientDetails.clientName"))),
       value = ValueViewModel(Text(clientName)),
       // need to add an empty Action with "govuk-!-width-one-third" css class so the clientReferenceRow displays the Change|Remove correctly
       actions = Some(
@@ -47,29 +47,29 @@ object ClientDetailsSummary {
     )
 
     val regNumberRow = SummaryListRow(
-      key = KeyViewModel(Text(messages("manageClientDetails.regNumber"))),
+      key = KeyViewModel(Text(messages("agent.manageClientDetails.regNumber"))),
       value = ValueViewModel(Text(regNumber))
     )
 
     val clientReferenceRow =
       if (clientReference.trim.isEmpty)
         SummaryListRow(
-          key = KeyViewModel(Text(messages("manageClientDetails.clientReference"))),
-          value = ValueViewModel(Text(messages("manageClientDetails.notProvided"))),
+          key = KeyViewModel(Text(messages("agent.manageClientDetails.clientReference"))),
+          value = ValueViewModel(Text(messages("agent.manageClientDetails.notProvided"))),
           actions = Some(
             Actions(
               items = Seq(
                 ActionItemViewModel(
                   Text(messages("site.change")),
                   controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
-                ).withVisuallyHiddenText(messages("manageClientDetails.clientReference"))
+                ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference"))
               )
             )
           )
         )
       else
         SummaryListRow(
-          key = KeyViewModel(Text(messages("manageClientDetails.clientReference"))),
+          key = KeyViewModel(Text(messages("agent.manageClientDetails.clientReference"))),
           value = ValueViewModel(Text(Some(clientReference).getOrElse(""))),
           actions = Some(
             Actions(
@@ -78,11 +78,11 @@ object ClientDetailsSummary {
                 ActionItemViewModel(
                   Text(messages("site.change")),
                   controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
-                ).withVisuallyHiddenText(messages("manageClientDetails.clientReference")),
+                ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference")),
                 ActionItemViewModel(
                   Text(messages("site.remove")),
                   "#" // controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url  TODO: uncomment
-                ).withVisuallyHiddenText(messages("manageClientDetails.clientReference"))
+                ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference"))
               )
             )
           )

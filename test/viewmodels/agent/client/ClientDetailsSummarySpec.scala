@@ -42,7 +42,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
-      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientName"))).value
+      val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.clientName"))).value
 
       row.value.content mustBe Text(msgs("ABC Ltd"))
       row.actions.value.items.head.content mustBe Text(msgs(""))
@@ -54,7 +54,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
-      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.regNumber"))).value
+      val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.regNumber"))).value
 
       row.value.content mustBe Text(msgs("XVM00000001001"))
       row.actions mustBe None
@@ -64,9 +64,9 @@ class ClientDetailsSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, "      ").rows
-      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientReference"))).value
+      val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.clientReference"))).value
 
-      row.value.content mustBe Text(msgs("manageClientDetails.notProvided"))
+      row.value.content mustBe Text(msgs("agent.manageClientDetails.notProvided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
       row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
       row.actions.value.items.size mustBe 1
@@ -76,7 +76,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
-      val row  = rows.find(_.key.content == Text(msgs("manageClientDetails.clientReference"))).value
+      val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.clientReference"))).value
 
       row.value.content mustBe Text("EZ00100")
       row.actions.value.items.size mustBe 2

@@ -11,6 +11,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.submit = Submit
 
 date.day = Day
 date.month = Month
@@ -149,10 +150,12 @@ agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
 
-clientList.title = Your clients
-clientList.heading = Your clients
-clientList.search.label = Search by client name
+clientList.title = Search for a client
+clientList.heading = Search for a client
+clientList.caption = Manage your details
+clientList.search.label = You can search by client name, Machine Games Duty (MGD) registration number or client reference.
 clientList.search.button = Search
+clientList.clearSearch = Clear search
 clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
 clientList.th.regNumber = MGD registration number
@@ -167,13 +170,13 @@ clientList.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 
-manageClientDetails.title = Manage your client details
-manageClientDetails.heading = Manage your client details
-manageClientDetails.clientName = Client name
-manageClientDetails.regNumber = MGD registration number
-manageClientDetails.clientReference = Client reference
-manageClientDetails.notProvided = Not provided
-manageClientDetails.remove.client = Remove client
+agent.manageClientDetails.title = Manage your client details
+agent.agentManageClientDetails.heading = Manage your client details
+agent.manageClientDetails.clientName = Client name
+agent.manageClientDetails.regNumber = MGD registration number
+agent.manageClientDetails.clientReference = Client reference
+agent.manageClientDetails.notProvided = Not provided
+agent.manageClientDetails.remove.client = Remove client
 
 changeClientReference.title = Change client reference
 changeClientReference.heading = Enter a client reference
@@ -190,7 +193,6 @@ removeClient.heading = Are you sure you want to remove {0}?
 removeClient.caption=Manage your client details
 removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
 removeClient.error.required = Select yes if you want to remove this client
-
 
 clientRemoved.title = Client removed
 clientRemoved.heading = Client removed
@@ -262,18 +264,19 @@ changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
 
-businessName.title = What is your business name?
-businessName.heading = What is your business name?
-businessName.caption = Change registration details
-businessName.error.required = Enter the name for this business
-businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
-businessName.error.length = The business name must be 100 characters or less
-
 confirmBusinessName.title = Confirm your business name
 confirmBusinessName.heading = Confirm your business name
 confirmBusinessName.caption = Check business details
 confirmBusinessName.businessName = Business name
 confirmBusinessName.submit = Submit
+
+businessName.title = What is your business name?
+businessName.heading = What is your business name?
+businessName.caption = Check business details
+businessName.error.required = Enter the name for this business
+businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
+businessName.error.length = The business name must be 100 characters or less
+
 changeBusinessContactConfirmation.title= Changes submitted
 changeBusinessContactConfirmation.heading= Changes submitted
 changeBusinessContactConfirmation.reference= Your reference number is
