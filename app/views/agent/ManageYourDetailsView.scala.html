@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import views.ViewUtils.titleNoForm
+@import viewmodels.CardLink
 
 @this(
         layout: templates.Layout,
@@ -25,25 +26,25 @@
 
 @(agentName: String, isClientListEmpty: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("agentManageYourDetails.title")), includeCustomCss = true) {
-    @h1("agentManageYourDetails.heading", classes = "govuk-heading-l govuk-!-margin-bottom-2")
+@layout(pageTitle = titleNoForm(messages("agent.ManageYourDetails.title")), includeCustomCss = true) {
+    @h1("agent.ManageYourDetails.heading", classes = "govuk-heading-l govuk-!-margin-bottom-2")
     <p class="govuk-body govuk-!-margin-bottom-2">@agentName</p>
     <br>
 
     <div class="govuk-grid-row flex-container govuk-!-padding-0 govuk-!-margin-bottom-4">
         <div class="govuk-grid-column-one-half">
             @linkCard(
-                "agentManageYourDetails.clientSearch.heading",
+                "agent.ManageYourDetails.clientSearch.heading",
                 Seq(
-                    "agentManageYourDetails.clientSearch.search" -> controllers.agent.routes.ClientListController.onPageLoad().url,
-                    "agentManageYourDetails.clientSearch.download" -> controllers.agent.routes.ClientListController.downloadClientList().url
+                    CardLink("agent.ManageYourDetails.clientSearch.search", controllers.agent.routes.ClientListController.onPageLoad().url),
+                    CardLink("agent.ManageYourDetails.clientSearch.download", controllers.agent.routes.ClientListController.downloadClientList().url)
                 ),
-                Option.when(isClientListEmpty)("agentManageYourDetails.clientSearch.empty")
+                Option.when(isClientListEmpty)("agent.ManageYourDetails.clientSearch.empty")
             )
         </div>
         <div class="govuk-grid-column-one-half">
-            @linkCard("agentManageYourDetails.businessDetails.heading", Seq(
-                "agentManageYourDetails.businessDetails.check" -> controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
+            @linkCard("agent.ManageYourDetails.businessDetails.heading", Seq(
+                CardLink("agent.ManageYourDetails.businessDetails.check", controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url)
             ))
         </div>
     </div>

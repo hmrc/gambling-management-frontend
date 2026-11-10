@@ -89,6 +89,9 @@ trait SpecBase
                                               | }
                                               | urls {
                                               |  variationsFrontend = "http://foo.com/variations"
+                                              |  makePayment = "http://foo.com/pay"
+                                              |  landpFrontend = "http://foo.com/landp"
+                                              |  filingFrontend = "http://foo.com/filing"
                                               |  login = "http://foo.com/login"
                                               |  loginContinue = "http://foo.com/bar"
                                               |  signOut = "http://foo.com/sign-out"

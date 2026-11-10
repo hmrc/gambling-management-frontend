@@ -16,31 +16,60 @@
 
 package models.agent
 
+import viewmodels.agent.ClientListViewModel
+
 object AgentClientUtil {
   val clientsList: List[AgentClient] = List(
     AgentClient(
       regime = "MGD",
       regNumber = "XVM00000001001",
-      clientName = Some("""ABC Ltd"""),
+      clientName = Some("ABC Ltd"),
       agentOwnRef = Some("EZ00100")
     ),
     AgentClient(
       regime = "MGD",
       regNumber = "XAM00000001002",
-      clientName = Some("""XYZ Builders"""),
+      clientName = Some("XYZ Builders"),
       agentOwnRef = Some("CD002")
     ),
     AgentClient(
       regime = "MGD",
       regNumber = "XCM00000001003",
-      clientName = Some("""Betelgeuse Construction 3"""),
+      clientName = Some("Betelgeuse Construction 3"),
       agentOwnRef = Some("UP374")
     ),
     AgentClient(
       regime = "MGD",
       regNumber = "XEM00000001004",
-      clientName = Some("""Heritage Contractors 4"""),
+      clientName = Some("Heritage Contractors 4"),
       agentOwnRef = Some("WY080")
+    )
+  )
+
+  val clientsListAsViewModel: Seq[ClientListViewModel] = List(
+    ClientListViewModel(
+      regNumber = "XVM00000001001",
+      clientName = "ABC Ltd",
+      clientReference = "EZ00100",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XVM00000001001").url
+    ),
+    ClientListViewModel(
+      regNumber = "XAM00000001002",
+      clientName = "XYZ Builders",
+      clientReference = "CD002",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XAM00000001002").url
+    ),
+    ClientListViewModel(
+      regNumber = "XCM00000001003",
+      clientName = "Betelgeuse Construction 3",
+      clientReference = "UP374",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XCM00000001003").url
+    ),
+    ClientListViewModel(
+      regNumber = "XEM00000001004",
+      clientName = "Heritage Contractors 4",
+      clientReference = "WY080",
+      removeLink = controllers.clientdetails.routes.RemoveClientController.onPageLoad("XEM00000001004").url
     )
   )
 }

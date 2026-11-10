@@ -40,7 +40,6 @@ class AgentLandingControllerSpec extends SpecBase {
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[views.html.agent.AgentLandingView]
 
   private val client = AgentClient("mgd", "XMM00000000123", Some("Acme Casinos"), Some("ref"))
 
@@ -57,17 +56,15 @@ class AgentLandingControllerSpec extends SpecBase {
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
       audit,
       repo,
-      mcc,
-      view
+      mcc
     )
   }
 
   "onPageLoad" - {
-    "selects the client and renders the landing page" in {
+    "selects the client and redirects to the MGD landing page" in {
       val ua     = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
       val result = controller(ua).onPageLoad("XMM00000000123")(FakeRequest())
-      status(result) mustBe OK
-      contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123"))
+      redirectLocation(result).value mustBe controllers.routes.ManageMachineGamesDutyController.onPageLoad().url
     }
 
     "redirects to JourneyRecovery for an unknown client" in {

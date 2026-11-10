@@ -25,5 +25,6 @@ final case class AuthorisedRequest[A](
   mgdRegNum: String,
   userId: String = "",
   isAgent: Boolean = false,
-  agentReference: Option[String] = None
+  agentReference: Option[String] = None,
+  sessionId: String = ""
 ) extends WrappedRequest[A](request)

@@ -11,6 +11,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.submit = Submit
 
 date.day = Day
 date.month = Month
@@ -18,6 +19,11 @@ date.year = Year
 date.error.day = day
 date.error.month = month
 date.error.year = year
+
+site.pagination.goToPage                                =  Go to page {0}
+site.pagination.landmark                                =  Pagination
+site.pagination.previous                                =  Previous
+site.pagination.next                                    =  Next
 
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
@@ -143,15 +149,22 @@ agentLanding.heading = {0}
 agentLanding.regNumber = Registration number: {0}
 agentLanding.link.registrationCertificate = View registration certificate
 agentLanding.link.backToClientList = Back to your client list
+agentLanding.link.manageClientDetails = Manage client details
 
-clientList.title = Your clients
-clientList.heading = Your clients
-clientList.search.label = Search by client name
+clientList.title = Search for a client
+clientList.heading = Search for a client
+clientList.caption = Manage your details
+clientList.search.label = You can search by client name, Machine Games Duty (MGD) registration number or client reference.
 clientList.search.button = Search
+clientList.clearSearch = Clear search
 clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
-clientList.th.regNumber = Registration number
+clientList.th.regNumber = MGD registration number
 clientList.th.clientReference = Client reference
+clientList.clientReference.empty = Not provided
+clientList.th.remove.action = Action
+clientList.th.remove = Remove
+clientList.pagination.displaying = Displaying {0} to {1} of {2} records
 clientList.download.th.clientName = Enw’r cleient
 clientList.download.th.regNumber = Cyfeirnod Toll Peiriannau Hapchwarae
 clientList.download.th.clientReference = Eich cyfeirnod cleient
@@ -159,13 +172,13 @@ clientList.download.filename = MgdAgentClientList.csv
 
 error.summary.title = There is a problem
 
-manageClientDetails.title = Manage client details
-manageClientDetails.heading = {0}
-manageClientDetails.clientName = Client name
-manageClientDetails.regNumber = Registration number
-manageClientDetails.clientReference = Client reference
-manageClientDetails.change = Change
-manageClientDetails.remove = Remove this client
+agent.manageClientDetails.title = Manage your client details
+agent.manageClientDetails.heading = Manage your client details
+agent.manageClientDetails.clientName = Client name
+agent.manageClientDetails.regNumber = MGD registration number
+agent.manageClientDetails.clientReference = Client reference
+agent.manageClientDetails.notProvided = Not provided
+agent.manageClientDetails.remove.client = Remove client
 
 changeClientReference.title = Change client reference
 changeClientReference.heading = Enter a client reference
@@ -183,12 +196,10 @@ removeClient.caption=Manage your client details
 removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
 removeClient.error.required = Select yes if you want to remove this client
 
-
 clientRemoved.title = Client removed
 clientRemoved.heading = Client removed
 clientRemoved.p1 = You are no longer authorised to act for this client.
 clientRemoved.link.backToClientList = Back to your client list
-agentLanding.link.manageClientDetails = Manage client details
 
 securityCheck.title = Checking your authorisation
 securityCheck.heading = Checking your authorisation
@@ -233,7 +244,7 @@ changeContactNumbers.error.phoneRequired = Enter the phone number for this busin
 checkBusinessDetails.title = Check your business details
 checkBusinessDetails.heading = Check your business details
 checkBusinessDetails.notProvided = Not provided
-checkBusinessDetails.returnToAtAGlance = Return to at a glance
+checkBusinessDetails.returnToManageYourDetails = Return to manage your details
 checkBusinessDetails.businessName = Business name
 checkBusinessDetails.businessAddress = Business address
 checkBusinessDetails.contactDetails.heading = Contact details
@@ -254,18 +265,19 @@ changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
 
-businessName.title = What is your business name?
-businessName.heading = What is your business name?
-businessName.caption = Change registration details
-businessName.error.required = Enter the name for this business
-businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
-businessName.error.length = The business name must be 100 characters or less
-
 confirmBusinessName.title = Confirm your business name
 confirmBusinessName.heading = Confirm your business name
 confirmBusinessName.caption = Check business details
 confirmBusinessName.businessName = Business name
 confirmBusinessName.submit = Submit
+
+businessName.title = What is your business name?
+businessName.heading = What is your business name?
+businessName.caption = Check business details
+businessName.error.required = Enter the name for this business
+businessName.error.invalid = The business name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
+businessName.error.length = The business name must be 100 characters or less
+
 changeBusinessContactConfirmation.title= Changes submitted
 changeBusinessContactConfirmation.heading= Changes submitted
 changeBusinessContactConfirmation.reference= Your reference number is
@@ -282,14 +294,32 @@ changeBusinessNameConfirmation.reviewing = We are reviewing your changes and wil
 changeBusinessNameConfirmation.processingTime = It may take up to 48 hours for HMRC to approve your changes.
 changeBusinessNameConfirmation.returnLink = Return to check your business details
 
-agentManageYourDetails.title = Manage your details
-agentManageYourDetails.heading = Manage your details
-agentManageYourDetails.clientSearch.heading = Client search
-agentManageYourDetails.clientSearch.search = Search for a client
-agentManageYourDetails.clientSearch.download = Download client list
-agentManageYourDetails.businessDetails.heading = Your business details
-agentManageYourDetails.businessDetails.check = Check your business details
-agentManageYourDetails.clientSearch.empty = You have no clients to view.
+agent.ManageYourDetails.title = Manage your details
+agent.ManageYourDetails.heading = Manage your details
+agent.ManageYourDetails.clientSearch.heading = Client search
+agent.ManageYourDetails.clientSearch.search = Search for a client
+agent.ManageYourDetails.clientSearch.download = Download client list
+agent.ManageYourDetails.businessDetails.heading = Your business details
+agent.ManageYourDetails.businessDetails.check = Check your business details
+agent.ManageYourDetails.clientSearch.empty = You have no clients to view.
+
+manageYourMgdLanding.title = Manage your Machine Games Duty
+manageYourMgdLanding.heading = Manage your Machine Games Duty
+manageYourMgdLanding.actingOnBehalfOf = {0} acting on behalf of {1}
+manageYourMgdLanding.statement.heading = Statement
+manageYourMgdLanding.statement.balance = As of {0}, your balance is {1} in {2}.
+manageYourMgdLanding.statement.viewAccountStatement = View account statement
+manageYourMgdLanding.statement.makePayment = Make a payment (opens in new tab)
+manageYourMgdLanding.returns.heading = Returns
+manageYourMgdLanding.returns.overdue = You have {0} overdue returns.
+manageYourMgdLanding.returns.fileReturn = File a return
+manageYourMgdLanding.returns.viewFiledReturns = View filed returns
+manageYourMgdLanding.registration.heading = Registration
+manageYourMgdLanding.registration.viewCertificate = View registration certificate
+manageYourMgdLanding.registration.changeDetails = Change registration details
+manageYourMgdLanding.registration.cancel = Cancel registration
+manageYourMgdLanding.clientDetails.heading = Client details
+manageYourMgdLanding.clientDetails.manage = Manage your client details
 
 removeClientReference.title=Are you sure you want to remove {0}?
 removeClientReference.heading=Are you sure you want to remove {0}?

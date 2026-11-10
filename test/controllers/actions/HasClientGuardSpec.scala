@@ -41,11 +41,18 @@ class HasClientGuardSpec extends AnyFreeSpec with Matchers with ScalaFutures wit
 
   given ExecutionContext = ExecutionContext.global
 
-  private val userId  = "internal-id"
+  private val userId  = "session-id"
   private val client  =
     AgentClient(regime = "MGD", regNumber = "RegNumber1", clientName = Some("Acme"), agentOwnRef = Some("ref"))
   private val request =
-    AuthorisedRequest(FakeRequest(), AffinityGroup.Agent, mgdRegNum = "", userId = userId, isAgent = true)
+    AuthorisedRequest(
+      FakeRequest(),
+      AffinityGroup.Agent,
+      mgdRegNum = "",
+      userId = "internal-id",
+      isAgent = true,
+      sessionId = userId
+    )
 
   private val systemErrorUrl     = controllers.routes.SystemErrorController.onPageLoad().url
   private val agentLostAccessUrl = controllers.agent.routes.AgentLostAccessController.onPageLoad().url
