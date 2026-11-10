@@ -80,7 +80,7 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
 
       val appConfig = app.injector.instanceOf[config.AppConfig]
       val payment   = doc.select("a:contains(Make a payment)").first()
-      payment.attr("href") mustBe appConfig.makePaymentUrl
+      payment.attr("href") mustBe "https://www.gov.uk/pay-machine-games-duty"
       doc
         .select("a:contains(File a return)")
         .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-return"
