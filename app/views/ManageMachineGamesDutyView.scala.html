@@ -56,14 +56,14 @@
             "manageYourMgdLanding.returns.heading",
             Seq(
                 CardLink("manageYourMgdLanding.returns.fileReturn", s"${appConfig.filingFrontend}/$regNumber/select-return"),
-                CardLink("manageYourMgdLanding.returns.viewFiledReturns", "#")
+                CardLink("manageYourMgdLanding.returns.viewFiledReturns", s"${appConfig.filingFrontend}/$regNumber/select-filed-return")
             ),
             description = Some(messages("manageYourMgdLanding.returns.overdue", overdueReturns))
         )
         @linkCard(
             "manageYourMgdLanding.registration.heading",
             Seq(
-                CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad().url),
+                CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad(regNumber: String).url),
                 CardLink("manageYourMgdLanding.registration.changeDetails", "#"),
                 CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling")
             )

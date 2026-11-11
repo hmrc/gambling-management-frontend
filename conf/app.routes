@@ -17,7 +17,7 @@ GET         /there-is-a-problem-with-the-service                     controllers
 GET         /there-is-a-problem-access-denied                        controllers.AccessDeniedController.onPageLoad()
 GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()
 
-GET         /registration-certificate                                controllers.ViewRegistrationCertificateController.onPageLoad()
+GET         /registration-certificate/:regNumber                                controllers.ViewRegistrationCertificateController.onPageLoad(regNumber: String)
 
 GET         /manage-your-machine-games-duty                          controllers.ManageMachineGamesDutyController.onPageLoad()
 
