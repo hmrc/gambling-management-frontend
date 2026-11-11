@@ -40,7 +40,7 @@
                         @for(error <- form.errors) {
                             <li>
                                 <a href="#value">
-                                    @messages(error.message, regNumber)
+                                    @messages(error.message, clientReference)
                                 </a>
                             </li>
                         }
@@ -75,7 +75,7 @@
                         <span class="govuk-visually-hidden">
                             @messages("error.prefix")
                         </span>
-                        @messages(error.message, regNumber)
+                        @messages(error.message, clientReference)
                     </p>
                 }
 

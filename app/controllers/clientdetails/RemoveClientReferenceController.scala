@@ -135,9 +135,7 @@ class RemoveClientReferenceController @Inject() (
       }
     }
 
-  private def clearAndRedirect(
-    userAnswers: models.UserAnswers
-  ): Future[play.api.mvc.Result] =
+  private def clearAndRedirect(userAnswers: models.UserAnswers): Future[play.api.mvc.Result] =
     for {
       clearedAnswers <- Future.fromTry(
                           userAnswers.remove(RemoveClientReferencePage)
@@ -146,6 +144,6 @@ class RemoveClientReferenceController @Inject() (
       _ <- sessionRepository.set(clearedAnswers)
 
     } yield Redirect(
-      controllers.agent.routes.ClientListController.onPageLoad()
+      controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad()
     )
 }
