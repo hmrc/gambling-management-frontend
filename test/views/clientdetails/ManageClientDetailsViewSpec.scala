@@ -103,8 +103,14 @@ class ManageClientDetailsViewSpec extends SpecBase {
 object ManageClientDetailsViewUtil {
   def summaryListWithChangeAndRemove(messages: Messages) = SummaryList(
     rows = Seq(
-      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.clientName"))), value = Value(Text("Acme Casinos"))),
-      SummaryListRow(key = Key(Text(messages("agent.manageClientDetails.regNumber"))), value = Value(Text("XMM00000000123"))),
+      SummaryListRow(
+        key = Key(Text(messages("agent.manageClientDetails.clientName"))),
+        value = Value(Text("Acme Casinos"))
+      ),
+      SummaryListRow(
+        key = Key(Text(messages("agent.manageClientDetails.regNumber"))),
+        value = Value(Text("XMM00000000123"))
+      ),
       SummaryListRow(
         key = Key(Text(messages("agent.manageClientDetails.clientReference"))),
         value = Value(Text("clientRef123")),
