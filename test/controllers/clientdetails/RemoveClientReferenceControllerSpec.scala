@@ -161,7 +161,7 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
 
   "onSubmit" - {
 
-    "redirects to search-for-a-client when Yes" in {
+    "redirects to manage-client-details when Yes" in {
 
       val request =
         FakeRequest()
@@ -176,12 +176,12 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).value mustBe
-        controllers.agent.routes.ClientListController
+        controllers.clientdetails.routes.ManageClientDetailsController
           .onPageLoad()
           .url
     }
 
-    "redirects to search-for-a-client when No" in {
+    "redirects to manage-client-details when No" in {
 
       val request =
         FakeRequest()
@@ -196,7 +196,7 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).value mustBe
-        controllers.agent.routes.ClientListController
+        controllers.clientdetails.routes.ManageClientDetailsController
           .onPageLoad()
           .url
     }
