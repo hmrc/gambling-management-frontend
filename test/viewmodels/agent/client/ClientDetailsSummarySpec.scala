@@ -29,8 +29,8 @@ class ClientDetailsSummarySpec extends SpecBase {
   private def changeClientReferenceUrl(regNumber: String) =
     controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
 
-//  private def removeClientReferenceUrl(regNumber: String) =
-//    controllers.businessdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url //TODO :uncomment to use correct url
+  private def removeClientReferenceUrl(regNumber: String) =
+    controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url
 
   private val clientName      = "ABC Ltd"
   private val regNumber       = "XVM00000001001"
@@ -84,7 +84,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
-      row.actions.value.items(1).href mustBe "#" // TODO replace with removeClientReferenceUrl(regNumber)
+      row.actions.value.items(1).href mustBe removeClientReferenceUrl(regNumber)
     }
   }
 }
