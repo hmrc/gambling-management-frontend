@@ -81,7 +81,7 @@ object ClientDetailsSummary {
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference")),
                 ActionItemViewModel(
                   Text(messages("site.remove")),
-                  "#" // controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url  TODO: uncomment
+                  controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference"))
               )
             )
