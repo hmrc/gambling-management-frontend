@@ -70,7 +70,9 @@ class ManageClientDetailsControllerSpec extends SpecBase {
       contentAsString(result) must include(
         controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
       )
-      // contentAsString(result) must include(controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url)  TODO : uncomment
+      contentAsString(result) must include(
+        controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url
+      )
       contentAsString(result) must include(
         controllers.clientdetails.routes.RemoveClientController.onPageLoad("XMM00000000123").url
       )
