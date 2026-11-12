@@ -70,7 +70,7 @@ class AgentViewsSpec extends SpecBase {
       doc.text                                 must include("XMM00000000123")
       doc.select("a").attr("href")             must not be empty
       doc.select("a").eachAttr("href").toArray must contain(
-        controllers.routes.ViewRegistrationCertificateController.onPageLoad().url
+        controllers.routes.ViewRegistrationCertificateController.onPageLoad("XMM00000000123").url
       )
     }
   }

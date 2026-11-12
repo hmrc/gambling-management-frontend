@@ -91,10 +91,10 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         .attr("href") mustBe s"${appConfig.landpFrontend}/statement/mgd/XWM00000001770/current"
       doc
         .select("a:contains(View filed returns)")
-        .attr("href") mustBe "#"
+        .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-filed-return"
       payment.attr("target") mustBe "_blank"
       doc.select("a:contains(View registration certificate)").attr("href") mustBe
-        controllers.routes.ViewRegistrationCertificateController.onPageLoad().url
+        controllers.routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url
       doc.select("a:contains(Manage your client details)").attr("href") mustBe
         controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url
     }
