@@ -39,9 +39,9 @@ class ViewRegistrationCertificateController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = authorise.async { implicit request =>
+  def onPageLoad(regNumber: String): Action[AnyContent] = authorise.async { implicit request =>
 
-    val mgdRegNum = request.mgdRegNum
+    val mgdRegNum = regNumber.toUpperCase.trim
 
     gamblingService
       .retrieveCertificate(mgdRegNum)

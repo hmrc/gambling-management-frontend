@@ -325,3 +325,8 @@ manageYourMgdLanding.registration.changeDetails = Change registration details
 manageYourMgdLanding.registration.cancel = Cancel registration
 manageYourMgdLanding.clientDetails.heading = Client details
 manageYourMgdLanding.clientDetails.manage = Manage your client details
+
+removeClientReference.title=Are you sure you want to remove {0}?
+removeClientReference.heading=Are you sure you want to remove {0}?
+removeClientReference.caption=Manage your client details
+removeClientReference.error.required=Select Select if you want to remove {0}
