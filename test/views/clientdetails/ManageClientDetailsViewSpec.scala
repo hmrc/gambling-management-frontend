@@ -65,7 +65,9 @@ class ManageClientDetailsViewSpec extends SpecBase {
       ddHrefs must contain(
         controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
       )
-      // ddHrefs must contain(controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url) TODO : uncomment
+      ddHrefs must contain(
+        controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url
+      )
       ddHrefs must have size 2
 
       val pHrefs = doc.select("p.govuk-body a").eachAttr("href").toArray
@@ -124,7 +126,7 @@ object ManageClientDetailsViewUtil {
               ).withVisuallyHiddenText(messages("")),
               ActionItemViewModel(
                 Text("RemoveLink"),
-                "/manage-gambling-tax/agent/remove-client-reference/XMM00000000123" // TODO: use correct url
+                "/manage-gambling-tax/agent/remove-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages(""))
             )
           )
