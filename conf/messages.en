@@ -186,8 +186,9 @@ agent.createClientReference.caption = Manage your client details
 agent.createClientReference.guidance1 = This is a reference assigned to your client when requesting to be authorised as their agent.
 agent.createClientReference.guidance2 = This can be up to 21 characters and include numbers like 123456789 and letters from A to Z.
 agent.createClientReference.clientReference.label = What is your client reference?
-agent.createClientReference.error.required = Enter a client reference
-agent.createClientReference.error.length = Client reference must be 20 characters or fewer
+agent.createClientReference.error.required = Enter your client reference
+agent.createClientReference.error.length = Client reference must be 21 characters or less
+agent.createClientReference.error.invalid = Enter your client reference in the correct format
 
 clientRefUpdateConfirmation.title = Client reference updated
 clientRefUpdateConfirmation.heading = Client reference updated

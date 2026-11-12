@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
+import forms.clientdetails.{CreateClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -120,7 +120,7 @@ object ManageClientDetailsViewUtil {
             items = Seq(
               ActionItemViewModel(
                 Text("ChangeLink"),
-                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+                "/manage-gambling-tax/agent/manage-your-details/create-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages("")),
               ActionItemViewModel(
                 Text("RemoveLink"),
@@ -146,7 +146,7 @@ object ManageClientDetailsViewUtil {
             items = Seq(
               ActionItemViewModel(
                 Text("ChangeLink"),
-                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+                "/manage-gambling-tax/agent/manage-your-details/create-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages(""))
             )
           )

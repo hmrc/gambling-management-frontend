@@ -16,7 +16,7 @@
 
 package controllers.clientdetails
 
-import controllers.actions.{AuthorisedAction, ClientListCheckAction, DataRequiredAction, DataRetrievalAction, HasClientGuard}
+import controllers.actions.*
 import forms.clientdetails.CreateClientReferenceFormProvider
 import pages.clientdetails.CreateClientReferencePage
 import play.api.Logging
