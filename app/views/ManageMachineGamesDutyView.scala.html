@@ -64,8 +64,8 @@
             "manageYourMgdLanding.registration.heading",
             Seq(
                 CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad(regNumber: String).url),
-                CardLink("manageYourMgdLanding.registration.changeDetails", "#"),
-                CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling")
+                CardLink("manageYourMgdLanding.registration.changeDetails", s"${appConfig.variationsFrontend}/$regNumber/change-registration-details"),
+                CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/$regNumber/cancel-registration")
             )
         )
         @if(isAgent) {
