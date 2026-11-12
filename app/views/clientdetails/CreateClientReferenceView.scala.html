@@ -14,9 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.LegendSize
 @import viewmodels.govuk.errorsummary._
-@import viewmodels.govuk.fieldset._
 @import views.html.components.*
 @import viewmodels.govuk.input._
 @import viewmodels.govuk.label._
@@ -26,10 +24,11 @@
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
     caption: components.Caption,
-    h1: H1
+    h1: H1,
+    p: Paragraph,
+    govukInput: GovukInput,
+    govukButton: GovukButton
 )
 
 @(form: Form[_], regNumber: String)(implicit request: Request[_], messages: Messages)
@@ -43,8 +42,8 @@
         @caption(messages("agent.createClientReference.caption"))
         @h1("agent.createClientReference.heading", classes = "govuk-heading-l")
 
-        <p class="govuk-body">@messages("agent.createClientReference.guidance1")</p>
-        <p class="govuk-body">@messages("agent.createClientReference.guidance2")</p>
+        @p("agent.createClientReference.guidance1")
+        @p("agent.createClientReference.guidance2")
 
         @govukInput(
             InputViewModel(
