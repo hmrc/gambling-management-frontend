@@ -111,3 +111,7 @@
 .govuk-summary-list__actions {
   width: 33%;
 }
+
+.govuk-summary-list .govuk-summary-list__row--no-actions::after {
+  width: 33%;
+}
