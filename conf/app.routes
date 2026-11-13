@@ -12,7 +12,6 @@ GET         /account/sign-out-survey                                 controllers
 GET         /account/sign-out                                        controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                                      controllers.auth.SignedOutController.onPageLoad()
 
-GET         /                                                        controllers.IndexController.onPageLoad()
 GET         /there-is-a-problem-with-the-service                     controllers.SystemErrorController.onPageLoad()
 GET         /there-is-a-problem-access-denied                        controllers.AccessDeniedController.onPageLoad()
 GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()

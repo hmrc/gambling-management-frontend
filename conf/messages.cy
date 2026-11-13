@@ -36,22 +36,6 @@ error.returnSummary.title = There is a problem
 
 mgd.registration.number = MGD registration number
 
-# Index page links
-index.title = Manage your Machine Games Duty
-index.heading = Manage your Machine Games Duty
-
-index.statement=Statement
-index.returns=Returns
-index.registration=Registration
-
-index.link.viewAccountStatement = View account statement
-index.link.makePayment = Make a payment (opens in new tab)
-index.link.fileReturn = File a return
-index.link.viewFiledReturns = View filed returns
-index.link.viewRegistrationCertificate = View registration certificate
-index.link.changeRegistrationDetails = Change registration details
-index.link.cancelRegistration = Cancel registration
-
 systemError.title = Sorry, there is a problem with the service
 systemError.heading = Sorry, there is a problem with the service
 systemError.p1 = Try again later or contact the

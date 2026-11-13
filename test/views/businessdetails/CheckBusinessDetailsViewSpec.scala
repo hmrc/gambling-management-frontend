@@ -137,7 +137,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
           .asScala
           .find(_.text() == msgs("checkBusinessDetails.returnToManageYourDetails"))
           .value
-      link.attr("href") mustEqual controllers.routes.IndexController.onPageLoad().url
+      link.attr("href") mustEqual controllers.routes.ManageMachineGamesDutyController.onPageLoad().url
 
       doc.select("form").size() mustEqual 0
     }

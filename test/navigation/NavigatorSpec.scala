@@ -33,7 +33,8 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.ManageMachineGamesDutyController
+          .onPageLoad()
       }
 
       "must go from ChangeContactNumbersPage to ChangeBusinessContactController" in {
