@@ -38,16 +38,14 @@ class ClientDetailsSummarySpec extends SpecBase {
 
   "ClientDetailsSummary" - {
 
-    "must show a clientName row with an empty Action" in {
+    "must show a clientName row with NO Action" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
       val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.clientName"))).value
 
       row.value.content mustBe Text(msgs("ABC Ltd"))
-      row.actions.value.items.head.content mustBe Text(msgs(""))
-      row.actions.value.items.head.href mustBe "#"
-      row.actions.value.classes mustBe "govuk-!-width-one-third"
+      row.actions mustBe None
     }
 
     "must show a regNumber row with NO Action" in {
