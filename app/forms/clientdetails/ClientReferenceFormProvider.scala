@@ -16,21 +16,23 @@
 
 package forms.clientdetails
 
+import forms.mappings.Validation.clientReferenceRegex
+import forms.mappings.{Constants, Mappings}
 import play.api.data.Form
-import play.api.data.Forms.{single, text}
 
 import javax.inject.Inject
 
-class ChangeClientReferenceFormProvider @Inject() () {
-
-  private val maxLength = 20
+class ClientReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      single(
-        "value" -> text
-          .verifying("changeClientReference.error.required", _.trim.nonEmpty)
-          .verifying("changeClientReference.error.length", _.trim.length <= maxLength)
-      )
+      "value" -> text("agent.clientReference.error.required")
+        .transform(_.trim, identity)
+        .verifying(
+          firstError(
+            regexp(clientReferenceRegex, "agent.clientReference.error.invalid"),
+            maxLength(Constants.MaxLength20, "agent.clientReference.error.length")
+          )
+        )
     )
 }

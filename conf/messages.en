@@ -180,10 +180,15 @@ agent.manageClientDetails.clientReference = Client reference
 agent.manageClientDetails.notProvided = Not provided
 agent.manageClientDetails.remove.client = Remove client
 
-changeClientReference.title = Change client reference
-changeClientReference.heading = Enter a client reference
-changeClientReference.error.required = Enter a client reference
-changeClientReference.error.length = Client reference must be 20 characters or fewer
+agent.clientReference.title = Create client reference
+agent.clientReference.heading = Create client reference
+agent.clientReference.caption = Manage your client details
+agent.clientReference.guidance1 = This is a reference assigned to your client when requesting to be authorised as their agent.
+agent.clientReference.guidance2 = This can be up to 20 characters and include numbers like 123456789 and letters from A to Z.
+agent.clientReference.clientReference.label = What is your client reference?
+agent.clientReference.error.required = Enter your client reference
+agent.clientReference.error.length = Client reference must be 20 characters or less
+agent.clientReference.error.invalid = Enter your client reference in the correct format
 
 clientRefUpdateConfirmation.title = Client reference updated
 clientRefUpdateConfirmation.heading = Client reference updated

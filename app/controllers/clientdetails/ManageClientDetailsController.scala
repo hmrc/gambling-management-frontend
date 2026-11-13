@@ -16,8 +16,8 @@
 
 package controllers.clientdetails
 
+import pages.clientdetails.ClientReferencePage
 import controllers.actions.*
-import pages.clientdetails.ChangeClientReferencePage
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,7 +57,7 @@ class ManageClientDetailsController @Inject() (
         case Some(client) =>
           val clientReference = client.agentOwnRef.getOrElse("")
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ChangeClientReferencePage, clientReference))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ClientReferencePage, clientReference))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Ok(
             view(

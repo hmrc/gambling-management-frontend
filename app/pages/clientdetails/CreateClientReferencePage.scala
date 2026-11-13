@@ -19,7 +19,7 @@ package pages.clientdetails
 import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
-case object ChangeClientReferencePage extends Gettable[String] with Settable[String] {
+case object ClientReferencePage extends Gettable[String] with Settable[String] {
   override def path: JsPath     = JsPath \ toString
-  override def toString: String = "changeClientReference"
+  override def toString: String = "clientReference"
 }

@@ -68,7 +68,7 @@ class ManageClientDetailsControllerSpec extends SpecBase {
       status(result) mustBe OK
       contentAsString(result) must (include("Acme Casinos") and include("XMM00000000123") and include("myref"))
       contentAsString(result) must include(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.ClientReferenceController.onPageLoad("XMM00000000123").url
       )
       contentAsString(result) must include(
         controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url

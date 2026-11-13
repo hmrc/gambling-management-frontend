@@ -26,8 +26,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 class ClientDetailsSummarySpec extends SpecBase {
 
-  private def changeClientReferenceUrl(regNumber: String) =
-    controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
+  private def clientReferenceUrl(regNumber: String) =
+    controllers.clientdetails.routes.ClientReferenceController.onPageLoad(regNumber).url
 
   private def removeClientReferenceUrl(regNumber: String) =
     controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url
@@ -66,7 +66,7 @@ class ClientDetailsSummarySpec extends SpecBase {
 
       row.value.content mustBe Text(msgs("agent.manageClientDetails.notProvided"))
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
+      row.actions.value.items.head.href mustBe clientReferenceUrl(regNumber)
       row.actions.value.items.size mustBe 1
     }
 
@@ -79,7 +79,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       row.value.content mustBe Text("EZ00100")
       row.actions.value.items.size mustBe 2
       row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeClientReferenceUrl(regNumber)
+      row.actions.value.items.head.href mustBe clientReferenceUrl(regNumber)
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
       row.actions.value.items(1).href mustBe removeClientReferenceUrl(regNumber)

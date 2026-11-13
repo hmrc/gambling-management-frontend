@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{ChangeClientReferenceFormProvider, RemoveClientFormProvider}
+import forms.clientdetails.{ClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -63,7 +63,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd>ul a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.ClientReferenceController.onPageLoad("XMM00000000123").url
       )
       ddHrefs must contain(
         controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url
@@ -90,7 +90,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.ClientReferenceController.onPageLoad("XMM00000000123").url
       )
       ddHrefs must have size 1
 
@@ -122,7 +122,7 @@ object ManageClientDetailsViewUtil {
             items = Seq(
               ActionItemViewModel(
                 Text("ChangeLink"),
-                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+                "/manage-gambling-tax/agent/manage-your-details/create-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages("")),
               ActionItemViewModel(
                 Text("RemoveLink"),
@@ -148,7 +148,7 @@ object ManageClientDetailsViewUtil {
             items = Seq(
               ActionItemViewModel(
                 Text("ChangeLink"),
-                "/manage-gambling-tax/agent/change-client-reference/XMM00000000123"
+                "/manage-gambling-tax/agent/manage-your-details/create-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages(""))
             )
           )

@@ -52,7 +52,7 @@ object ClientDetailsSummary {
               items = Seq(
                 ActionItemViewModel(
                   Text(messages("site.change")),
-                  controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
+                  controllers.clientdetails.routes.ClientReferenceController.onPageLoad(regNumber).url
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference"))
               )
             )
@@ -68,7 +68,7 @@ object ClientDetailsSummary {
               items = Seq(
                 ActionItemViewModel(
                   Text(messages("site.change")),
-                  controllers.clientdetails.routes.ChangeClientReferenceController.onPageLoad(regNumber).url
+                  controllers.clientdetails.routes.ClientReferenceController.onPageLoad(regNumber).url
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference")),
                 ActionItemViewModel(
                   Text(messages("site.remove")),
