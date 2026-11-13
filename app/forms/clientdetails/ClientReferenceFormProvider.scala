@@ -31,7 +31,7 @@ class ClientReferenceFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             regexp(clientReferenceRegex, "agent.clientReference.error.invalid"),
-            maxLength(Constants.MaxLength21, "agent.clientReference.error.length")
+            maxLength(Constants.MaxLength20, "agent.clientReference.error.length")
           )
         )
     )
