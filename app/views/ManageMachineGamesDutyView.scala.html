@@ -56,7 +56,7 @@
             "manageYourMgdLanding.returns.heading",
             Seq(
                 CardLink("manageYourMgdLanding.returns.fileReturn", s"${appConfig.filingFrontend}/$regNumber/select-return"),
-                CardLink("manageYourMgdLanding.returns.viewFiledReturns", "http://localhost:10401/manage-gambling-tax/returns/XWM00000001770/select-filed-return")
+                CardLink("manageYourMgdLanding.returns.viewFiledReturns", s"${appConfig.filingFrontend}/$regNumber/select-filed-return")
             ),
             description = Some(messages("manageYourMgdLanding.returns.overdue", overdueReturns))
         )
@@ -64,8 +64,8 @@
             "manageYourMgdLanding.registration.heading",
             Seq(
                 CardLink("manageYourMgdLanding.registration.viewCertificate", controllers.routes.ViewRegistrationCertificateController.onPageLoad(regNumber: String).url),
-                CardLink("manageYourMgdLanding.registration.changeDetails", "#"),
-                CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling")
+                CardLink("manageYourMgdLanding.registration.changeDetails", s"${appConfig.variationsFrontend}/$regNumber/change-registration-details"),
+                CardLink("manageYourMgdLanding.registration.cancel", s"${appConfig.variationsFrontend}/$regNumber/cancel-registration")
             )
         )
         @if(isAgent) {

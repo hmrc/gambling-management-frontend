@@ -34,16 +34,7 @@ object ClientDetailsSummary {
 
     val clientNameRow = SummaryListRow(
       key = KeyViewModel(Text(messages("agent.manageClientDetails.clientName"))),
-      value = ValueViewModel(Text(clientName)),
-      // need to add an empty Action with "govuk-!-width-one-third" css class so the clientReferenceRow displays the Change|Remove correctly
-      actions = Some(
-        Actions(
-          classes = "govuk-!-width-one-third",
-          items = Seq(
-            ActionItemViewModel(Text(""), "#").withVisuallyHiddenText(messages(""))
-          )
-        )
-      )
+      value = ValueViewModel(Text(clientName))
     )
 
     val regNumberRow = SummaryListRow(
@@ -81,7 +72,7 @@ object ClientDetailsSummary {
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference")),
                 ActionItemViewModel(
                   Text(messages("site.remove")),
-                  "#" // controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url  TODO: uncomment
+                  controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url
                 ).withVisuallyHiddenText(messages("agent.manageClientDetails.clientReference"))
               )
             )

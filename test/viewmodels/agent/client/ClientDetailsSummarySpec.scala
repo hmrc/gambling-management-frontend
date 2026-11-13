@@ -29,8 +29,8 @@ class ClientDetailsSummarySpec extends SpecBase {
   private def clientReferenceUrl(regNumber: String) =
     controllers.clientdetails.routes.ClientReferenceController.onPageLoad(regNumber).url
 
-//  private def removeClientReferenceUrl(regNumber: String) =
-//    controllers.businessdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url //TODO :uncomment to use correct url
+  private def removeClientReferenceUrl(regNumber: String) =
+    controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad(regNumber).url
 
   private val clientName      = "ABC Ltd"
   private val regNumber       = "XVM00000001001"
@@ -38,16 +38,14 @@ class ClientDetailsSummarySpec extends SpecBase {
 
   "ClientDetailsSummary" - {
 
-    "must show a clientName row with an empty Action" in {
+    "must show a clientName row with NO Action" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ClientDetailsSummary.rows(clientName, regNumber, clientReference).rows
       val row  = rows.find(_.key.content == Text(msgs("agent.manageClientDetails.clientName"))).value
 
       row.value.content mustBe Text(msgs("ABC Ltd"))
-      row.actions.value.items.head.content mustBe Text(msgs(""))
-      row.actions.value.items.head.href mustBe "#"
-      row.actions.value.classes mustBe "govuk-!-width-one-third"
+      row.actions mustBe None
     }
 
     "must show a regNumber row with NO Action" in {
@@ -84,7 +82,7 @@ class ClientDetailsSummarySpec extends SpecBase {
       row.actions.value.items.head.href mustBe clientReferenceUrl(regNumber)
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
-      row.actions.value.items(1).href mustBe "#" // TODO replace with removeClientReferenceUrl(regNumber)
+      row.actions.value.items(1).href mustBe removeClientReferenceUrl(regNumber)
     }
   }
 }

@@ -84,14 +84,16 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
       doc
         .select("a:contains(File a return)")
         .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-return"
+      doc.select("a:contains(Change registration details)").attr("href") mustBe
+        s"${appConfig.variationsFrontend}/XWM00000001770/change-registration-details"
       doc.select("a:contains(Cancel registration)").attr("href") mustBe
-        s"${appConfig.variationsFrontend}/cancel-registration/why-are-you-cancelling"
+        s"${appConfig.variationsFrontend}/XWM00000001770/cancel-registration"
       doc
         .select("a:contains(View account statement)")
         .attr("href") mustBe s"${appConfig.landpFrontend}/statement/mgd/XWM00000001770/current"
       doc
         .select("a:contains(View filed returns)")
-        .attr("href") mustBe s"${appConfig.filingFrontend}/XWM00000001770/select-filed-return"
+        .attr("href") mustBe "http://localhost:10401/manage-gambling-tax/returns/XWM00000001770/select-filed-return"
       payment.attr("target") mustBe "_blank"
       doc.select("a:contains(View registration certificate)").attr("href") mustBe
         controllers.routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url
@@ -115,6 +117,24 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
       doc.select(".govuk-grid-column-full p.govuk-body").eachText().toArray mustBe
         Array("MGD registration number: XWM00000001770")
       doc.select(".card-heading").eachText().toArray mustBe Array("Statement", "Returns", "Registration")
+    }
+
+    "must link change and cancel registration to the variations landing endpoints for the regNumber" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[ManageMachineGamesDutyView]
+      implicit val msgs = messages(app)
+      val doc           = Jsoup.parse(
+        view(false, "", "", "XWM00000001770", 4, "27 January 2025", BigDecimal("700.19"), "debit")(
+          FakeRequest(),
+          msgs
+        ).body
+      )
+
+      val appConfig = app.injector.instanceOf[config.AppConfig]
+      doc.select("a:contains(Change registration details)").attr("href") mustBe
+        s"${appConfig.variationsFrontend}/XWM00000001770/change-registration-details"
+      doc.select("a:contains(Cancel registration)").attr("href") mustBe
+        s"${appConfig.variationsFrontend}/XWM00000001770/cancel-registration"
     }
   }
 }
