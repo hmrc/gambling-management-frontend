@@ -47,7 +47,7 @@ class Navigator @Inject() () {
       _ => controllers.businessdetails.routes.ConfirmBusinessNameController.onPageLoad()
 
     case _ =>
-      _ => routes.IndexController.onPageLoad()
+      _ => routes.ManageMachineGamesDutyController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = { case _ =>
