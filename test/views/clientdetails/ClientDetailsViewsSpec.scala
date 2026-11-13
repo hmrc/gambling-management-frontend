@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{CreateClientReferenceFormProvider, RemoveClientFormProvider, RemoveClientReferenceFormProvider}
+import forms.clientdetails.{ClientReferenceFormProvider, RemoveClientFormProvider, RemoveClientReferenceFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -31,21 +31,21 @@ class ClientDetailsViewsSpec extends SpecBase {
     play.api.test.CSRFTokenHelper.addCSRFToken(FakeRequest())
   private implicit val messages: Messages  = app.injector.instanceOf[MessagesApi].preferred(request)
 
-  "CreateClientReferenceView" - {
-    val view = app.injector.instanceOf[CreateClientReferenceView]
-    val form = new CreateClientReferenceFormProvider()()
+  "ClientReferenceView" - {
+    val view = app.injector.instanceOf[ClientReferenceView]
+    val form = new ClientReferenceFormProvider()()
 
     "renders the input pre-filled and posts to onSubmit" in {
       val doc = Jsoup.parse(view(form.fill("existing"), "u1").body)
       doc.select("input[name=value]").attr("value") mustBe "existing"
       doc.select("form").attr("action") mustBe
-        controllers.clientdetails.routes.CreateClientReferenceController.onSubmit("u1").url
+        controllers.clientdetails.routes.ClientReferenceController.onSubmit("u1").url
     }
 
     "renders an error summary when the form has errors" in {
       val doc = Jsoup.parse(view(form.bind(Map("value" -> "")), "u1").body)
       doc.select(".govuk-error-summary").size mustBe 1
-      doc.text must include(messages("agent.createClientReference.error.required"))
+      doc.text must include(messages("agent.clientReference.error.required"))
     }
   }
 

@@ -17,7 +17,7 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.{CreateClientReferenceFormProvider, RemoveClientFormProvider}
+import forms.clientdetails.{ClientReferenceFormProvider, RemoveClientFormProvider}
 import org.jsoup.Jsoup
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
@@ -63,7 +63,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd>ul a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.ClientReferenceController.onPageLoad("XMM00000000123").url
       )
       // ddHrefs must contain(controllers.clientdetails.routes.RemoveClientReferenceController.onPageLoad("XMM00000000123").url) TODO : uncomment
       ddHrefs must have size 2
@@ -88,7 +88,7 @@ class ManageClientDetailsViewSpec extends SpecBase {
 
       val ddHrefs = doc.select("dd a").eachAttr("href").toArray
       ddHrefs must contain(
-        controllers.clientdetails.routes.CreateClientReferenceController.onPageLoad("XMM00000000123").url
+        controllers.clientdetails.routes.ClientReferenceController.onPageLoad("XMM00000000123").url
       )
       ddHrefs must have size 1
 

@@ -17,8 +17,8 @@
 package controllers.clientdetails
 
 import controllers.actions.*
-import forms.clientdetails.CreateClientReferenceFormProvider
-import pages.clientdetails.CreateClientReferencePage
+import forms.clientdetails.ClientReferenceFormProvider
+import pages.clientdetails.ClientReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,12 +27,12 @@ import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.clientdetails.CreateClientReferenceView
+import views.html.clientdetails.ClientReferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreateClientReferenceController @Inject() (
+class ClientReferenceController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
@@ -40,10 +40,10 @@ class CreateClientReferenceController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
-  formProvider: CreateClientReferenceFormProvider,
+  formProvider: ClientReferenceFormProvider,
   manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
-  view: CreateClientReferenceView
+  view: ClientReferenceView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -57,7 +57,7 @@ class CreateClientReferenceController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
-      val preparedForm = request.userAnswers.get(CreateClientReferencePage).fold(form)(form.fill)
+      val preparedForm = request.userAnswers.get(ClientReferencePage).fold(form)(form.fill)
       Future.successful(Ok(view(preparedForm, regNumber)))
     }
 
@@ -75,7 +75,7 @@ class CreateClientReferenceController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, regNumber))),
           value =>
             (for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(CreateClientReferencePage, value.trim))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ClientReferencePage, value.trim))
               _              <- manageService.updateClient(regNumber, updatedAnswers, value.trim)
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(routes.ClientRefUpdateConfirmationController.onPageLoad()))

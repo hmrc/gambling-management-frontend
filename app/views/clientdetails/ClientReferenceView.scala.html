@@ -33,22 +33,22 @@
 
 @(form: Form[_], regNumber: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agent.createClientReference.title"))) {
-    @formHelper(action = controllers.clientdetails.routes.CreateClientReferenceController.onSubmit(regNumber), Symbol("autoComplete") -> "off") {
+@layout(pageTitle = title(form, messages("agent.clientReference.title"))) {
+    @formHelper(action = controllers.clientdetails.routes.ClientReferenceController.onSubmit(regNumber), Symbol("autoComplete") -> "off") {
         @if(form.hasErrors) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("agent.createClientReference.caption"))
-        @h1("agent.createClientReference.heading", classes = "govuk-heading-l")
+        @caption(messages("agent.clientReference.caption"))
+        @h1("agent.clientReference.heading", classes = "govuk-heading-l")
 
-        @p("agent.createClientReference.guidance1")
-        @p("agent.createClientReference.guidance2")
+        @p("agent.clientReference.guidance1")
+        @p("agent.clientReference.guidance2")
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("agent.createClientReference.clientReference.label")).withCssClass("govuk-fieldset__legend--m")
+                label = LabelViewModel(messages("agent.clientReference.clientReference.label")).withCssClass("govuk-fieldset__legend--m")
             )
         )
 

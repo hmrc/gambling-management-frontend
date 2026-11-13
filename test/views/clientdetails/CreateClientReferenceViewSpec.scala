@@ -17,29 +17,29 @@
 package views.clientdetails
 
 import base.SpecBase
-import forms.clientdetails.CreateClientReferenceFormProvider
+import forms.clientdetails.ClientReferenceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.clientdetails.CreateClientReferenceView
+import views.html.clientdetails.ClientReferenceView
 
-class CreateClientReferenceViewSpec extends SpecBase {
+class ClientReferenceViewSpec extends SpecBase {
 
-  "CreateClientReferenceView" - {
+  "ClientReferenceView" - {
     "must render the page with the correct content" in new Setup {
 
       val html = view(form, "regNum123")
       val doc  = Jsoup.parse(html.body)
 
-      doc.title     must include(messages("agent.createClientReference.title"))
-      doc.body.text must include(messages("agent.createClientReference.heading"))
-      doc.body.text must include(messages("agent.createClientReference.caption"))
-      doc.body.text must include(messages("agent.createClientReference.guidance1"))
-      doc.body.text must include(messages("agent.createClientReference.guidance2"))
-      doc.body.text must include(messages("agent.createClientReference.clientReference.label"))
+      doc.title     must include(messages("agent.clientReference.title"))
+      doc.body.text must include(messages("agent.clientReference.heading"))
+      doc.body.text must include(messages("agent.clientReference.caption"))
+      doc.body.text must include(messages("agent.clientReference.guidance1"))
+      doc.body.text must include(messages("agent.clientReference.guidance2"))
+      doc.body.text must include(messages("agent.clientReference.clientReference.label"))
     }
 
     "must render a continue button" in new Setup {
@@ -66,7 +66,7 @@ class CreateClientReferenceViewSpec extends SpecBase {
 
       doc.select(".govuk-error-summary").size() mustEqual 1
       doc.select(".govuk-error-message").text() must not be empty
-      doc.body.text                             must include(messages("agent.createClientReference.error.required"))
+      doc.body.text                             must include(messages("agent.clientReference.error.required"))
     }
 
     "must render errors when the form contains the error for invalid regex" in new Setup {
@@ -76,7 +76,7 @@ class CreateClientReferenceViewSpec extends SpecBase {
 
       doc.select(".govuk-error-summary").size() mustEqual 1
       doc.select(".govuk-error-message").text() must not be empty
-      doc.body.text                             must include(messages("agent.createClientReference.error.invalid"))
+      doc.body.text                             must include(messages("agent.clientReference.error.invalid"))
     }
 
     "must render errors when the form contains the error for value length too long" in new Setup {
@@ -86,14 +86,14 @@ class CreateClientReferenceViewSpec extends SpecBase {
 
       doc.select(".govuk-error-summary").size() mustEqual 1
       doc.select(".govuk-error-message").text() must not be empty
-      doc.body.text                             must include(messages("agent.createClientReference.error.length"))
+      doc.body.text                             must include(messages("agent.clientReference.error.length"))
     }
   }
 
   trait Setup {
-    val app: Application                = applicationBuilder().build()
-    val view: CreateClientReferenceView = app.injector.instanceOf[CreateClientReferenceView]
-    val form                            = new CreateClientReferenceFormProvider()()
+    val app: Application          = applicationBuilder().build()
+    val view: ClientReferenceView = app.injector.instanceOf[ClientReferenceView]
+    val form                      = new ClientReferenceFormProvider()()
 
     implicit val request: Request[?] =
       FakeRequest()

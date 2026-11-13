@@ -16,7 +16,7 @@
 
 package controllers.clientdetails
 
-import pages.clientdetails.CreateClientReferencePage
+import pages.clientdetails.ClientReferencePage
 import controllers.actions.*
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
@@ -57,7 +57,7 @@ class ManageClientDetailsController @Inject() (
         case Some(client) =>
           val clientReference = client.agentOwnRef.getOrElse("")
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CreateClientReferencePage, clientReference))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ClientReferencePage, clientReference))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Ok(
             view(

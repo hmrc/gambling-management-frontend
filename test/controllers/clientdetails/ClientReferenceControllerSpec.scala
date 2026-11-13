@@ -18,11 +18,11 @@ package controllers.clientdetails
 
 import base.SpecBase
 import controllers.actions.*
-import forms.clientdetails.CreateClientReferenceFormProvider
+import forms.clientdetails.ClientReferenceFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.clientdetails.CreateClientReferencePage
+import pages.clientdetails.ClientReferencePage
 import play.api.mvc.PlayBodyParsers
 import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
@@ -30,17 +30,17 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{GamblingService, ManageService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.clientdetails.CreateClientReferenceView
+import views.html.clientdetails.ClientReferenceView
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 
-class CreateClientReferenceControllerSpec extends SpecBase {
+class ClientReferenceControllerSpec extends SpecBase {
 
   private val app         = applicationBuilder().build()
   private val mcc         = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
   private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
-  private val view        = app.injector.instanceOf[CreateClientReferenceView]
+  private val view        = app.injector.instanceOf[ClientReferenceView]
 
   private class StubManageService extends ManageService(null, null) {
     override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
@@ -55,7 +55,7 @@ class CreateClientReferenceControllerSpec extends SpecBase {
   ) = {
     val repo = org.mockito.Mockito.mock(classOf[SessionRepository])
     when(repo.set(any)).thenReturn(repoResult)
-    new CreateClientReferenceController(
+    new ClientReferenceController(
       mcc.messagesApi,
       repo,
       new FakeAgentIdentifierAction(bodyParsers),
@@ -63,7 +63,7 @@ class CreateClientReferenceControllerSpec extends SpecBase {
       new FakeDataRetrievalAction(Some(userAnswers)),
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
-      new CreateClientReferenceFormProvider(),
+      new ClientReferenceFormProvider(),
       new StubManageService(),
       mcc,
       view
@@ -74,14 +74,14 @@ class CreateClientReferenceControllerSpec extends SpecBase {
     "renders the change-reference form" in {
       val result = controller().onPageLoad("RegNum123")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
-      contentAsString(result) must include(messages(app)("agent.createClientReference.heading"))
+      contentAsString(result) must include(messages(app)("agent.clientReference.heading"))
     }
 
     "renders the change-reference form with the existing user-answers value" in {
-      val populatedAnswers = emptyUserAnswers.set(CreateClientReferencePage, "012345678901234567891").success.value
+      val populatedAnswers = emptyUserAnswers.set(ClientReferencePage, "012345678901234567891").success.value
       val result           = controller(userAnswers = populatedAnswers).onPageLoad("RegNum123")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
-      contentAsString(result) must include(messages(app)("agent.createClientReference.heading"))
+      contentAsString(result) must include(messages(app)("agent.clientReference.heading"))
       contentAsString(result) must include("01234567890123456789")
     }
   }
@@ -97,21 +97,21 @@ class CreateClientReferenceControllerSpec extends SpecBase {
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> ""))
       val result  = controller().onSubmit("RegNum123")(request)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("agent.createClientReference.error.required"))
+      contentAsString(result) must include(messages(app)("agent.clientReference.error.required"))
     }
 
     "returns BadRequest and re-renders the form when the value is more than 21 characters" in {
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> "abcdefghijklmnopqrstuV"))
       val result  = controller().onSubmit("RegNum123")(request)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("agent.createClientReference.error.length"))
+      contentAsString(result) must include(messages(app)("agent.clientReference.error.length"))
     }
 
     "returns BadRequest and re-renders the form when the value does not match the RegEx" in {
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("value" -> "abcdefghijklmnopqrstu%%%%"))
       val result  = controller().onSubmit("RegNum123")(request)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages(app)("agent.createClientReference.error.invalid"))
+      contentAsString(result) must include(messages(app)("agent.clientReference.error.invalid"))
     }
 
     "redirects to the SystemErrorController when sessionRepository throws error" in {
