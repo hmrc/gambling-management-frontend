@@ -93,13 +93,6 @@ class AgentViewsSpec extends SpecBase {
       )
     }
 
-    "renders the no-results message when the list is empty" in {
-      val pagination = PaginationParams(0, 10, 1)
-      val doc        = Jsoup.parse(view(Seq.empty, "abc", pagination).body)
-
-      doc.text must include(messages("clientList.noResults"))
-    }
-
     "renders pagination when more than 10 clients exist" in {
       val clients    = Seq(ClientListViewModel("Acme Casinos", "RN1", "ref1", "remove1"))
       val pagination = PaginationParams(15, 10, 1)

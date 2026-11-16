@@ -22,7 +22,6 @@
 @this(
         layout: templates.Layout,
         h1: H1,
-        paragraph: Paragraph,
         link: Link,
         pagination: components.Pagination
 )
@@ -82,38 +81,34 @@
         </p>
     }
 
-    @if(clients.isEmpty) {
-        @paragraph(message = "clientList.noResults")
-    } else {
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("clientList.th.clientName")</th>
+                <th scope="col" class="govuk-table__header">@messages("clientList.th.regNumber")</th>
+                <th scope="col" class="govuk-table__header">@messages("clientList.th.clientReference")</th>
+                <th scope="col" class="govuk-table__header">@messages("clientList.th.remove.action")</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @for(client <- clients) {
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@messages("clientList.th.clientName")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientList.th.regNumber")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientList.th.clientReference")</th>
-                    <th scope="col" class="govuk-table__header">@messages("clientList.th.remove.action")</th>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.regNumber).url">@client.clientName</a>
+                    </td>
+                    <td class="govuk-table__cell">@client.regNumber</td>
+                    <td class="govuk-table__cell">
+                        @if(client.clientReference.trim.isEmpty){
+                            @messages("clientList.clientReference.empty")
+                        } else {
+                            @client.clientReference
+                        }
+                    </td>
+                    <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">@messages("clientList.th.remove")<span class="govuk-visually-hidden">@client.clientName</span></a></td>
                 </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                @for(client <- clients) {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">
-                            <a class="govuk-link" href="@controllers.agent.routes.AgentLandingController.onPageLoad(client.regNumber).url">@client.clientName</a>
-                        </td>
-                        <td class="govuk-table__cell">@client.regNumber</td>
-                        <td class="govuk-table__cell">
-                            @if(client.clientReference.trim.isEmpty){
-                                @messages("clientList.clientReference.empty")
-                            } else {
-                                @client.clientReference
-                            }
-                        </td>
-                        <td class="govuk-table__cell"><a class="govuk-link" href="@client.removeLink">@messages("clientList.th.remove")<span class="govuk-visually-hidden">@client.clientName</span></a></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
 
-        @pagination(paginationParams.pageNo, paginationParams.totalPages, pageUrl)
-    }
+    @pagination(paginationParams.pageNo, paginationParams.totalPages, pageUrl)
 }

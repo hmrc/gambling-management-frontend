@@ -61,6 +61,19 @@ class StaticAgentControllersSpec extends SpecBase {
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
+  "NoResultsFoundController.onPageLoad returns OK and plays back the search term" in {
+    val controller = new NoResultsFoundController(
+      mcc.messagesApi,
+      mcc,
+      auth,
+      clientListCheck,
+      app.injector.instanceOf[views.html.agent.NoResultsFoundView]
+    )
+    val result     = controller.onPageLoad("Acme")(FakeRequest())
+    status(result) mustBe OK
+    contentAsString(result) must include("Acme")
+  }
+
   "ClientRemovedController.onPageLoad returns OK" in {
     val controller = new ClientRemovedController(
       mcc.messagesApi,
