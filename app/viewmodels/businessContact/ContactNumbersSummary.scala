@@ -18,43 +18,79 @@ package viewmodels.businessContact
 
 import models.UserAnswers
 import models.agent.ContactNumbers
-import pages.BusinessDetailsPage
 import pages.businessdetails.ChangeContactNumbersPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.govuk.summarylist.{KeyViewModel, SummaryListRowViewModel, ValueViewModel}
 
 object ContactNumbersSummary {
 
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val answer = answers.get(ChangeContactNumbersPage)
 
-    val phoneNumber = answer match {
-      case Some(cn) => cn.phoneNumber.getOrElse(messages("changeBusinessContact.notProvided"))
-      case None     => messages("changeBusinessContact.notProvided")
-    }
+    val contactNumbers =
+      answers.get(ChangeContactNumbersPage)
 
-    val mobileNumber = answer match {
-      case Some(cn) => cn.mobileNumber.getOrElse(messages("changeBusinessContact.notProvided"))
-      case None     => messages("changeBusinessContact.notProvided")
-    }
+    val changeContactNumbersUrl =
+      controllers.businessdetails.routes.ChangeContactNumbersController
+        .onPageLoad()
+        .url
 
-    Seq(
-      BusinessContactHelpers.textOrActionLinkRowDouble(
-        keyMsg = "changeBusinessContact.contactNumbers",
-        answer = Some(
-          Seq(
-            messages("changeBusinessContact.contactNumbers.phone"),
-            phoneNumber,
-            "",
-            messages("changeBusinessContact.contactNumbers.mobile"),
-            mobileNumber
-          ).mkString("<br>")
-        ),
-        urlChange = controllers.businessdetails.routes.ChangeContactNumbersController
-          .onPageLoad()
-          .url,
-        hiddenMsg = "changeBusinessContact.contactNumbers"
+    val enterContactNumbersLink =
+      HtmlContent(
+        s"""<a class="govuk-link" href="$changeContactNumbersUrl">${messages(
+            "changeBusinessContact.contactNumbers.enter"
+          )}</a>"""
       )
-    )
+
+    val row =
+      contactNumbers match {
+
+        case None =>
+          SummaryListRowViewModel(
+            key = KeyViewModel(
+              Text(
+                messages("changeBusinessContact.contactNumbers")
+              )
+            ),
+            value = ValueViewModel(
+              enterContactNumbersLink
+            )
+          )
+
+        case Some(ContactNumbers(None, None)) =>
+          SummaryListRowViewModel(
+            key = KeyViewModel(
+              Text(
+                messages("changeBusinessContact.contactNumbers")
+              )
+            ),
+            value = ValueViewModel(
+              enterContactNumbersLink
+            )
+          )
+
+        case Some(ContactNumbers(phoneNumber, mobileNumber)) =>
+          BusinessContactHelpers.textOrActionLinkRowDouble(
+            keyMsg = "changeBusinessContact.contactNumbers",
+            answer = Some(
+              Seq(
+                messages("changeBusinessContact.contactNumbers.phone"),
+                phoneNumber.getOrElse(
+                  messages("changeBusinessContact.notProvided")
+                ),
+                "",
+                messages("changeBusinessContact.contactNumbers.mobile"),
+                mobileNumber.getOrElse(
+                  messages("changeBusinessContact.notProvided")
+                )
+              ).mkString("<br>")
+            ),
+            urlChange = changeContactNumbersUrl,
+            hiddenMsg = "changeBusinessContact.contactNumbers"
+          )
+      }
+
+    Seq(row)
   }
 }

@@ -30,7 +30,7 @@
     govukButton: GovukButton
 )
 
-@(summaryList: SummaryList, hasChanges: Boolean, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(summaryList: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("changeBusinessContact.title"))
@@ -41,12 +41,6 @@
     @h1(messages("changeBusinessContact.heading"))
 
     @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-6"))
-
-    @if(hasChanges) {
-        <p class="govuk-body">
-            @messages("changeBusinessContact.guidance")
-        </p>
-    }
 
     @formHelper(
         action =

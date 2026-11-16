@@ -32,15 +32,46 @@ class ContactNumbersSummarySpec extends SpecBase {
 
   "ContactNumbersSummary" - {
 
-    "must show a 'Change' link with no remove action when empty" in {
+    "must show 'Enter contact numbers' link when ChangeContactNumbersPage does not exist" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
 
       val rows = ContactNumbersSummary.rows(emptyUserAnswers)
       val row  = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
 
-      row.value.content mustBe HtmlContent(msgs("Phone number:<br>Not provided<br><br>Mobile number:<br>Not provided"))
-      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
-      row.actions.value.items.head.href mustBe changeContactNumbersSummaryUrl
+      row.value.content mustBe HtmlContent(
+        s"""<a class="govuk-link" href="$changeContactNumbersSummaryUrl">${msgs(
+            "changeBusinessContact.contactNumbers.enter"
+          )}</a>"""
+      )
+
+      row.actions mustBe None
+    }
+
+    "must show 'Enter contact numbers' link when phone and mobile numbers are both missing" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val answers = emptyUserAnswers
+        .set(
+          ChangeContactNumbersPage,
+          ContactNumbers(
+            phoneNumber = None,
+            mobileNumber = None
+          )
+        )
+        .success
+        .value
+
+      val rows = ContactNumbersSummary.rows(answers)
+
+      val row = rows.find(_.key.content == Text(msgs("changeBusinessContact.contactNumbers"))).value
+
+      row.value.content mustBe HtmlContent(
+        s"""<a class="govuk-link" href="$changeContactNumbersSummaryUrl">${msgs(
+            "changeBusinessContact.contactNumbers.enter"
+          )}</a>"""
+      )
+
+      row.actions mustBe None
     }
 
     "must show the normal value with a change & remove action when phone value is entered" in {
