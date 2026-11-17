@@ -183,7 +183,7 @@ removeClient.title = Are you sure you want to remove {0}?
 removeClient.heading = Are you sure you want to remove {0}?
 removeClient.caption=Manage your client details
 removeClient.body=You will lose access to any forms submitted using this service. It may take up to 30 minutes for this change to appear in your client list.
-removeClient.error.required = Select ’Yes’ if you want to remove this client
+removeClient.error.required = Select ‘Yes’ if you want to remove this client
 
 clientRemoved.title = Client removed
 clientRemoved.heading = Client removed
@@ -204,7 +204,7 @@ changeEmailAddress.error.length = The email address must be 70 characters or les
 removeEmailAddress.title = Are you sure you want to remove the email address?
 removeEmailAddress.heading = Are you sure you want to remove the email address {0}?
 removeEmailAddress.caption = Check business details
-removeEmailAddress.error.required = Select ’Yes’ if you want to remove the email address
+removeEmailAddress.error.required = Select ‘Yes’ if you want to remove the email address
 
 changeFaxNumber.title = What is the fax number for this business?
 changeFaxNumber.heading = What is the fax number for this business?
@@ -216,7 +216,7 @@ changeFaxNumber.error.length = The fax number must be 20 characters or less
 removeFaxNumber.title = Are you sure you want to remove the fax number?
 removeFaxNumber.heading = Are you sure you want to remove the fax number {0}?
 removeFaxNumber.caption = Check business details
-removeFaxNumber.error.required = Select ’Yes’ if you want to remove the fax number
+removeFaxNumber.error.required = Select ‘Yes’ if you want to remove the fax number
 
 changeContactNumbers.title = What are your business contact numbers?
 changeContactNumbers.heading = What are your business contact numbers?
@@ -313,4 +313,4 @@ manageYourMgdLanding.clientDetails.manage = Manage your client details
 removeClientReference.title=Are you sure you want to remove {0}?
 removeClientReference.heading=Are you sure you want to remove {0}?
 removeClientReference.caption=Manage your client details
-removeClientReference.error.required= Select ’Yes’ if you want to remove {0}
+removeClientReference.error.required= Select ‘Yes’ if you want to remove {0}
