@@ -62,7 +62,8 @@ class ChangeBusinessContactController @Inject() (
     (agentOnly andThen getData andThen requireData).async { implicit request =>
       request.userAnswers.get(ChangeContactNumbersPage) match {
 
-        case Some(ContactNumbers(phoneNumber, mobileNumber)) if phoneNumber.isDefined || mobileNumber.isDefined =>
+        case Some(ContactNumbers(phoneNumber, mobileNumber))
+            if phoneNumber.forall(_.isEmpty) || mobileNumber.forall(_.isEmpty) =>
 
           val submission =
             BusinessContactDetailSubmission(

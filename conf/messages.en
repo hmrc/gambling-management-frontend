@@ -252,7 +252,7 @@ changeBusinessContact.faxNumber = Fax number
 changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
-changeBusinessContact.contactNumbers.enter= Enter contact numbers
+changeBusinessContact.contactNumbers.empty= Enter contact numbers
 
 confirmBusinessName.title = Confirm your business name
 confirmBusinessName.heading = Confirm your business name
