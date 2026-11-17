@@ -18,7 +18,8 @@ GET         /page-not-found                                          controllers
 
 GET         /registration-certificate/:regNumber                                controllers.ViewRegistrationCertificateController.onPageLoad(regNumber: String)
 
-GET         /manage-your-machine-games-duty                          controllers.ManageMachineGamesDutyController.onPageLoad()
+GET         /manage-your-machine-games-duty                    controllers.ManageMachineGamesDutyController.onPageLoad()
+GET         /manage-your-details/no-results-found              controllers.agent.NoResultsFoundController.onPageLoad(search: String ?= "")
 
 # Agent client-list flow
 GET         /agent/retrieving-client                                 controllers.agent.RetrievingClientController.onPageLoad()
@@ -26,7 +27,6 @@ GET         /agent/retrieving-client/start                           controllers
 GET         /agent/retrieving-client/poll                            controllers.agent.RetrievingClientController.poll(retryCount: Int ?= 0)
 GET         /agent/manage-your-details/search-for-a-client           controllers.agent.ClientListController.onPageLoad()
 GET         /agent/manage-your-details/search-for-a-client/download  controllers.agent.ClientListController.downloadClientList()
-GET         /agent/manage-your-details/no-results-found              controllers.agent.NoResultsFoundController.onPageLoad(search: String ?= "")
 GET         /agent/client/:regNumber                                 controllers.agent.AgentLandingController.onPageLoad(regNumber: String)
 GET         /agent/failed-to-retrieve-client                         controllers.agent.FailedToRetrieveClientController.onPageLoad()
 GET         /agent/no-authorised-clients                             controllers.agent.NoAuthorisedClientsController.onPageLoad()

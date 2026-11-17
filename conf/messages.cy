@@ -141,6 +141,7 @@ clientList.caption = Manage your details
 clientList.search.label = You can search by client name, Machine Games Duty (MGD) registration number or client reference.
 clientList.search.button = Search
 clientList.clearSearch = Clear search
+clientList.noResults = No clients match your search.
 clientList.th.clientName = Client name
 clientList.th.regNumber = MGD registration number
 clientList.th.clientReference = Client reference
