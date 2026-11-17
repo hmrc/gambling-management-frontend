@@ -313,4 +313,4 @@ manageYourMgdLanding.clientDetails.manage = Manage your client details
 removeClientReference.title=Are you sure you want to remove {0}?
 removeClientReference.heading=Are you sure you want to remove {0}?
 removeClientReference.caption=Manage your client details
-removeClientReference.error.required= Select if you want to remove {0}
+removeClientReference.error.required= Select yes if you want to remove {0}
