@@ -42,7 +42,8 @@
 @layout(
     pageTitle = titleNoForm(messages("clientList.title")),
     showBackLink = true,
-    showSignOut = true
+    showSignOut = true,
+    backLinkUrl = Some(controllers.agent.routes.ManageYourDetailsController.onPageLoad().url)
 ) {
     <span class="govuk-caption-l">@messages("clientList.caption")</span>
 
