@@ -171,11 +171,19 @@ class ClientListControllerSpec extends SpecBase {
         FakeRequest("GET", "/agent/client-list?search=XVM000")
       )
 
-      status(result) mustBe OK
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.agent.routes.NoResultsFoundController.onPageLoad("XVM000").url
+    }
 
-      val body = contentAsString(result)
-      body must not include "ABC Ltd"
-      body must not include "XYZ Builders"
+    "redirect to no results found with the trimmed search term when nothing matches" in {
+      val result = controller(clientsList, Some(emptyUserAnswers)).onPageLoad()(
+        FakeRequest("GET", "/agent/client-list?search=%20nomatch%20")
+      )
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        controllers.agent.routes.NoResultsFoundController.onPageLoad("nomatch").url
     }
 
     "search clients case insensitively" in {

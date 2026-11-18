@@ -154,6 +154,16 @@ clientList.download.th.regNumber = Cyfeirnod Toll Peiriannau Hapchwarae
 clientList.download.th.clientReference = Eich cyfeirnod cleient
 clientList.download.filename = MgdAgentClientList.csv
 
+noResultsFound.title = No results found
+noResultsFound.caption = Manage your details
+noResultsFound.heading = No results found
+noResultsFound.p1 = There are no results for "{0}".
+noResultsFound.p2 = You can try:
+noResultsFound.bullet1 = checking the spelling/registration number
+noResultsFound.bullet2 = using fewer words
+noResultsFound.bullet3 = using different keywords
+noResultsFound.searchAgain = Search again
+
 error.summary.title = There is a problem
 
 agent.manageClientDetails.title = Manage your client details

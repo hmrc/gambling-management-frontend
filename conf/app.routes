@@ -18,7 +18,8 @@ GET         /page-not-found                                          controllers
 
 GET         /registration-certificate/:regNumber                                controllers.ViewRegistrationCertificateController.onPageLoad(regNumber: String)
 
-GET         /manage-your-machine-games-duty                          controllers.ManageMachineGamesDutyController.onPageLoad()
+GET         /manage-your-machine-games-duty                    controllers.ManageMachineGamesDutyController.onPageLoad()
+GET         /manage-your-details/no-results-found              controllers.agent.NoResultsFoundController.onPageLoad(search: String ?= "")
 
 # Agent client-list flow
 GET         /agent/retrieving-client                                 controllers.agent.RetrievingClientController.onPageLoad()
