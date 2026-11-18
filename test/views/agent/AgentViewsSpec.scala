@@ -93,6 +93,16 @@ class AgentViewsSpec extends SpecBase {
       )
     }
 
+    "renders the back link to the manage your details page" in {
+      val pagination = PaginationParams(0, 10, 1)
+      val doc        = Jsoup.parse(view(Seq.empty, "", pagination).body)
+
+      val backLink = doc.select("a.govuk-back-link")
+      backLink.size mustBe 1
+      backLink.attr("href") mustBe controllers.agent.routes.ManageYourDetailsController.onPageLoad().url
+      backLink.text mustBe "Back"
+    }
+
     "renders the no-results message when the list is empty" in {
       val pagination = PaginationParams(0, 10, 1)
       val doc        = Jsoup.parse(view(Seq.empty, "abc", pagination).body)

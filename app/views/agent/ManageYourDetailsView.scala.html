@@ -17,16 +17,18 @@
 @import views.html.components._
 @import views.ViewUtils.titleNoForm
 @import viewmodels.CardLink
+@import config.AppConfig
 
 @this(
         layout: templates.Layout,
+        appConfig: AppConfig,
         h1: H1,
         linkCard: LinkCard
 )
 
 @(agentName: String, isClientListEmpty: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("agent.ManageYourDetails.title")), includeCustomCss = true) {
+@layout(pageTitle = titleNoForm(messages("agent.ManageYourDetails.title")), includeCustomCss = true, backLinkUrl = Some(appConfig.portalHomeUrl)) {
     @h1("agent.ManageYourDetails.heading", classes = "govuk-heading-l govuk-!-margin-bottom-2")
     <p class="govuk-body govuk-!-margin-bottom-2">@agentName</p>
     <br>

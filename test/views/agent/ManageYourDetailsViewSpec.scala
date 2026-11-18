@@ -17,6 +17,7 @@
 package views.agent
 
 import base.SpecBase
+import config.AppConfig
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import views.html.agent.ManageYourDetailsView
@@ -45,6 +46,19 @@ class ManageYourDetailsViewSpec extends SpecBase {
         .size() mustBe 1
       doc.select(".card-action a").last().attr("href") mustBe
         controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
+    }
+
+    "must render the back link to the portal home page" in {
+      val app           = applicationBuilder().build()
+      val view          = app.injector.instanceOf[ManageYourDetailsView]
+      val appConfig     = app.injector.instanceOf[AppConfig]
+      implicit val msgs = messages(app)
+      val doc           = Jsoup.parse(view("Agent 1", isClientListEmpty = false)(FakeRequest(), msgs).body)
+
+      val backLink = doc.select("a.govuk-back-link")
+      backLink.size() mustBe 1
+      backLink.attr("href") mustBe appConfig.portalHomeUrl
+      backLink.text() mustBe "Back"
     }
 
     "must show the empty message instead of client links when there are no clients" in {
