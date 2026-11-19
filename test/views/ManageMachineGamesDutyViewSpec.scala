@@ -90,7 +90,7 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         s"${appConfig.variationsFrontend}/XWM00000001770/cancel-registration"
       doc
         .select("a:contains(View account statement)")
-        .attr("href") mustBe s"${appConfig.landpFrontend}/statement/mgd/XWM00000001770/current"
+        .attr("href") mustBe s"${appConfig.landpFrontend}/mgd/XWM00000001770/current"
       doc
         .select("a:contains(View filed returns)")
         .attr("href") mustBe "http://localhost:10401/manage-gambling-tax/returns/XWM00000001770/select-filed-return"
