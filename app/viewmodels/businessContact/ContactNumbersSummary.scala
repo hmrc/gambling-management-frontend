@@ -39,7 +39,7 @@ object ContactNumbersSummary {
     val enterContactNumbersLink =
       HtmlContent(
         s"""<a class="govuk-link" href="$changeContactNumbersUrl">${messages(
-            "changeBusinessContact.contactNumbers.enter"
+            "changeBusinessContact.contactNumbers.empty"
           )}</a>"""
       )
 
