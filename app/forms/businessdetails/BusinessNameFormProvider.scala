@@ -19,6 +19,7 @@ package forms.businessdetails
 import forms.mappings.{Constants, Mappings}
 import forms.mappings.Validation.{businessNameRegex, faxRegex}
 import play.api.data.Form
+import utils.Utils.normaliseSpaces
 
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class BusinessNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("businessName.error.required")
-        .transform(_.trim, identity)
+        .transform(normaliseSpaces, identity)
         .verifying(
           firstError(
             regexp(businessNameRegex, "businessName.error.invalid"),

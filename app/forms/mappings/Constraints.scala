@@ -24,6 +24,12 @@ import java.time.LocalDate
 
 trait Constraints {
 
+  protected def ifPresent[A](constraint: Constraint[A]): Constraint[Option[A]] =
+    Constraint {
+      case Some(value) => constraint(value)
+      case None        => Valid
+    }
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
       constraints

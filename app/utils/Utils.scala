@@ -22,6 +22,13 @@ object Utils {
   val emptyString  = ""
   val firstRadioId = "value_0"
 
+  // Any run of whitespace, including non-breaking and other Unicode spaces
+  private val whitespaceRegex = """[\s\p{Z}]+"""
+
+  // Trims and collapses whitespace in user input, e.g. "  abc    def " -> "abc def"
+  def normaliseSpaces(value: String): String =
+    value.replaceAll(whitespaceRegex, " ").trim
+
   def withIds(items: Seq[RadioItem], prefix: String = "value"): Seq[RadioItem] =
     items.zipWithIndex.map { case (item, i) => item.copy(id = Some(s"${prefix}_$i")) }
 }

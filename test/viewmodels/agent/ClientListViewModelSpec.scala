@@ -69,6 +69,12 @@ class ClientListViewModelSpec extends SpecBase {
       )
     }
 
+    "must filter a Seq[ClientListViewModel] when provided name has multiple SPACES in between" in {
+      val result =
+        ClientListViewModel.filterByField("  Heritage    Contractors  ", AgentClientUtil.clientsListAsViewModel)
+      result.map(_.clientName) mustBe List("Heritage Contractors 4")
+    }
+
     "must return an empty Seq[ClientListViewModel] when provided name is NOT FOUND" in {
       val result = ClientListViewModel.filterByField("NOT_FOUND", AgentClientUtil.clientsListAsViewModel)
       result mustBe List.empty

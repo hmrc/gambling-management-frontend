@@ -20,7 +20,7 @@ import forms.mappings.Validation.faxRegex
 import forms.mappings.{Constants, Mappings}
 import models.Enumerable
 import models.agent.ContactNumbers
-import play.api.data.Forms.{mapping, of, optional}
+import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, Form, FormError}
 
@@ -34,24 +34,24 @@ class ChangeContactNumbersFormProvider @Inject() extends Mappings {
   def apply(): Form[ContactNumbers] =
     Form(
       mapping(
-        "phoneNumber"  -> optional(
-          text()
-            .verifying(
+        "phoneNumber"  -> optionalText()
+          .verifying(
+            ifPresent(
               firstError(
                 maxLength(maxLengthChars, "changeContactNumbers.phoneNumber.error.length"),
                 regexp(allowedChars, "changeContactNumbers.phoneNumber.error.invalid")
               )
             )
-        ),
-        "mobileNumber" -> optional(
-          text()
-            .verifying(
+          ),
+        "mobileNumber" -> optionalText()
+          .verifying(
+            ifPresent(
               firstError(
                 maxLength(maxLengthChars, "changeContactNumbers.mobileNumber.error.length"),
                 regexp(allowedChars, "changeContactNumbers.mobileNumber.error.invalid")
               )
             )
-        )
+          )
       )(ContactNumbers.apply)(contactNumbers => Some((contactNumbers.phoneNumber, contactNumbers.mobileNumber)))
         .verifying(contactNumbers => contactNumbers.phoneNumber.isDefined || contactNumbers.mobileNumber.isDefined)
     )

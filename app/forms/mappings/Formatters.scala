@@ -19,6 +19,7 @@ package forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import models.Enumerable
+import utils.Utils.normaliseSpaces
 
 import scala.util.control.Exception.nonFatalCatch
 
@@ -29,13 +30,23 @@ trait Formatters {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         data.get(key) match {
-          case None                      => Left(Seq(FormError(key, errorKey, args)))
-          case Some(s) if s.trim.isEmpty => Left(Seq(FormError(key, errorKey, args)))
-          case Some(s)                   => Right(s)
+          case None                                  => Left(Seq(FormError(key, errorKey, args)))
+          case Some(s) if normaliseSpaces(s).isEmpty => Left(Seq(FormError(key, errorKey, args)))
+          case Some(s)                               => Right(s)
         }
 
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
+    }
+
+  private[mappings] def optionalStringFormatter: Formatter[Option[String]] =
+    new Formatter[Option[String]] {
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+        Right(data.get(key).map(normaliseSpaces).filter(_.nonEmpty))
+
+      override def unbind(key: String, value: Option[String]): Map[String, String] =
+        value.map(key -> _).toMap
     }
 
   private[mappings] def booleanFormatter(

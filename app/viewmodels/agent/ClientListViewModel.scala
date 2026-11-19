@@ -17,6 +17,7 @@
 package viewmodels.agent
 
 import models.agent.AgentClient
+import utils.Utils.normaliseSpaces
 
 private val mgdRegistrationNumberRegex = "^X[A-Z]M[0-9]{11}$"
 
@@ -40,7 +41,7 @@ object ClientListViewModel {
     }
 
   def filterByField(query: String, clients: Seq[ClientListViewModel]): Seq[ClientListViewModel] = {
-    val search      = query.trim
+    val search      = normaliseSpaces(query)
     val searchLower = search.toLowerCase
 
     if (search.matches(mgdRegistrationNumberRegex)) {

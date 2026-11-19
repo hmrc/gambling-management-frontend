@@ -69,6 +69,11 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.errors must contain(FormError("value", "error.required"))
     }
 
+    "must not bind a string of non-breaking spaces only" in {
+      val result = testForm.bind(Map("value" -> "\u00A0\u00A0"))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
     "must return a custom error message" in {
       val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> ""))
@@ -78,6 +83,38 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must unbind a valid value" in {
       val result = testForm.fill("foobar")
       result.apply("value").value.value mustEqual "foobar"
+    }
+  }
+
+  "optionalText" - {
+
+    val testForm: Form[Option[String]] =
+      Form(
+        "value" -> optionalText()
+      )
+
+    "must bind and normalise a value" in {
+      testForm.bind(Map("value" -> "  foo    bar ")).get mustEqual Some("foo bar")
+    }
+
+    "must bind None for an empty string" in {
+      testForm.bind(Map("value" -> "")).get mustEqual None
+    }
+
+    "must bind None for a string of whitespace only, including non-breaking spaces" in {
+      testForm.bind(Map("value" -> " \t\u00A0 ")).get mustEqual None
+    }
+
+    "must bind None for an empty map" in {
+      testForm.bind(Map.empty[String, String]).get mustEqual None
+    }
+
+    "must unbind a value" in {
+      testForm.fill(Some("foo")).apply("value").value.value mustEqual "foo"
+    }
+
+    "must unbind None as no value" in {
+      testForm.fill(None).apply("value").value mustBe None
     }
   }
 
