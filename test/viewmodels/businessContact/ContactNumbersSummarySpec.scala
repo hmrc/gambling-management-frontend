@@ -40,7 +40,7 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       row.value.content mustBe HtmlContent(
         s"""<a class="govuk-link" href="$changeContactNumbersSummaryUrl">${msgs(
-            "changeBusinessContact.contactNumbers.enter"
+            "changeBusinessContact.contactNumbers.empty"
           )}</a>"""
       )
 
@@ -67,7 +67,7 @@ class ContactNumbersSummarySpec extends SpecBase {
 
       row.value.content mustBe HtmlContent(
         s"""<a class="govuk-link" href="$changeContactNumbersSummaryUrl">${msgs(
-            "changeBusinessContact.contactNumbers.enter"
+            "changeBusinessContact.contactNumbers.empty"
           )}</a>"""
       )
 
