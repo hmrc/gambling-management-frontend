@@ -61,7 +61,7 @@ class ClientListController @Inject() (
         .resolveAndStoreAgentClients(userAnswers)
         .map {
           case (Nil, _)     =>
-            Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
+            Redirect(controllers.agent.routes.ManageYourDetailsController.onPageLoad())
           case (clients, _) =>
             ClientListViewModel.filterByField(searchQuery, ClientListViewModel.fromAgentClients(clients)) match {
               case Seq()           =>
@@ -87,7 +87,7 @@ class ClientListController @Inject() (
         .resolveAndStoreAgentClients(request.userAnswers)
         .map {
           case (Nil, _)        =>
-            Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
+            Redirect(controllers.agent.routes.ManageYourDetailsController.onPageLoad())
           case (clientList, _) =>
             val clientsToDownload = ClientListViewModel.fromAgentClients(clientList)
 
