@@ -21,6 +21,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import forms.mappings.Constraints
 import play.api.data.Form
+import utils.Utils.normaliseSpaces
 
 class ChangeEmailAddressFormProvider @Inject() extends Mappings {
 
@@ -29,6 +30,7 @@ class ChangeEmailAddressFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("changeEmailAddress.error.required")
+        .transform(normaliseSpaces, identity)
         .verifying(
           firstError(
             maxLength(maxEmailLength, "changeEmailAddress.error.length"),

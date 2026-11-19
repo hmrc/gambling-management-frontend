@@ -39,6 +39,34 @@ class UtilsSpec extends AnyWordSpec with Matchers {
     }
   }
 
+  "Utils.normaliseSpaces" should {
+
+    "trim and collapse multiple spaces to a single space" in {
+
+      Utils.normaliseSpaces("  abc    def ") shouldBe "abc def"
+    }
+
+    "keep single spaces between words" in {
+
+      Utils.normaliseSpaces("abc def ghi") shouldBe "abc def ghi"
+    }
+
+    "collapse tabs and newlines to a single space" in {
+
+      Utils.normaliseSpaces("abc\t\t\n def") shouldBe "abc def"
+    }
+
+    "collapse and trim non-breaking and other Unicode spaces" in {
+
+      Utils.normaliseSpaces("\u00A0abc\u00A0\u00A0def\u2007ghi\u00A0") shouldBe "abc def ghi"
+    }
+
+    "return an empty string for whitespace-only input" in {
+
+      Utils.normaliseSpaces(" \t\u00A0 ") shouldBe ""
+    }
+  }
+
   "Utils.withIds" should {
 
     "add sequential ids using default prefix" in {

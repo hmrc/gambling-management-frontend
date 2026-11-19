@@ -19,6 +19,7 @@ package forms.clientdetails
 import forms.mappings.Validation.clientReferenceRegex
 import forms.mappings.{Constants, Mappings}
 import play.api.data.Form
+import utils.Utils.normaliseSpaces
 
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class ClientReferenceFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("agent.clientReference.error.required")
-        .transform(_.trim, identity)
+        .transform(normaliseSpaces, identity)
         .verifying(
           firstError(
             regexp(clientReferenceRegex, "agent.clientReference.error.invalid"),

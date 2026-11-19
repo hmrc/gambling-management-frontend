@@ -18,6 +18,7 @@ package forms.businessdetails
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.Utils.normaliseSpaces
 import forms.mappings.Validation.faxRegex
 import forms.mappings.Constants
 
@@ -28,7 +29,7 @@ class ChangeFaxNumberFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("changeFaxNumber.error.required")
-        .transform(_.trim.replace(" ", ""), identity)
+        .transform(normaliseSpaces(_).replace(" ", ""), identity)
         .verifying(
           firstError(
             validFaxIfPresent("changeFaxNumber.error.invalid"),
