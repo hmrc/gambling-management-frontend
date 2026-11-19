@@ -33,7 +33,8 @@
 @(summaryList: SummaryList, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("changeBusinessContact.title"))
+    pageTitle = titleNoForm(messages("changeBusinessContact.title")),
+includeCustomCss = true
 ) {
 
     @caption(messages("changeBusinessContact.caption"))
