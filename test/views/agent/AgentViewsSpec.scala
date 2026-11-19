@@ -47,13 +47,6 @@ class AgentViewsSpec extends SpecBase {
     }
   }
 
-  "NoAuthorisedClientsView" - {
-    "renders the no-clients heading" in {
-      val doc = Jsoup.parse(app.injector.instanceOf[NoAuthorisedClientsView].apply().body)
-      doc.select("h1").text must include(messages("noAuthorisedClients.heading"))
-    }
-  }
-
   "AgentLostAccessView" - {
     "renders the lost-access heading" in {
       val doc = Jsoup.parse(app.injector.instanceOf[AgentLostAccessView].apply().body)

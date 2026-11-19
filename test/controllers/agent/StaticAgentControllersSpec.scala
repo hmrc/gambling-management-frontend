@@ -51,16 +51,6 @@ class StaticAgentControllersSpec extends SpecBase {
     status(controller.onPageLoad(FakeRequest())) mustBe OK
   }
 
-  "NoAuthorisedClientsController.onPageLoad returns OK" in {
-    val controller = new NoAuthorisedClientsController(
-      mcc.messagesApi,
-      mcc,
-      auth,
-      app.injector.instanceOf[views.html.agent.NoAuthorisedClientsView]
-    )
-    status(controller.onPageLoad(FakeRequest())) mustBe OK
-  }
-
   "NoResultsFoundController.onPageLoad returns OK and plays back the search term" in {
     val realMcc    = app.injector.instanceOf[MessagesControllerComponents]
     val controller = new NoResultsFoundController(

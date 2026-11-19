@@ -124,10 +124,6 @@ failedToRetrieveClient.title = We could not retrieve your client list
 failedToRetrieveClient.heading = We could not retrieve your client list
 failedToRetrieveClient.p1 = There was a problem retrieving your client list. Try again later.
 
-noAuthorisedClients.title = You have no authorised clients
-noAuthorisedClients.heading = You have no authorised clients
-noAuthorisedClients.p1 = You are not currently authorised to act for any clients for this service.
-
 agentLanding.title = Client
 agentLanding.heading = {0}
 agentLanding.regNumber = Registration number: {0}
