@@ -63,7 +63,7 @@ class ChangeBusinessContactController @Inject() (
       request.userAnswers.get(ChangeContactNumbersPage) match {
 
         case Some(ContactNumbers(phoneNumber, mobileNumber))
-            if phoneNumber.forall(_.isEmpty) || mobileNumber.forall(_.isEmpty) =>
+            if phoneNumber.exists(_.trim.nonEmpty) || mobileNumber.exists(_.trim.nonEmpty) =>
 
           val submission =
             BusinessContactDetailSubmission(
