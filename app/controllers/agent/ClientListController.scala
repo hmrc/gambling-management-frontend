@@ -63,14 +63,17 @@ class ClientListController @Inject() (
           case (Nil, _)     =>
             Redirect(controllers.agent.routes.NoAuthorisedClientsController.onPageLoad())
           case (clients, _) =>
-            val allClients       = ClientListViewModel.fromAgentClients(clients)
-            val filteredClients  = ClientListViewModel.filterByField(searchQuery, allClients)
-            val totalPages       = (filteredClients.size + pageSize - 1) / pageSize
-            val currentPage      = requestedPage.max(1).min(totalPages.max(1))
-            val pagination       = PaginationParams(filteredClients.size, pageSize, currentPage)
-            val paginatedClients = filteredClients.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            ClientListViewModel.filterByField(searchQuery, ClientListViewModel.fromAgentClients(clients)) match {
+              case Seq()           =>
+                Redirect(controllers.agent.routes.NoResultsFoundController.onPageLoad(searchQuery.trim))
+              case filteredClients =>
+                val totalPages       = (filteredClients.size + pageSize - 1) / pageSize
+                val currentPage      = requestedPage.max(1).min(totalPages.max(1))
+                val pagination       = PaginationParams(filteredClients.size, pageSize, currentPage)
+                val paginatedClients = filteredClients.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
-            Ok(view(paginatedClients, searchQuery, pagination))
+                Ok(view(paginatedClients, searchQuery, pagination))
+            }
         }
         .recover { case e =>
           logger.error("failed to resolve and store agent clients", e)

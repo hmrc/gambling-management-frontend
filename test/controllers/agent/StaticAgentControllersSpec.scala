@@ -19,7 +19,7 @@ package controllers.agent
 import base.SpecBase
 import controllers.actions.{FakeAgentIdentifierAction, PassThroughClientListCheckAction, PassThroughHasClientGuard}
 import controllers.clientdetails.{ClientRefUpdateConfirmationController, ClientRemovedController}
-import play.api.mvc.PlayBodyParsers
+import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.GamblingService
@@ -59,6 +59,21 @@ class StaticAgentControllersSpec extends SpecBase {
       app.injector.instanceOf[views.html.agent.NoAuthorisedClientsView]
     )
     status(controller.onPageLoad(FakeRequest())) mustBe OK
+  }
+
+  "NoResultsFoundController.onPageLoad returns OK and plays back the search term" in {
+    val realMcc    = app.injector.instanceOf[MessagesControllerComponents]
+    val controller = new NoResultsFoundController(
+      realMcc.messagesApi,
+      realMcc,
+      auth,
+      clientListCheck,
+      app.injector.instanceOf[views.html.agent.NoResultsFoundView]
+    )
+    val result     = controller.onPageLoad("Acme")(FakeRequest())
+
+    status(result) mustBe OK
+    contentAsString(result) must include("Acme")
   }
 
   "ClientRemovedController.onPageLoad returns OK" in {

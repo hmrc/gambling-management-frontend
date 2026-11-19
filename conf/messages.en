@@ -154,6 +154,16 @@ clientList.download.th.regNumber = Machine Games Duty Registration Number
 clientList.download.th.clientReference = Your client reference
 clientList.download.filename = MgdAgentClientList.csv
 
+noResultsFound.title = No results found
+noResultsFound.caption = Manage your details
+noResultsFound.heading = No results found
+noResultsFound.p1 = There are no results for "{0}".
+noResultsFound.p2 = You can try:
+noResultsFound.bullet1 = checking the spelling/registration number
+noResultsFound.bullet2 = using fewer words
+noResultsFound.bullet3 = using different keywords
+noResultsFound.searchAgain = Search again
+
 error.summary.title = There is a problem
 
 agent.manageClientDetails.title = Manage your client details
@@ -313,4 +323,4 @@ manageYourMgdLanding.clientDetails.manage = Manage your client details
 removeClientReference.title=Are you sure you want to remove {0}?
 removeClientReference.heading=Are you sure you want to remove {0}?
 removeClientReference.caption=Manage your client details
-removeClientReference.error.required= Select if you want to remove {0}
+removeClientReference.error.required= Select yes if you want to remove {0}

@@ -52,3 +52,5 @@ class AppConfig @Inject() (config: Configuration):
 
   lazy val gamblingVariationsBaseUrl: String =
     s"${config.get[Service]("microservice.services.gambling-variations-frontend").baseUrl}/gambling-variations"
+
+  lazy val portalHomeUrl = s"$host/home"
