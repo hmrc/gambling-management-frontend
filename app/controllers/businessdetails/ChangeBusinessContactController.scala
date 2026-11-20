@@ -20,7 +20,7 @@ import connectors.GamblingConnector
 import controllers.actions.*
 import models.agent.ContactNumbers
 import models.businessdetails.BusinessContactDetailSubmission
-import models.{CheckMode, Mode, NormalMode}
+import models.Mode
 import pages.businessdetails.{BusinessContactDetailConfirmationPage, ChangeContactNumbersPage, ChangeEmailAddressPage, ChangeFaxNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,14 +55,15 @@ class ChangeBusinessContactController @Inject() (
         EmailAddressSummary.rows(answers)
     )
 
-    Ok(view(summaryList, BusinessContactHelpers.hasChanges(answers), mode))
+    Ok(view(summaryList, mode))
   }
 
   def onSubmit(): Action[AnyContent] =
     (agentOnly andThen getData andThen requireData).async { implicit request =>
       request.userAnswers.get(ChangeContactNumbersPage) match {
 
-        case Some(ContactNumbers(phoneNumber, mobileNumber)) =>
+        case Some(ContactNumbers(phoneNumber, mobileNumber))
+            if phoneNumber.exists(_.trim.nonEmpty) || mobileNumber.exists(_.trim.nonEmpty) =>
 
           val submission =
             BusinessContactDetailSubmission(
@@ -91,7 +92,7 @@ class ChangeBusinessContactController @Inject() (
             controllers.businessdetails.routes.ChangeBusinessContactConfirmationController.onPageLoad()
           )
 
-        case None =>
+        case _ =>
           Future.successful(
             Redirect(
               controllers.businessdetails.routes.ChangeContactNumbersController.onPageLoad()

@@ -32,7 +32,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the page with the correct content" in new Setup {
 
-      val html = view(summaryList, true, NormalMode)
+      val html = view(summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
@@ -45,7 +45,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the summary list" in new Setup {
 
-      val html = view(summaryList, true, NormalMode)
+      val html = view(summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
@@ -53,32 +53,24 @@ class ChangeBusinessContactViewSpec extends SpecBase {
       doc.select(".govuk-summary-list__row").size() mustEqual 3
     }
 
-    "must render the guidance when the user has made changes" in new Setup {
-
-      val html = view(summaryList, true, NormalMode)
-
-      val doc = Jsoup.parse(html.body)
-
-      doc.body.text must include(messages("changeBusinessContact.guidance"))
-    }
-
-    "must not render the guidance when the user has not made changes" in new Setup {
-
-      val html = view(summaryList, false, NormalMode)
-
-      val doc = Jsoup.parse(html.body)
-
-      doc.body.text must not include messages("changeBusinessContact.guidance")
-    }
-
     "must render a submit button" in new Setup {
 
-      val html = view(summaryList, true, NormalMode)
+      val html = view(summaryList, NormalMode)
 
       val doc = Jsoup.parse(html.body)
 
       doc.select(".govuk-button").text() mustEqual
         messages("site.submit")
+    }
+
+    "must not render the removed guidance copy" in new Setup {
+
+      val html = view(summaryList, NormalMode)
+
+      val doc = Jsoup.parse(html.body)
+
+      doc.body.text must not include
+        "You have changed some of your details but they will not be saved until you submit this page."
     }
 
   }

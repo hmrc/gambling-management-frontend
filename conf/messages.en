@@ -251,7 +251,6 @@ checkBusinessDetails.emailAddress = Email address
 changeBusinessContact.title = Change your contact details
 changeBusinessContact.caption = Check business details
 changeBusinessContact.heading = Change your contact details
-changeBusinessContact.guidance = You have changed some of your details but they will not be saved until you submit this page.
 changeBusinessContact.contactNumbers = Contact numbers
 changeBusinessContact.contactNumbers.phone = Phone number:
 changeBusinessContact.contactNumbers.mobile = Mobile number:
@@ -259,6 +258,7 @@ changeBusinessContact.faxNumber = Fax number
 changeBusinessContact.emailAddress = Email address
 changeBusinessContact.enterNumber = Enter number
 changeBusinessContact.notProvided = Not provided
+changeBusinessContact.contactNumbers.empty= Enter contact numbers
 
 confirmBusinessName.title = Confirm your business name
 confirmBusinessName.heading = Confirm your business name
