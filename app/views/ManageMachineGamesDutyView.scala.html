@@ -47,7 +47,7 @@
         @linkCard(
             "manageYourMgdLanding.statement.heading",
             Seq(
-                CardLink("manageYourMgdLanding.statement.viewAccountStatement", s"${appConfig.landpFrontend}/statement/mgd/$regNumber/current"),
+                CardLink("manageYourMgdLanding.statement.viewAccountStatement", s"${appConfig.landpFrontend}/mgd/$regNumber/current"),
                 CardLink("manageYourMgdLanding.statement.makePayment", appConfig.makePaymentUrl, newTab = true)
             ),
             description = Some(messages("manageYourMgdLanding.statement.balance", balanceDate, CurrencyFormatter.currencyFormat(balance), balanceType))
