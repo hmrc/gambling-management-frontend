@@ -18,13 +18,12 @@ package controllers.clientdetails
 
 import controllers.actions.*
 import forms.clientdetails.RemoveClientReferenceFormProvider
-import pages.clientdetails.RemoveClientReferencePage
+import pages.clientdetails.{ClientReferencePage, RemoveClientReferencePage}
 import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,114 +35,67 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveClientReferenceController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   authorise: AuthorisedAction,
   clientListCheck: ClientListCheckAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
   formProvider: RemoveClientReferenceFormProvider,
+  manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
   view: RemoveClientReferenceView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  private val form: Form[Boolean] = formProvider()
+  private val form: Form[Boolean]          = formProvider()
+  final private val BLANK_CLIENT_REFERENCE = ""
 
   def onPageLoad(regNumber: String): Action[AnyContent] =
-    (authorise
-      andThen clientListCheck
-      andThen getData
-      andThen requireData
+    (authorise andThen clientListCheck andThen getData andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
-      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
-
+      AgentClientsPage.findInClientList(request.userAnswers, regNumber) match
         case Some(client) =>
-          val preparedForm =
-            request.userAnswers
-              .get(RemoveClientReferencePage)
-              .fold(form)(form.fill)
-
-          Future.successful(
-            Ok(
-              view(
-                preparedForm,
-                regNumber,
-                client.agentOwnRef.getOrElse("")
-              )
-            )
-          )
-
-        case None =>
-          Future.successful(
-            Redirect(
-              controllers.routes.JourneyRecoveryController.onPageLoad()
-            )
-          )
-      }
+          client.agentOwnRef match
+            case Some(agentOwnRef) if !agentOwnRef.trim.isBlank =>
+              val preparedForm = request.userAnswers.get(RemoveClientReferencePage).fold(form)(form.fill)
+              Future.successful(Ok(view(preparedForm, regNumber, agentOwnRef)))
+            case _                                              =>
+              Future.successful(Redirect(controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad()))
+        case _            =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   def onSubmit(regNumber: String): Action[AnyContent] =
-    (authorise
-      andThen clientListCheck
-      andThen getData
-      andThen requireData
+    (authorise andThen clientListCheck andThen getData andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
       AgentClientsPage.findInClientList(request.userAnswers, regNumber) match {
-
         case Some(client) =>
           form
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(
-                  BadRequest(
-                    view(
-                      formWithErrors,
-                      regNumber,
-                      client.agentOwnRef.getOrElse("")
-                    )
-                  )
-                ),
+                Future.successful(BadRequest(view(formWithErrors, regNumber, client.agentOwnRef.getOrElse("")))),
               value =>
-                Future
-                  .fromTry(
-                    request.userAnswers.set(
-                      RemoveClientReferencePage,
-                      value
-                    )
-                  )
-                  .flatMap { updatedAnswers =>
-                    sessionRepository.set(updatedAnswers).flatMap { _ =>
-                      if (value) {
-                        // TODO: integration ticket
-                        clearAndRedirect(updatedAnswers)
-                      } else {
-                        clearAndRedirect(updatedAnswers)
+                Future.fromTry(request.userAnswers.set(RemoveClientReferencePage, value)).flatMap { updatedAnswers =>
+                  if (value) {
+                    manageService
+                      .updateClient(regNumber, updatedAnswers, BLANK_CLIENT_REFERENCE)
+                      .map(_ => Redirect(controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad()))
+                      .recover { case ex =>
+                        logger.error(s"Failed to update client reference for regNumber $regNumber", ex)
+                        Redirect(controllers.routes.SystemErrorController.onPageLoad())
                       }
-                    }
+                  } else {
+                    Future
+                      .successful(Redirect(controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad()))
                   }
+                }
             )
 
         case None =>
-          Future.successful(
-            Redirect(
-              controllers.routes.JourneyRecoveryController.onPageLoad()
-            )
-          )
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
-
-  private def clearAndRedirect(userAnswers: models.UserAnswers): Future[play.api.mvc.Result] =
-    for {
-      clearedAnswers <- Future.fromTry(
-                          userAnswers.remove(RemoveClientReferencePage)
-                        )
-
-      _ <- sessionRepository.set(clearedAnswers)
-
-    } yield Redirect(
-      controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad()
-    )
 }

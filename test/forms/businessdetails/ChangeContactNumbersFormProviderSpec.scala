@@ -57,12 +57,19 @@ class ChangeContactNumbersFormProviderSpec extends AnyFreeSpec with Matchers wit
     }
 
     "must still return the invalid error for other characters" in {
-      form.bind(Map("phoneNumber" -> "0123-456")).errors.map(_.message) mustBe Seq("changeContactNumbers.phoneNumber.error.invalid")
+      form.bind(Map("phoneNumber" -> "0123-456")).errors.map(_.message) mustBe Seq(
+        "changeContactNumbers.phoneNumber.error.invalid"
+      )
     }
 
     "must apply the length check to the value after spaces are collapsed" in {
       val twentyChars = "0123456789 012345678"
-      form.bind(Map("phoneNumber" -> s"   ${twentyChars.replace(" ", "     ")}   ")).value.value.phoneNumber.value mustBe twentyChars
+      form
+        .bind(Map("phoneNumber" -> s"   ${twentyChars.replace(" ", "     ")}   "))
+        .value
+        .value
+        .phoneNumber
+        .value mustBe twentyChars
     }
   }
 }

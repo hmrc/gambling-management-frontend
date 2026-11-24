@@ -31,7 +31,9 @@ class ChangeEmailAddressFormProviderSpec extends AnyFreeSpec with Matchers with 
     }
 
     "must reject an email address with spaces in between" in {
-      form.bind(Map("value" -> "test   @example.com")).errors.map(_.message) mustBe Seq("changeEmailAddress.error.invalid")
+      form.bind(Map("value" -> "test   @example.com")).errors.map(_.message) mustBe Seq(
+        "changeEmailAddress.error.invalid"
+      )
     }
   }
 }
