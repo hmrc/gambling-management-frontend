@@ -33,7 +33,7 @@
 
 @layout(pageTitle = title(form, messages("changeEmailAddress.title"))) {
 
-    @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit()) {
+    @formHelper(action = controllers.businessdetails.routes.ChangeEmailAddressController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.hasErrors) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

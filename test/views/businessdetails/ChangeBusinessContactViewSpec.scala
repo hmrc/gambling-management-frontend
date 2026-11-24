@@ -32,7 +32,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the page with the correct content" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, NormalMode, None)
 
       val doc = Jsoup.parse(html.body)
 
@@ -45,7 +45,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render the summary list" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, NormalMode, None)
 
       val doc = Jsoup.parse(html.body)
 
@@ -55,7 +55,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must render a submit button" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, NormalMode, None)
 
       val doc = Jsoup.parse(html.body)
 
@@ -65,7 +65,7 @@ class ChangeBusinessContactViewSpec extends SpecBase {
 
     "must not render the removed guidance copy" in new Setup {
 
-      val html = view(summaryList, NormalMode)
+      val html = view(summaryList, NormalMode, None)
 
       val doc = Jsoup.parse(html.body)
 
