@@ -33,7 +33,7 @@
 
 @layout(pageTitle = title(form, messages("changeFaxNumber.title"))) {
 
-    @formHelper(action = controllers.businessdetails.routes.ChangeFaxNumberController.onSubmit()) {
+    @formHelper(action = controllers.businessdetails.routes.ChangeFaxNumberController.onSubmit(), Symbol("autoComplete") -> "off") {
 
        @if(form.hasErrors) {
          @govukErrorSummary(ErrorSummaryViewModel(form))

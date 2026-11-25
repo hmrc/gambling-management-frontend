@@ -55,7 +55,11 @@ class ChangeBusinessContactController @Inject() (
         EmailAddressSummary.rows(answers)
     )
 
-    Ok(view(summaryList, mode))
+    val backLink = Some(
+      controllers.businessdetails.routes.CheckBusinessDetailsController.onPageLoad().url
+    )
+
+    Ok(view(summaryList, mode, backLink))
   }
 
   def onSubmit(): Action[AnyContent] =
