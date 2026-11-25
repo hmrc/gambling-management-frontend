@@ -29,26 +29,21 @@ import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.GamblingService
+import services.{GamblingService, ManageService}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RemoveClientReferenceControllerSpec extends SpecBase {
 
-  private val app =
-    applicationBuilder().build()
+  private val app = applicationBuilder().build()
 
-  private val mcc =
-    app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
+  private val mcc = app.injector.instanceOf[play.api.mvc.MessagesControllerComponents]
 
-  private val bodyParsers =
-    app.injector.instanceOf[PlayBodyParsers]
+  private val bodyParsers = app.injector.instanceOf[PlayBodyParsers]
 
-  private val view =
-    app.injector.instanceOf[
-      views.html.clientdetails.RemoveClientReferenceView
-    ]
+  private val view = app.injector.instanceOf[views.html.clientdetails.RemoveClientReferenceView]
 
   private val client =
     AgentClient(
@@ -58,7 +53,7 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
       agentOwnRef = Some("CLIENT-REF-123")
     )
 
-  private val clientWithoutAgentRef =
+  private val clientWithNoneAgentRef =
     AgentClient(
       regime = "mgd",
       regNumber = "RN2",
@@ -66,96 +61,70 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
       agentOwnRef = None
     )
 
-  private val ua: UserAnswers =
-    UserAnswers("internal-id")
-      .set(
-        AgentClientsPage,
-        List(client)
-      )
-      .get
+  private val clientWithSpacesAgentRef =
+    AgentClient(
+      regime = "mgd",
+      regNumber = "RN2",
+      clientName = Some("No Reference Casinos"),
+      agentOwnRef = Some("       ")
+    )
 
-  private val uaWithoutAgentRef: UserAnswers =
-    UserAnswers("internal-id")
-      .set(
-        AgentClientsPage,
-        List(clientWithoutAgentRef)
-      )
-      .get
+  private val ua: UserAnswers = UserAnswers("internal-id").set(AgentClientsPage, List(client)).get
 
-  private def controller(
-    userAnswers: UserAnswers = ua
-  ) = {
+  private val uaWithNoneAgentRef: UserAnswers =
+    UserAnswers("internal-id").set(AgentClientsPage, List(clientWithNoneAgentRef)).get
 
-    val repo =
-      org.mockito.Mockito.mock(
-        classOf[SessionRepository]
-      )
+  private val uaWithSpacesAgentRef: UserAnswers =
+    UserAnswers("internal-id").set(AgentClientsPage, List(clientWithSpacesAgentRef)).get
 
-    when(repo.set(any))
-      .thenReturn(
-        Future.successful(true)
-      )
+  private class StubManageService extends ManageService(null, null) {
+    override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
+                                                                                     HeaderCarrier
+    ): Future[Unit] = Future.unit
+  }
 
+  private def controller(userAnswers: UserAnswers = ua) =
     new RemoveClientReferenceController(
       mcc.messagesApi,
-      repo,
       new FakeAgentIdentifierAction(bodyParsers),
       new PassThroughClientListCheckAction(),
       new FakeDataRetrievalAction(Some(userAnswers)),
       new DataRequiredActionImpl(),
-      new PassThroughHasClientGuard(
-        new GamblingService(null),
-        null,
-        null
-      ),
+      new PassThroughHasClientGuard(new GamblingService(null), null, null),
       new RemoveClientReferenceFormProvider(),
+      new StubManageService(),
       mcc,
       view
     )
-  }
 
   "onPageLoad" - {
 
     "renders the confirmation page for a known client" in {
-
-      val result =
-        controller()
-          .onPageLoad("RN1")(
-            addCSRFToken(FakeRequest())
-          )
-
+      val result = controller().onPageLoad("RN1")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
-
-      contentAsString(result) must include(
-        "CLIENT-REF-123"
-      )
+      contentAsString(result) must include("CLIENT-REF-123")
     }
 
-    "renders the confirmation page when the client has no agent reference" in {
+    "renders the confirmation page when the client agent reference is None" in {
+      val result = controller(uaWithNoneAgentRef).onPageLoad("RN2")(addCSRFToken(FakeRequest()))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.clientdetails.routes.ManageClientDetailsController
+        .onPageLoad()
+        .url
+    }
 
-      val result =
-        controller(uaWithoutAgentRef)
-          .onPageLoad("RN2")(
-            addCSRFToken(FakeRequest())
-          )
-
-      status(result) mustBe OK
+    "renders the confirmation page when the client agent reference is Spaces" in {
+      val result = controller(uaWithSpacesAgentRef).onPageLoad("RN2")(addCSRFToken(FakeRequest()))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.clientdetails.routes.ManageClientDetailsController
+        .onPageLoad()
+        .url
     }
 
     "redirects to JourneyRecovery for an unknown client" in {
-
-      val result =
-        controller()
-          .onPageLoad("missing")(
-            addCSRFToken(FakeRequest())
-          )
-
+      val result = controller().onPageLoad("missing")(addCSRFToken(FakeRequest()))
       status(result) mustBe SEE_OTHER
-
-      redirectLocation(result).value mustBe
-        controllers.routes.JourneyRecoveryController
-          .onPageLoad()
-          .url
+      redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 
@@ -229,7 +198,7 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
         )
 
       val result =
-        controller(uaWithoutAgentRef)
+        controller(uaWithNoneAgentRef)
           .onSubmit("RN2")(request)
 
       status(result) mustBe BAD_REQUEST
