@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import views.html.components._
 @import models.MgdCertificate
 @import java.time.format.DateTimeFormatter
@@ -30,13 +31,15 @@
     link: Link,
     govukSummaryList: GovukSummaryList,
     partnershipDetails: PartnershipDetails,
-    groupSection: GroupSection
+    groupSection: GroupSection,
+    appConfig: AppConfig
 )
 
 @(certificate: MgdCertificate,
     displayName: String,
     displayLabelKey: String,
-    formattedAddress: String
+    formattedAddress: String,
+    regNumber: String
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("viewRegistrationCertificate.title"))) {
@@ -148,7 +151,7 @@ Option(formattedAddress).filter(_.nonEmpty).map { addr =>
 
     @link(
         messages("viewRegistrationCertificate.change-registration.link"),
-        "/gambling-variations/change-registration-details",
+        s"${appConfig.variationsFrontend}/$regNumber/change-registration-details",
         extraClasses = "change-registration-page-link govuk-!-margin-bottom-8"
     )
 

@@ -83,11 +83,10 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
           cert.busPostcode
         ).flatten.mkString("<br>")
 
-      val html = view(cert, displayName, displayLabelKey, formattedAddress)(request, messages(app))
+      val html = view(cert, displayName, displayLabelKey, formattedAddress, "MGD123")(request, messages(app))
       val doc  = Jsoup.parse(html.body)
 
       doc.title()                           must include(messages(app)("viewRegistrationCertificate.title"))
-      println("??? + " + doc.select(".govuk-panel__body").text)
       doc.select(".govuk-panel__body").text must include("MGD123")
 
       val pageText = doc.body().text()
@@ -115,7 +114,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
         )
       )
 
-      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.partnership", "")(
+      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.partnership", "", "MGD123")(
         request,
         messages(app)
       )
@@ -145,7 +144,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
         )
       )
 
-      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "")(
+      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "", "MGD123")(
         request,
         messages(app)
       )
@@ -176,7 +175,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
         groupMembers = Seq.empty
       )
 
-      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "")(
+      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "", "MGD123")(
         request,
         messages(app)
       )
@@ -197,7 +196,7 @@ class ViewRegistrationCertificateViewSpec extends SpecBase {
         businessTradeClass = Some(6)
       )
 
-      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "")(
+      val html = view(cert, "Test Business Ltd", "viewRegistrationCertificate.label.corporateBody", "", "MGD123")(
         request,
         messages(app)
       )

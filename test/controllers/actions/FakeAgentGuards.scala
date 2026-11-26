@@ -20,17 +20,18 @@ import models.requests.{AuthorisedRequest, DataRequest}
 import play.api.mvc.{ActionFilter, Result}
 import services.{AuditService, GamblingService}
 import repositories.SessionRepository
+import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
 
 /** A ClientListCheckAction that always passes (returns None). */
-class PassThroughClientListCheckAction(implicit ec: ExecutionContext) extends ClientListCheckAction {
+class PassThroughClientListCheckAction @Inject() (implicit ec: ExecutionContext) extends ClientListCheckAction {
   override protected def executionContext: ExecutionContext                               = ec
   override protected def filter[A](request: AuthorisedRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
 /** A HasClientGuard whose guards always pass (return None). */
-class PassThroughHasClientGuard(
+class PassThroughHasClientGuard @Inject() (
   service: GamblingService,
   sessionRepository: SessionRepository,
   audit: AuditService
