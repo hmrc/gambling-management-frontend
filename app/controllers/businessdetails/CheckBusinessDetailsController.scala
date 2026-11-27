@@ -60,8 +60,9 @@ class CheckBusinessDetailsController @Inject() (
       case Left(_)                      =>
         Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
       case Right(agentDetails)          =>
-        val bd = BusinessDetails.fromAgentDetails(agentDetails)
-        updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd)))
+        val bd       = BusinessDetails.fromAgentDetails(agentDetails)
+        val backLink = Some(controllers.agent.routes.ManageYourDetailsController.onPageLoad().url)
+        updateUserAnswersFromBusinessDetails(bd, request).map(answers => Ok(view(bd, backLink)))
     }
 
   }

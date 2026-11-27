@@ -24,11 +24,12 @@
         link: Link
 )
 
-@(searchQuery: String)(implicit request: Request[_], messages: Messages)
+@(searchQuery: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("noResultsFound.title")),
     showBackLink = true,
+    backLinkUrl = backLink,
     showSignOut = true
 ) {
     <span class="govuk-caption-l">@messages("noResultsFound.caption")</span>

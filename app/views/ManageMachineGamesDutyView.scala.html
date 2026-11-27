@@ -31,6 +31,13 @@
 @layout(
     pageTitle = titleNoForm(messages("manageYourMgdLanding.title")),
     includeCustomCss = true,
+    backLinkUrl =
+    Some(
+        if (isAgent)
+            controllers.agent.routes.ClientListController.onPageLoad().url
+        else
+            controllers.routes.JourneyRecoveryController.onPageLoad().url
+    ),
     fullWidth = true
 ) {
     <div class="govuk-grid-row">
