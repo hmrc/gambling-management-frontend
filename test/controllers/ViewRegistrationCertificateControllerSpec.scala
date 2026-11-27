@@ -84,7 +84,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       ).thenReturn(Future.successful(certificate))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers),  mgdRegNum = "MGD123")
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), mgdRegNum = "MGD123")
           .overrides(
             bind[GamblingService].toInstance(mockService)
           )
@@ -373,7 +373,6 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       }
     }
 
-
     "must retrieve certificate using selected agent client's registration number" in {
 
       val selectedClient = AgentClient(
@@ -384,11 +383,15 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       )
 
       val agentUserAnswers = emptyUserAnswers
-        .set(SelectedClientPage, "MGD999").success.value
-        .set(AgentClientsPage, List(selectedClient)).success.value
+        .set(SelectedClientPage, "MGD999")
+        .success
+        .value
+        .set(AgentClientsPage, List(selectedClient))
+        .success
+        .value
 
       val mockService = mock[GamblingService]
-      val mockView = mock[ViewRegistrationCertificateView]
+      val mockView    = mock[ViewRegistrationCertificateView]
 
       when(
         mockService.retrieveCertificate(any[String])(any[HeaderCarrier])
