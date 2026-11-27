@@ -17,14 +17,20 @@
 package controllers.agent
 
 import base.SpecBase
-import controllers.actions.{FakeAgentIdentifierAction, PassThroughClientListCheckAction, PassThroughHasClientGuard}
+import controllers.actions.*
 import controllers.clientdetails.{ClientRefUpdateConfirmationController, ClientRemovedController}
+import models.UserAnswers
+import models.agent.AgentClient
+import pages.clientdetails.ClientReferencePage
+import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import services.GamblingService
+import services.{GamblingService, ManageService}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class StaticAgentControllersSpec extends SpecBase {
 
@@ -34,6 +40,13 @@ class StaticAgentControllersSpec extends SpecBase {
   private def auth            = new FakeAgentIdentifierAction(bodyParsers)
   private val clientListCheck = new PassThroughClientListCheckAction()
   private val hasClientGuard  = new PassThroughHasClientGuard(new GamblingService(null), null, null)
+
+  private class StubManageService extends ManageService(null, null) {
+    override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
+      HeaderCarrier
+    ): Future[Unit] =
+      Future.unit
+  }
 
   "AgentLostAccessController.onPageLoad returns OK" in {
     val controller =
@@ -78,12 +91,22 @@ class StaticAgentControllersSpec extends SpecBase {
   }
 
   "ClientRefUpdateConfirmationController.onPageLoad returns OK" in {
+    val client           = AgentClient("mgd", "RN1", Some("Acme"), Some("ref"))
+    val ua               = UserAnswers("internal-id")
+      .set(AgentClientsPage, List(client))
+      .flatMap(_.set(SelectedClientPage, "RN1"))
+      .get
+    val populatedAnswers = ua.set(ClientReferencePage, "01234567890123456789").success.value
+
     val controller = new ClientRefUpdateConfirmationController(
       mcc.messagesApi,
       mcc,
       auth,
       clientListCheck,
+      new FakeDataRetrievalAction(Some(populatedAnswers)),
+      new DataRequiredActionImpl(),
       hasClientGuard,
+      new StubManageService(),
       app.injector.instanceOf[views.html.clientdetails.ClientRefUpdateConfirmationView]
     )
     status(controller.onPageLoad(FakeRequest())) mustBe OK

@@ -64,7 +64,6 @@ class ClientReferenceControllerSpec extends SpecBase {
       new DataRequiredActionImpl(),
       new PassThroughHasClientGuard(new GamblingService(null), null, null),
       new ClientReferenceFormProvider(),
-      new StubManageService(),
       mcc,
       view
     )
@@ -78,7 +77,7 @@ class ClientReferenceControllerSpec extends SpecBase {
     }
 
     "renders the change-reference form with the existing user-answers value" in {
-      val populatedAnswers = emptyUserAnswers.set(ClientReferencePage, "012345678901234567891").success.value
+      val populatedAnswers = emptyUserAnswers.set(ClientReferencePage, "01234567890123456789").success.value
       val result           = controller(userAnswers = populatedAnswers).onPageLoad("RegNum123")(addCSRFToken(FakeRequest()))
       status(result) mustBe OK
       contentAsString(result) must include(messages(app)("agent.clientReference.heading"))

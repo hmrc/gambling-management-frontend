@@ -80,4 +80,27 @@ object ClientDetailsSummary {
         )
 
     SummaryListViewModel(Seq(clientNameRow, regNumberRow, clientReferenceRow))
+
+  def rowForConfirmation(regNumber: String, clientReference: String)(implicit
+    messages: Messages
+  ): SummaryList =
+    SummaryListViewModel(
+      Seq(
+        SummaryListRow(
+          key = KeyViewModel(Text(messages("agent.clientRefUpdateConfirmation.clientReference"))),
+          value = ValueViewModel(Text(Some(clientReference).getOrElse(""))),
+          actions = Some(
+            Actions(
+              classes = "govuk-!-width-one-third",
+              items = Seq(
+                ActionItemViewModel(
+                  Text(messages("site.change")),
+                  controllers.clientdetails.routes.ClientReferenceController.onPageLoad(regNumber).url
+                ).withVisuallyHiddenText(messages("agent.clientRefUpdateConfirmation.clientReference"))
+              )
+            )
+          )
+        )
+      )
+    )
 }

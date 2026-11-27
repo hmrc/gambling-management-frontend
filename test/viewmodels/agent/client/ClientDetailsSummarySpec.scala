@@ -36,7 +36,7 @@ class ClientDetailsSummarySpec extends SpecBase {
   private val regNumber       = "XVM00000001001"
   private val clientReference = "EZ00100"
 
-  "ClientDetailsSummary" - {
+  "ClientDetailsSummary row" - {
 
     "must show a clientName row with NO Action" in {
       implicit val msgs: Messages = messages(applicationBuilder().build())
@@ -83,6 +83,21 @@ class ClientDetailsSummarySpec extends SpecBase {
 
       row.actions.value.items(1).content mustBe Text(msgs("site.remove"))
       row.actions.value.items(1).href mustBe removeClientReferenceUrl(regNumber)
+    }
+  }
+
+  "ClientDetailsSummary rowForConfirmation" - {
+
+    "must show a clientReference row with with a 'Change' Action when value is entered" in {
+      implicit val msgs: Messages = messages(applicationBuilder().build())
+
+      val rows = ClientDetailsSummary.rowForConfirmation(regNumber, clientReference).rows
+      val row  = rows.find(_.key.content == Text(msgs("agent.clientRefUpdateConfirmation.clientReference"))).value
+
+      row.value.content mustBe Text("EZ00100")
+      row.actions.value.items.size mustBe 1
+      row.actions.value.items.head.content mustBe Text(msgs("site.change"))
+      row.actions.value.items.head.href mustBe clientReferenceUrl(regNumber)
     }
   }
 }
