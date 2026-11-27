@@ -34,15 +34,18 @@ GET         /agent/cannot-access-service                             controllers
 # Client details management
 GET         /agent/manage-your-details                               controllers.agent.ManageYourDetailsController.onPageLoad()
 GET         /agent/manage-your-details/manage-your-client-details    controllers.clientdetails.ManageClientDetailsController.onPageLoad()
-GET         /agent/manage-your-details/create-client-reference/:regNumber               controllers.clientdetails.ClientReferenceController.onPageLoad(regNumber: String)
-POST        /agent/manage-your-details/create-client-reference/:regNumber               controllers.clientdetails.ClientReferenceController.onSubmit(regNumber: String)
+
+GET         /agent/manage-your-details/create-client-reference/:regNumber   controllers.clientdetails.ClientReferenceController.onPageLoad(regNumber: String)
+POST        /agent/manage-your-details/create-client-reference/:regNumber   controllers.clientdetails.ClientReferenceController.onSubmit(regNumber: String)
 GET         /agent/manage-your-details/confirm-client-reference                         controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
 POST        /agent/manage-your-details/confirm-client-reference                         controllers.clientdetails.ClientRefUpdateConfirmationController.onSubmit()
+GET         /agent/manage-your-details/remove-client-reference/:regNumber   controllers.clientdetails.RemoveClientReferenceController.onPageLoad(regNumber: String)
+POST        /agent/manage-your-details/remove-client-reference/:regNumber   controllers.clientdetails.RemoveClientReferenceController.onSubmit(regNumber: String)
+
 GET         /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onPageLoad(regNumber: String)
 POST        /agent/manage-your-details/remove-client/:regNumber      controllers.clientdetails.RemoveClientController.onSubmit(regNumber: String)
 GET         /agent/client-removed                                    controllers.clientdetails.ClientRemovedController.onPageLoad()
-GET         /agent/remove-client-reference/:regNumber                controllers.clientdetails.RemoveClientReferenceController.onPageLoad(regNumber: String)
-POST        /agent/remove-client-reference/:regNumber                controllers.clientdetails.RemoveClientReferenceController.onSubmit(regNumber: String)
+
 
 # Security check (client-list retrieval in-progress spinner)
 GET         /agent/authorisation-check                               controllers.SecurityCheckController.onClientListCheck(continueUrl: RedirectUrl)

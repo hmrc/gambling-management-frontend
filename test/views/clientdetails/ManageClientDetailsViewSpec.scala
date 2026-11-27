@@ -126,7 +126,7 @@ object ManageClientDetailsViewUtil {
               ).withVisuallyHiddenText(messages("")),
               ActionItemViewModel(
                 Text("RemoveLink"),
-                "/manage-gambling-tax/agent/remove-client-reference/XMM00000000123"
+                "/manage-gambling-tax/agent/manage-your-details/remove-client-reference/XMM00000000123"
               ).withVisuallyHiddenText(messages(""))
             )
           )
