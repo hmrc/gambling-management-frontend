@@ -17,18 +17,24 @@
 package controllers
 
 import base.SpecBase
+import controllers.actions.{AuthorisedAction, ClientListCheckAction, FakeAgentIdentifierAction, FakeIdentifierAction, HasClientGuard, PassThroughClientListCheckAction, PassThroughHasClientGuard}
 import models.*
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
-import play.api.mvc.DefaultActionBuilder
+import play.api.mvc.{DefaultActionBuilder, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import services.GamblingService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.registrationCertificate.ViewRegistrationCertificateView
+
+import javax.inject.Provider
+import play.api.test.Helpers.stubControllerComponents
+import pages.{AgentClientsPage, SelectedClientPage}
+import models.agent.AgentClient
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -78,15 +84,16 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       ).thenReturn(Future.successful(certificate))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[GamblingService].toInstance(mockService))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), mgdRegNum = "MGD123")
+          .overrides(
+            bind[GamblingService].toInstance(mockService)
+          )
           .build()
 
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
-            .withSession("mgdRefNum" -> "MGD123")
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ViewRegistrationCertificateView]
@@ -129,14 +136,13 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
 
         status(result) mustBe OK
 
-        status(result) mustBe OK
-
         val expected =
           view(
             certificate,
             displayName,
             displayLabelKey,
-            formattedAddress
+            formattedAddress,
+            "MGD123"
           )(request, messages(application)).toString
 
         normalize(contentAsString(result)) mustBe normalize(expected)
@@ -164,7 +170,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
             .withSession("mgdRefNum" -> "MGD123")
 
         val result = route(application, request).value
@@ -194,12 +200,13 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
           any(),
           any(),
           any(),
+          any(),
           any()
         )(any(), any())
       ).thenReturn(Html("success"))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), mgdRegNum = "MGD123")
           .overrides(
             bind[GamblingService].toInstance(mockService),
             bind[ViewRegistrationCertificateView].toInstance(mockView)
@@ -209,8 +216,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
-            .withSession("mgdRefNum" -> "MGD123")
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -220,7 +226,8 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
           eqTo(partnershipCert),
           eqTo("Partner Business Ltd"),
           eqTo("viewRegistrationCertificate.label.partnership"),
-          any()
+          any(),
+          eqTo("MGD123")
         )(any(), any())
       }
     }
@@ -246,7 +253,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
             .withSession("mgdRefNum" -> "MGD123")
 
         val result = route(application, request).value
@@ -279,7 +286,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
             .withSession("mgdRefNum" -> "MGD123")
 
         val result = route(application, request).value
@@ -307,7 +314,7 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
       running(application) {
 
         val request =
-          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url)
+          FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
             .withSession("mgdRefNum" -> "MGD123")
 
         val result = route(application, request).value
@@ -317,5 +324,127 @@ class ViewRegistrationCertificateControllerSpec extends SpecBase with MockitoSug
           controllers.routes.SystemErrorController.onPageLoad().url
       }
     }
+    "must pass uppercase trimmed registration number to the view" in {
+
+      val mockService = mock[GamblingService]
+      val mockView    = mock[ViewRegistrationCertificateView]
+
+      when(
+        mockService.retrieveCertificate(any[String])(any[HeaderCarrier])
+      ).thenReturn(Future.successful(certificate))
+
+      when(
+        mockView.apply(
+          any(),
+          any(),
+          any(),
+          any(),
+          any()
+        )(any(), any())
+      ).thenReturn(Html("success"))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), mgdRegNum = "MGD123")
+          .overrides(
+            bind[GamblingService].toInstance(mockService),
+            bind[ViewRegistrationCertificateView].toInstance(mockView)
+          )
+          .build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, routes.ViewRegistrationCertificateController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustBe OK
+
+        verify(mockService).retrieveCertificate(
+          eqTo("MGD123")
+        )(any[HeaderCarrier])
+
+        verify(mockView).apply(
+          eqTo(certificate),
+          eqTo("Test Business Ltd"),
+          eqTo("viewRegistrationCertificate.label.corporateBody"),
+          any(),
+          eqTo("MGD123")
+        )(any(), any())
+      }
+    }
+
+    "must retrieve certificate using selected agent client's registration number" in {
+
+      val selectedClient = AgentClient(
+        regime = "MGD",
+        regNumber = "MGD999",
+        clientName = Some("Agent Client Ltd"),
+        agentOwnRef = Some("AGENT001")
+      )
+
+      val agentUserAnswers = emptyUserAnswers
+        .set(SelectedClientPage, "MGD999")
+        .success
+        .value
+        .set(AgentClientsPage, List(selectedClient))
+        .success
+        .value
+
+      val mockService = mock[GamblingService]
+      val mockView    = mock[ViewRegistrationCertificateView]
+
+      when(
+        mockService.retrieveCertificate(any[String])(any[HeaderCarrier])
+      ).thenReturn(Future.successful(certificate))
+
+      when(
+        mockView.apply(
+          any(),
+          any(),
+          any(),
+          any(),
+          any()
+        )(any(), any())
+      ).thenReturn(Html("success"))
+
+      val application =
+        applicationBuilder(
+          userAnswers = Some(agentUserAnswers),
+          isAgent = true
+        )
+          .overrides(
+            bind[GamblingService].toInstance(mockService),
+            bind[ViewRegistrationCertificateView].toInstance(mockView),
+            bind[ClientListCheckAction].to[PassThroughClientListCheckAction],
+            bind[HasClientGuard].to[PassThroughHasClientGuard]
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          FakeRequest(
+            GET,
+            routes.ViewRegistrationCertificateController.onPageLoad().url
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustBe OK
+
+        verify(mockService).retrieveCertificate(
+          eqTo("MGD999")
+        )(any[HeaderCarrier])
+
+        verify(mockView).apply(
+          eqTo(certificate),
+          eqTo("Test Business Ltd"),
+          eqTo("viewRegistrationCertificate.label.corporateBody"),
+          any(),
+          eqTo("MGD999")
+        )(any(), any())
+      }
+    }
+
   }
 }

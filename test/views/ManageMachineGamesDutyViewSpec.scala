@@ -96,7 +96,7 @@ class ManageMachineGamesDutyViewSpec extends SpecBase {
         .attr("href") mustBe "http://localhost:10401/manage-gambling-tax/returns/XWM00000001770/select-filed-return"
       payment.attr("target") mustBe "_blank"
       doc.select("a:contains(View registration certificate)").attr("href") mustBe
-        controllers.routes.ViewRegistrationCertificateController.onPageLoad("XWM00000001770").url
+        controllers.routes.ViewRegistrationCertificateController.onPageLoad().url
       doc.select("a:contains(Manage your client details)").attr("href") mustBe
         controllers.clientdetails.routes.ManageClientDetailsController.onPageLoad().url
     }

@@ -18,12 +18,15 @@ package controllers
 
 import config.AppConfig
 import controllers.actions.*
+import pages.{AgentClientsPage, SelectedClientPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.GamblingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationCertificate.ViewRegistrationCertificateView
+import models.BusinessDetails
+import scala.concurrent.Future
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -31,6 +34,9 @@ import scala.concurrent.ExecutionContext
 class ViewRegistrationCertificateController @Inject() (
   override val messagesApi: MessagesApi,
   authorise: AuthorisedAction,
+  clientListCheck: ClientListCheckAction,
+  getData: DataRetrievalAction,
+  hasClientGuard: HasClientGuard,
   val controllerComponents: MessagesControllerComponents,
   view: ViewRegistrationCertificateView,
   gamblingService: GamblingService
@@ -39,66 +45,90 @@ class ViewRegistrationCertificateController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regNumber: String): Action[AnyContent] = authorise.async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (authorise
+    andThen clientListCheck
+    andThen hasClientGuard.currentClientAuthorised
+    andThen getData).async { implicit request =>
 
-    val mgdRegNum = regNumber.toUpperCase.trim
+    val regNumber =
+      if request.isAgent then
+        request.userAnswers
+          .flatMap(answers =>
+            answers
+              .get(SelectedClientPage)
+              .flatMap(AgentClientsPage.findInClientList(answers, _))
+          )
+          .map(_.regNumber)
+      else Some(request.mgdRegNum)
 
-    gamblingService
-      .retrieveCertificate(mgdRegNum)
-      .map { certificate =>
+    regNumber match {
+      case Some(number) =>
+        val mgdRegNum = number.toUpperCase.trim
 
-        val (displayName, displayLabelKey) =
-          certificate.typeOfBusiness.map(_.trim.toLowerCase) match {
+        gamblingService
+          .retrieveCertificate(mgdRegNum)
+          .map { certificate =>
 
-            case Some("sole proprietor") =>
-              certificate.individualName.getOrElse("") ->
-                "viewRegistrationCertificate.label.soleProprietor"
+            val (displayName, displayLabelKey) =
+              certificate.typeOfBusiness.map(_.trim.toLowerCase) match {
 
-            case Some(b) if b.startsWith("unincorporated body") =>
-              certificate.businessName.getOrElse("") ->
-                "viewRegistrationCertificate.label.unincorporatedBody"
+                case Some("sole proprietor") =>
+                  certificate.individualName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.soleProprietor"
 
-            case Some("corporate body") =>
-              certificate.businessName.getOrElse("") ->
-                "viewRegistrationCertificate.label.corporateBody"
+                case Some(b) if b.startsWith("unincorporated body") =>
+                  certificate.businessName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.unincorporatedBody"
 
-            case Some("partnership") =>
-              certificate.businessName.getOrElse("") ->
-                "viewRegistrationCertificate.label.partnership"
+                case Some("corporate body") =>
+                  certificate.businessName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.corporateBody"
 
-            case Some("limited liability partnership") =>
-              certificate.businessName.getOrElse("") ->
-                "viewRegistrationCertificate.label.limitedLiabilityPartnership"
+                case Some("partnership") =>
+                  certificate.businessName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.partnership"
 
-            case _ =>
-              certificate.businessName.getOrElse("") ->
-                "viewRegistrationCertificate.label.default"
+                case Some("limited liability partnership") =>
+                  certificate.businessName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.limitedLiabilityPartnership"
+
+                case _ =>
+                  certificate.businessName.getOrElse("") ->
+                    "viewRegistrationCertificate.label.default"
+              }
+
+            val formattedAddress =
+              Seq(
+                certificate.busAddrLine1,
+                certificate.busAddrLine2,
+                certificate.busAddrLine3,
+                certificate.busAddrLine4,
+                certificate.busPostcode
+              ).flatten.filter(_.nonEmpty).mkString("<br>")
+
+            Ok(
+              view(
+                certificate,
+                displayName,
+                displayLabelKey,
+                formattedAddress,
+                mgdRegNum
+              )
+            )
+          }
+          .recover { case ex =>
+            logger.error(
+              s"retrieveCertificate failed for mgdRegNum=$mgdRegNum",
+              ex
+            )
+            Redirect(controllers.routes.SystemErrorController.onPageLoad())
           }
 
-        val formattedAddress =
-          Seq(
-            certificate.busAddrLine1,
-            certificate.busAddrLine2,
-            certificate.busAddrLine3,
-            certificate.busAddrLine4,
-            certificate.busPostcode
-          ).flatten.filter(_.nonEmpty).mkString("<br>")
-
-        Ok(
-          view(
-            certificate,
-            displayName,
-            displayLabelKey,
-            formattedAddress
-          )
+      case None =>
+        logger.warn("No registration number found for certificate")
+        Future.successful(
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         )
-      }
-      .recover { case ex =>
-        logger.error(
-          s"retrieveCertificate failed for mgdRegNum=$mgdRegNum",
-          ex
-        )
-        Redirect(controllers.routes.SystemErrorController.onPageLoad())
-      }
+    }
   }
 }

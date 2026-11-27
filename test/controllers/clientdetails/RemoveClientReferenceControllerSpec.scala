@@ -79,7 +79,7 @@ class RemoveClientReferenceControllerSpec extends SpecBase {
 
   private class StubManageService extends ManageService(null, null) {
     override def updateClient(regNumber: String, ua: UserAnswers, clientRef: String)(using
-                                                                                     HeaderCarrier
+      HeaderCarrier
     ): Future[Unit] = Future.unit
   }
 

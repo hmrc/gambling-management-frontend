@@ -23,10 +23,10 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends AuthorisedAction {
+class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers, mgdRegNum: String = "id") extends AuthorisedAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthorisedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthorisedRequest(request, AffinityGroup.Organisation, "id", sessionId = "id"))
+    block(AuthorisedRequest(request, AffinityGroup.Organisation, mgdRegNum, isAgent = false, sessionId = "id"))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

@@ -16,9 +16,9 @@ GET         /there-is-a-problem-with-the-service                     controllers
 GET         /there-is-a-problem-access-denied                        controllers.AccessDeniedController.onPageLoad()
 GET         /page-not-found                                          controllers.PageNotFoundController.onPageLoad()
 
-GET         /registration-certificate/:regNumber                                controllers.ViewRegistrationCertificateController.onPageLoad(regNumber: String)
+GET         /registration-certificate                               controllers.ViewRegistrationCertificateController.onPageLoad()
 
-GET         /manage-your-machine-games-duty                    controllers.ManageMachineGamesDutyController.onPageLoad()
+GET         /                                                  controllers.ManageMachineGamesDutyController.onPageLoad()
 GET         /manage-your-details/no-results-found              controllers.agent.NoResultsFoundController.onPageLoad(search: String ?= "")
 
 # Agent client-list flow

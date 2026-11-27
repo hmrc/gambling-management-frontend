@@ -32,6 +32,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
+import play.api.test.Helpers.stubControllerComponents
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -56,11 +57,23 @@ trait SpecBase
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None,
+    mgdRegNum: String = "id",
+    isAgent: Boolean = false
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[AuthorisedAction].to[FakeIdentifierAction],
+        bind[AuthorisedAction].toInstance(
+          if (isAgent)
+            new FakeAgentIdentifierAction(stubControllerComponents().parsers)
+          else
+            new FakeIdentifierAction(
+              stubControllerComponents().parsers,
+              mgdRegNum
+            )
+        ),
         bind[AgentOnlyAction].to[FakeAgentOnlyAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
