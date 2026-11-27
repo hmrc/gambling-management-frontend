@@ -34,6 +34,8 @@ class NoResultsFoundController @Inject() (
     with I18nSupport {
 
   def onPageLoad(search: String): Action[AnyContent] = (authorise andThen clientListCheck) { implicit request =>
-    Ok(view(search))
+
+    val backLink = Some(controllers.agent.routes.ClientListController.onPageLoad().url)
+    Ok(view(search, backLink))
   }
 }

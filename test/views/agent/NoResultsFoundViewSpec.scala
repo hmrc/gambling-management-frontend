@@ -32,7 +32,7 @@ class NoResultsFoundViewSpec extends SpecBase {
 
   "NoResultsFoundView" - {
     "renders the heading, playback of the search term, suggestions and search again link" in {
-      val doc = Jsoup.parse(view("Acme").body)
+      val doc = Jsoup.parse(view("Acme", None).body)
 
       doc.select("h1").text must include(messages("noResultsFound.heading"))
       doc.select(".govuk-caption-l").text mustBe messages("noResultsFound.caption")
@@ -44,7 +44,7 @@ class NoResultsFoundViewSpec extends SpecBase {
     }
 
     "escapes the search term" in {
-      val doc = Jsoup.parse(view("<script>alert(1)</script>").body)
+      val doc = Jsoup.parse(view("<script>alert(1)</script>", None).body)
 
       doc.select("main script").size mustBe 0
       doc.text must include("<script>alert(1)</script>")

@@ -53,7 +53,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 
-      val doc = Jsoup.parse(view(details)(request, msgs).body)
+      val doc = Jsoup.parse(view(details, None)(request, msgs).body)
 
       doc.title() must include(msgs("checkBusinessDetails.title"))
       doc.select("h1").text() mustEqual msgs("checkBusinessDetails.heading")
@@ -65,7 +65,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 
-      val doc = Jsoup.parse(view(details)(request, msgs).body)
+      val doc = Jsoup.parse(view(details, None)(request, msgs).body)
 
       def valueFor(keyText: String): String =
         rowFor(doc, keyText).select(".govuk-summary-list__value").text()
@@ -110,7 +110,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       implicit val msgs = messages(app)
 
       val doc = Jsoup.parse(
-        view(details.copy(phoneNumber = None, mobileNumber = None, faxNumber = None, emailAddress = None))(
+        view(details.copy(phoneNumber = None, mobileNumber = None, faxNumber = None, emailAddress = None), None)(
           FakeRequest(),
           msgs
         ).body
@@ -129,7 +129,7 @@ class CheckBusinessDetailsViewSpec extends SpecBase {
       val request       = FakeRequest()
       implicit val msgs = messages(app)
 
-      val doc = Jsoup.parse(view(details)(request, msgs).body)
+      val doc = Jsoup.parse(view(details, None)(request, msgs).body)
 
       val link =
         doc

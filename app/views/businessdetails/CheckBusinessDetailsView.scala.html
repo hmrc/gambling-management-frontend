@@ -27,7 +27,7 @@
 )
 
 @(
-        details: BusinessDetails
+        details: BusinessDetails, backLink: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @row(keyMsg: String, value: Content, changeUrl: String) = @{
@@ -51,7 +51,7 @@
         @details.emailAddress.getOrElse(messages("checkBusinessDetails.notProvided"))</p>
 }
 
-@layout(pageTitle = titleNoForm(messages("checkBusinessDetails.title"))) {
+@layout(pageTitle = titleNoForm(messages("checkBusinessDetails.title")), backLinkUrl = backLink) {
 
     @h1("checkBusinessDetails.heading")
 
