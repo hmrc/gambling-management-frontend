@@ -180,10 +180,10 @@ agent.clientReference.error.required = Enter your client reference
 agent.clientReference.error.length = Client reference must be 20 characters or less
 agent.clientReference.error.invalid = Enter your client reference in the correct format
 
-clientRefUpdateConfirmation.title = Client reference updated
-clientRefUpdateConfirmation.heading = Client reference updated
-clientRefUpdateConfirmation.p1 = The client reference has been updated.
-clientRefUpdateConfirmation.link.backToClientList = Back to your client list
+agent.clientRefUpdateConfirmation.title = Confirm your client reference
+agent.clientRefUpdateConfirmation.heading = Confirm your client reference
+agent.clientRefUpdateConfirmation.caption = Manage your client details
+agent.clientRefUpdateConfirmation.clientReference = Client reference
 
 removeClient.title = Are you sure you want to remove {0}?
 removeClient.heading = Are you sure you want to remove {0}?

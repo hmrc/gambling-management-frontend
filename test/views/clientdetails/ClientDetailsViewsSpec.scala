@@ -213,13 +213,6 @@ class ClientDetailsViewsSpec extends SpecBase {
     }
   }
 
-  "ClientRefUpdateConfirmationView" - {
-    "renders the confirmation panel" in {
-      val doc = Jsoup.parse(app.injector.instanceOf[ClientRefUpdateConfirmationView].apply().body)
-      doc.select(".govuk-panel__title").text must include(messages("clientRefUpdateConfirmation.heading"))
-    }
-  }
-
   "ClientRemovedView" - {
     "renders the removed confirmation panel" in {
       val doc = Jsoup.parse(app.injector.instanceOf[ClientRemovedView].apply().body)

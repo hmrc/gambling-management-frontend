@@ -23,7 +23,6 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.ManageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -41,7 +40,6 @@ class ClientReferenceController @Inject() (
   requireData: DataRequiredAction,
   hasClientGuard: HasClientGuard,
   formProvider: ClientReferenceFormProvider,
-  manageService: ManageService,
   val controllerComponents: MessagesControllerComponents,
   view: ClientReferenceView
 )(implicit ec: ExecutionContext)
@@ -67,8 +65,6 @@ class ClientReferenceController @Inject() (
       andThen getData
       andThen requireData
       andThen hasClientGuard.forRegNumber(regNumber)).async { implicit request =>
-      given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
       form
         .bindFromRequest()
         .fold(
@@ -76,7 +72,6 @@ class ClientReferenceController @Inject() (
           value =>
             (for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ClientReferencePage, value.trim))
-              _              <- manageService.updateClient(regNumber, updatedAnswers, value.trim)
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(routes.ClientRefUpdateConfirmationController.onPageLoad()))
               .recover { case ex =>

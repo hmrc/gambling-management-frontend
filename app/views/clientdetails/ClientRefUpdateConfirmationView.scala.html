@@ -15,29 +15,39 @@
  *@
 
 @import views.html.components.*
+@import viewmodels.govuk.summarylist.FluentSummaryList
 
 @this(
         layout: templates.Layout,
-        paragraph: Paragraph,
-        link: Link
+        govukSummaryList: GovukSummaryList,
+        caption: components.Caption,
+        h1: H1,
+        formHelper: FormWithCSRF,
+        govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(regNumber: String, summaryList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("clientRefUpdateConfirmation.title")),
-    showBackLink = false,
-    showSignOut = true
+    pageTitle = titleNoForm(messages("agent.clientRefUpdateConfirmation.title")),
+    showBackLink = true,
+    showSignOut = true,
+    includeCustomCss = true
 ) {
+    @caption(messages("agent.clientRefUpdateConfirmation.caption"))
+    @h1(msg = "agent.clientRefUpdateConfirmation.heading", classes = "govuk-heading-l")
 
-    <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@messages("clientRefUpdateConfirmation.heading")</h1>
-    </div>
+    @govukSummaryList(summaryList.withCssClass("govuk-!-margin-bottom-9"))
 
-    @paragraph(message = "clientRefUpdateConfirmation.p1")
-
-    @link(
-        linkTextKey = "clientRefUpdateConfirmation.link.backToClientList",
-        linkUrl = controllers.agent.routes.ClientListController.onPageLoad().url
-    )
+    @formHelper(
+        action =
+        controllers.clientdetails.routes.ClientRefUpdateConfirmationController
+        .onSubmit()
+    ) {
+        @govukButton(
+            ButtonViewModel(
+                messages("site.submit")
+            )
+        )
+    }
 }

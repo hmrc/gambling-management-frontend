@@ -37,7 +37,8 @@ GET         /agent/manage-your-details/manage-your-client-details    controllers
 
 GET         /agent/manage-your-details/create-client-reference/:regNumber   controllers.clientdetails.ClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/manage-your-details/create-client-reference/:regNumber   controllers.clientdetails.ClientReferenceController.onSubmit(regNumber: String)
-GET         /agent/client-reference-updated                                 controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
+GET         /agent/manage-your-details/confirm-client-reference                         controllers.clientdetails.ClientRefUpdateConfirmationController.onPageLoad()
+POST        /agent/manage-your-details/confirm-client-reference                         controllers.clientdetails.ClientRefUpdateConfirmationController.onSubmit()
 GET         /agent/manage-your-details/remove-client-reference/:regNumber   controllers.clientdetails.RemoveClientReferenceController.onPageLoad(regNumber: String)
 POST        /agent/manage-your-details/remove-client-reference/:regNumber   controllers.clientdetails.RemoveClientReferenceController.onSubmit(regNumber: String)
 
